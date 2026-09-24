@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import logoLockup from "@/public/logo-lockup.png";
@@ -43,6 +44,7 @@ import { nav, site } from "@/lib/site";
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   /* A menu that cannot be dismissed from the keyboard is a trap for anyone
      not using a pointer. */
@@ -73,7 +75,29 @@ export function Header() {
             and flattened its rounded end. See the note where the asset is
             cut. The tagline belongs in the footer, at a size where "Product
             of MnT Future" can actually be read. */}
-        <Link href="/" className="flex shrink-0 items-center">
+        {/* CLICKING IT WHILE ALREADY HOME DID NOTHING, which is what a
+            link to the route you are on does - Next resolves it, finds the
+            page unchanged and leaves the scroll position alone. On a page
+            this long that reads as a dead logo.
+
+            So on `/` it goes to the top instead of navigating. It is a
+            scroll rather than a reload because a reload on a logo click
+            costs a round trip and re-downloads the page to arrive at the
+            same place. No `behavior` is passed: scrollTo then follows the
+            CSS `scroll-behavior`, which globals.css already sets to smooth
+            and already forces back to auto under prefers-reduced-motion.
+
+            Off `/` the branch never runs and it navigates home normally. */}
+        <Link
+          href="/"
+          onClick={(e) => {
+            setOpen(false);
+            if (pathname !== "/") return;
+            e.preventDefault();
+            window.scrollTo({ top: 0 });
+          }}
+          className="flex shrink-0 items-center"
+        >
           <Image
             src={logoLockup}
             alt="iSuite AI"
