@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { channelIcons } from "@/components/ui/icons";
 import { oneInbox, unanswered } from "@/lib/content/queues";
@@ -56,14 +57,27 @@ import { oneInbox, unanswered } from "@/lib/content/queues";
    NO FIGURES ANYWHERE. Times of day and message ages are content; counts,
    values and response-time averages are statistics. The unread pill is the
    one number on screen and it is the length of the list beside it.
+
+   THE TYPEWRITER LIVES AT THE BOTTOM OF THIS FILE AND THAT IS A PERFORMANCE
+   FIX, NOT TIDINESS. It used to be a useState in the section, handed down
+   as a `typed` prop - so each of the reply's 105 characters re-rendered the
+   section, this component and everything in it. Eleven nodes in that tree
+   carry motion's `layout` prop, and motion re-measures a layout node every
+   time the component owning it renders. That is 105 measure-and-correct
+   passes over eleven boxes in three seconds, and it happens on the REPLY
+   beat - the one the section is built around. A laptop absorbs it; a phone
+   stammers, which is exactly what it was reported doing.
+
+   Owned by the bubble instead, the same 105 renders touch two spans and no
+   layout node at all. AssistantReply carries no `layout` prop for that
+   reason, and nothing above it re-renders while the reply types.
    ========================================================================== */
 
 type Props = {
   merged: boolean;
   answered: boolean;
-  /* The assistant reply, revealed a character at a time by the section. */
-  typed: string;
-  typing: boolean;
+  /* Reduced motion: the reply is already written rather than typing. */
+  still?: boolean;
 };
 
 /* WHERE EACH HEADING AND ITS CARD SIT, BY HAND, because two sibling grids
@@ -103,7 +117,7 @@ const AVATAR_TINTS = [
   "bg-[#fff1e0] text-[#a5651c]",
 ];
 
-export function InboxMock({ merged, answered, typed, typing }: Props) {
+export function InboxMock({ merged, answered, still = false }: Props) {
   const lead = unanswered[0];
 
   return (
@@ -331,40 +345,12 @@ export function InboxMock({ merged, answered, typed, typing }: Props) {
                 </span>
               </span>
 
-              {answered && (
-                <motion.span
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.35 }}
-                  className="max-w-[78%] self-end rounded-2xl rounded-br-md bg-brand px-3 py-2 text-white shadow-sm"
-                >
-                  <span className="block text-[14.5px] leading-snug">
-                    {typed}
-                    {typing && (
-                      <span className="ml-0.5 inline-block h-[1em] w-[2px] translate-y-[0.15em] bg-white/90" />
-                    )}
-                  </span>
-                  <span className="mt-1 flex items-center justify-end gap-1.5">
-                    <span className="rounded bg-white/20 px-2 py-0.5 text-[12px] font-bold">
-                      &#10022; AI
-                    </span>
-                    <span className="text-[11.5px] text-white/80">12:19</span>
-                    <TicksGlyph />
-                  </span>
-                </motion.span>
-              )}
-
-              {answered && !typing && (
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                  className="mx-auto mt-1 inline-flex items-center gap-1.5 rounded-full bg-brand-tint px-2.5 py-1 text-[12.5px] font-bold text-brand"
-                >
-                  <span className="size-1.5 rounded-full bg-brand" />
-                  {lead.did}
-                </motion.span>
-              )}
+              <AssistantReply
+                text={lead.reply ?? ""}
+                did={lead.did}
+                on={answered}
+                still={still}
+              />
             </div>
 
             <div className="flex items-center gap-2 border-t border-line bg-surface px-3.5 py-3">
@@ -395,6 +381,95 @@ export function InboxMock({ merged, answered, typed, typing }: Props) {
       )}
     </motion.div>
   );
+}
+
+/* ==========================================================================
+   THE ASSISTANT'S REPLY
+   --------------------------------------------------------------------------
+   The bubble and the little "what it did" pill under it, which are flex
+   siblings rather than nested - hence the fragment.
+
+   IT OWNS THE TYPING. See the note at the top of the file for why that
+   matters. NOTHING IN HERE MAY TAKE A `layout` PROP, or the whole point of
+   moving it is undone.
+
+   It renders null rather than unmounting when `on` goes false, so the
+   sentence it has already typed survives a scroll back up and the bubble's
+   entry animation still plays fresh when the beat comes round again.
+   ========================================================================== */
+function AssistantReply({
+  text,
+  did,
+  on,
+  still,
+}: {
+  text: string;
+  /* Optional only because the array it comes from is derived with a find;
+     every enquiry that reaches this component has one. */
+  did: string | undefined;
+  on: boolean;
+  still: boolean;
+}) {
+  const typed = useTypewriter(text, on && !still);
+  const shown = still ? text : typed;
+  const typing = !still && shown.length < text.length;
+
+  if (!on) return null;
+
+  return (
+    <>
+      <motion.span
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35 }}
+        className="max-w-[78%] self-end rounded-2xl rounded-br-md bg-brand px-3 py-2 text-white shadow-sm"
+      >
+        <span className="block text-[14.5px] leading-snug">
+          {shown}
+          {typing && (
+            <span className="ml-0.5 inline-block h-[1em] w-[2px] translate-y-[0.15em] bg-white/90" />
+          )}
+        </span>
+        <span className="mt-1 flex items-center justify-end gap-1.5">
+          <span className="rounded bg-white/20 px-2 py-0.5 text-[12px] font-bold">
+            &#10022; AI
+          </span>
+          <span className="text-[11.5px] text-white/80">12:19</span>
+          <TicksGlyph />
+        </span>
+      </motion.span>
+
+      {!typing && (
+        <motion.span
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="mx-auto mt-1 inline-flex items-center gap-1.5 rounded-full bg-brand-tint px-2.5 py-1 text-[12.5px] font-bold text-brand"
+        >
+          <span className="size-1.5 rounded-full bg-brand" />
+          {did}
+        </motion.span>
+      )}
+    </>
+  );
+}
+
+/* Reveals `text` one character at a time once `on` is true. A reply that
+   simply appears is a string; a reply that types is a machine working, and
+   that difference is most of what this section is selling.
+
+   It holds whatever it has typed when `on` goes false rather than resetting,
+   so scrolling back up does not rewind the sentence mid-word. */
+function useTypewriter(text: string, on: boolean) {
+  const [n, setN] = useState(0);
+
+  useEffect(() => {
+    if (!on || n >= text.length) return;
+    const id = window.setTimeout(() => setN((v) => v + 1), 28);
+    return () => window.clearTimeout(id);
+  }, [on, n, text.length]);
+
+  return text.slice(0, n);
 }
 
 function ChannelMark({ channel }: { channel: keyof typeof channelIcons }) {

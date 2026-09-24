@@ -1,17 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   AnimatePresence,
   motion,
-  useInView,
   useMotionValueEvent,
   useReducedMotion,
   useScroll,
 } from "motion/react";
 import { InboxMock } from "@/components/home/product/InboxMock";
 import { PipelineMock } from "@/components/home/product/PipelineMock";
-import { oneInbox, unanswered } from "@/lib/content/queues";
+import { oneInbox } from "@/lib/content/queues";
 
 /* ==========================================================================
    SECTION 3 - WHAT iSuite AI IS
@@ -180,9 +179,11 @@ export function OneInbox() {
   const answered = stage >= 2;
   const onBoard = stage >= 3;
 
-  const reply = unanswered[0].reply ?? "";
-  const typed = useTypewriter(reply, !flow && answered);
-
+  /* THIS COMPONENT RE-RENDERS FOUR TIMES FOR THE WHOLE SECTION - once per
+     beat - and it has to stay that way. The reply's typewriter used to live
+     here and made it 109; see the note at the top of InboxMock for what
+     that cost on a phone. Anything added here that ticks belongs in a leaf,
+     because eleven `layout` nodes hang off this render. */
   const at = onBoard ? 2 : merged ? 1 : 0;
 
   return (
@@ -242,7 +243,7 @@ export function OneInbox() {
           className={flow ? "relative mt-12" : "relative mt-2 h-[230vh]"}
         >
           {flow ? (
-            <Flow reply={reply} still={still} />
+            <Flow still={still} />
           ) : (
             /* CENTRED AND TIGHTER ON A PHONE. The top padding exists to
                clear the fixed header, which is 64px tall on a phone and
@@ -347,12 +348,7 @@ export function OneInbox() {
                       exit={{ opacity: 0, x: -40 }}
                       transition={{ duration: 0.55, ease: "easeIn" }}
                     >
-                      <InboxMock
-                        merged={merged}
-                        answered={answered}
-                        typed={typed}
-                        typing={answered && typed.length < reply.length}
-                      />
+                      <InboxMock merged={merged} answered={answered} />
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -397,15 +393,19 @@ export function OneInbox() {
    misalign: one pill sits centred above the frame it names, and it is the
    same StepPill the wide layout uses, so the two cannot drift apart.
    ========================================================================== */
-function Flow({ reply, still }: { reply: string; still: boolean }) {
+function Flow({ still }: { still: boolean }) {
   return (
     <div className="mt-12 space-y-14">
       <FlowBeat n={1} label={oneInbox.steps[0]} still={still}>
-        <InboxMock merged={false} answered={false} typed="" typing={false} />
+        <InboxMock merged={false} answered={false} />
       </FlowBeat>
 
       <FlowBeat n={2} label={oneInbox.steps[1]} still={still}>
-        <Replying reply={reply} still={still} />
+        {/* `still` is the only way this layout is ever reached, so the
+            reply is written rather than typed - the typewriter would be
+            motion, which is the thing the reader asked the system not to
+            do. */}
+        <InboxMock merged answered still={still} />
       </FlowBeat>
 
       <FlowBeat n={3} label={oneInbox.steps[2]} still={still}>
@@ -459,26 +459,6 @@ function FlowBeat({
   );
 }
 
-/* The reply types when the beat arrives rather than at a scroll position,
-   because there is no scroll timeline here to read one from. */
-function Replying({ reply, still }: { reply: string; still: boolean }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.25 });
-  const typed = useTypewriter(reply, inView && !still);
-  const shown = still ? reply : typed;
-
-  return (
-    <div ref={ref}>
-      <InboxMock
-        merged
-        answered
-        typed={shown}
-        typing={!still && shown.length < reply.length}
-      />
-    </div>
-  );
-}
-
 /* One pill, both layouts. It was written twice for a while and the two
    copies had already drifted by a pixel of padding. */
 function StepPill({
@@ -517,22 +497,4 @@ function StepPill({
       {label}
     </motion.span>
   );
-}
-
-/* Reveals `text` one character at a time once `on` is true. A reply that
-   simply appears is a string; a reply that types is a machine working, and
-   that difference is most of what this section is selling.
-
-   It holds whatever it has typed when `on` goes false rather than resetting,
-   so scrolling back up does not rewind the sentence mid-word. */
-function useTypewriter(text: string, on: boolean) {
-  const [n, setN] = useState(0);
-
-  useEffect(() => {
-    if (!on || n >= text.length) return;
-    const id = window.setTimeout(() => setN((v) => v + 1), 28);
-    return () => window.clearTimeout(id);
-  }, [on, n, text.length]);
-
-  return text.slice(0, n);
 }
