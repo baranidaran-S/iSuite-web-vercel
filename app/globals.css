@@ -1,0 +1,345 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   DESIGN TOKENS — iSuite AI website
+   --------------------------------------------------------------------------
+   PLACEHOLDER PALETTE. Every colour below is a stand-in until the real brand
+   values arrive (requirements §32). They are named by JOB, not by colour, so
+   a rebrand is a swap of these eight values and nothing else in the codebase
+   has to change.
+
+   The rule from §29: a limited palette, where colour earns attention because
+   it is rare. --color-brand appears on the primary button and almost nowhere
+   else. Channel colours are the one exemption — WhatsApp green and Instagram
+   pink are third-party marks and have to be themselves to be recognised.
+   ========================================================================== */
+@theme {
+  --color-bg: #edeef3; /* the frame around the hero card, and the ground
+                          every section below it sits on - one value, so the
+                          card edge is the only seam on the page */
+
+  /* THE SKY. Four stops rather than two: a straight blue-to-white ramp
+     banks visibly across a full viewport, and the eye reads the banding as
+     a cheap gradient. The extra stops bend it so the horizon arrives late
+     and the copy sits on a near-neutral ground where it stays legible. */
+  --color-sky-top: #7fb6e8;
+  --color-sky-mid: #b9daf4;
+  --color-sky-low: #e4f0fb;
+  --color-sky-base: #ffffff;
+  --color-surface: #ffffff; /* cards, product frame */
+  --color-ink: #041c3d; /* headings, body, dark buttons  16.95:1 on white */
+  --color-muted: #5b6880; /* secondary text         5.62:1 */
+  --color-line: #e3e7f0; /* hairlines, borders */
+  --color-line-soft: #eef1f7; /* inner UI dividers */
+  --color-line-strong: #c9d1e0; /* hover edge on controls   3.1:1 on bg */
+
+  /* ------------------------------------------------------------------
+     SAMPLED FROM THE LOGO, not chosen. public/logo.jpg was measured
+     pixel by pixel: the wordmark navy reads #002048, and the "AI"
+     gradient runs #0055FD at its deep end to #00D8F8 at its bright one.
+
+     --color-brand is the deep end, nudged one step for contrast: white
+     on it measures 5.49:1, which clears AA for the button text it
+     carries. --color-brand-bright is the gradient's other end and is
+     used only where the logo itself uses it - the AI in the wordmark.
+
+     --color-ink is the wordmark navy taken a shade deeper. The logo
+     value is correct for a logo and slightly light for a 70px headline;
+     at #041c3d it holds 16.95:1 and still reads as the same colour
+     family standing beside the mark.
+     ------------------------------------------------------------------ */
+  --color-brand: #0a5bf5; /* CTA and accents       5.49:1 with white */
+  --color-brand-dark: #0847d6; /* hover                 7.29:1 */
+  --color-brand-bright: #00c8f8; /* the AI gradient end, logo only */
+  --color-brand-tint: #eef3ff; /* soft brand wash */
+
+  /* ------------------------------------------------------------------
+     NIGHT - sections 2, 5 and 7.
+     ------------------------------------------------------------------
+     It began as the problem section and only the problem section: a
+     problem stated on the same pale ground as everything around it reads
+     as one more feature panel, which is exactly how section 2 first came
+     out. The page ran bright sky, then this, then bright again once the
+     problem was solved.
+
+     Sections 5 and 7 use it too, and the arc still holds - sky, night,
+     white, white, night, white, night. Sections 2 and 5 bookend the three
+     that explain the product; 7 continues the alternation past them, with
+     white either side of it. Being the same colour is what makes the dark
+     bands read as one recurring ground rather than as three unrelated
+     decisions. Anything added BETWEEN 2 and 5 stays light.
+
+     Measured against --color-night: white 17.4:1, muted 7.1:1, the
+     ghost text 4.6:1, and the walls 2.4:1 - above the 3:1 needed for a
+     graphical object only where they matter most, at the top, which is
+     why they are drawn as a fading gradient rather than a flat rule. */
+  --color-night: #0b1220; /* the ground */
+  --color-night-card: #161f33; /* answered enquiries, raised off it */
+  --color-night-line: #4b5a7d; /* the walls, at their brightest  3.2:1 */
+  --color-night-muted: #a4a9b4; /* body copy on the ground   8.3:1
+                                   Near-neutral on purpose. At #94a0bb this
+                                   leaned periwinkle and read as a third
+                                   colour on the page rather than as quiet
+                                   text under a white heading. */
+  --color-night-dim: #7f8ba7; /* ghost copy                 4.6:1 */
+
+  /* THE ONLY WARM MARK IN THE SECTION, and it appears four times: on the
+     "no reply" label and nowhere else. Amber rather than red on purpose -
+     red says error, and nothing has errored. These enquiries are WAITING,
+     which is worse and quieter, and amber is the colour of waiting.
+
+     It exists because the ghosts were legible but not SCANNABLE: four
+     dashed outlines at the same depth form a band across all four columns,
+     and that band is the whole point of the picture. Four small warm marks
+     make the eye find it in about a second. Measured 7.4:1 on the ground. */
+  --color-night-warn: #cf9a63;
+
+  /* Third-party channel marks — kept accurate on purpose. */
+  --color-wa: #25d366;
+  --color-ig: #e1306c;
+  --color-fb: #1877f2;
+  --color-web: #64748b;
+
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+}
+
+/* --------------------------------------------------------------------------
+   MOTION
+   --------------------------------------------------------------------------
+   Entrance animations only, all on transform and opacity so nothing triggers
+   layout. Each element sets its own --d (delay) inline, which is how the
+   stagger is built without a JS animation library — the hero needs no runtime
+   at all and stays a Server Component.
+
+   `both` fill mode matters: without it an element with a delay renders at its
+   final state for the first frames, flashes, then jumps back to the start.
+   -------------------------------------------------------------------------- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lift {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* The chips keep drifting after they arrive. Different durations per chip so
+   they never sync up into a single pulsing mass — see Hero.tsx. */
+@keyframes drift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-9px);
+  }
+}
+
+/* THE HEADLINE REVEAL. Each line slides up from behind a clipped box rather
+   than fading in, which is the single cheapest way to make type look
+   directed rather than merely animated - the letters arrive from somewhere
+   instead of materialising in place.
+
+   THE PADDING IS NOT OPTIONAL. `overflow: hidden` on a line of type clips
+   descenders, so "journey." loses the tail of its j and y and nobody can say
+   why the word looks wrong. The padding gives the glyphs room and the equal
+   negative margin takes the space back out of the layout. */
+@utility reveal-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+
+@keyframes reveal-up {
+  from {
+    transform: translateY(105%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@utility anim-reveal {
+  display: block;
+  animation: reveal-up 0.95s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--d, 0s);
+}
+
+/* THE SKY DRIFTS. Six clouds at six speeds, none of them a divisor of any
+   other, so the pattern never visibly repeats. `alternate` rather than a
+   loop: a cloud that snaps back to its start every cycle is worse than one
+   that never moved. Minutes, not seconds - at any speed a viewer can
+   perceive directly this stops being weather and becomes a carousel. */
+@keyframes cloud-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(var(--dx, 4%), var(--dy, -1.5%), 0);
+  }
+}
+
+@utility anim-cloud {
+  animation: cloud-drift var(--dur, 90s) ease-in-out infinite alternate;
+  animation-delay: var(--d, 0s);
+  will-change: transform;
+}
+
+@utility anim-rise {
+  animation: rise 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--d, 0s);
+}
+
+@utility anim-fade {
+  animation: fade 0.9s ease-out both;
+  animation-delay: var(--d, 0s);
+}
+
+@utility anim-lift {
+  animation: lift 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--d, 0s);
+}
+
+@utility anim-pop {
+  animation: pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: var(--d, 0s);
+}
+
+@utility anim-drift {
+  animation: drift var(--dur, 6s) ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+
+/* --------------------------------------------------------------------------
+   SECTION TYPE SCALE
+   --------------------------------------------------------------------------
+   EVERY SECTION HEADING USES THIS. It exists because they drifted: section 2
+   was built with an xl step and sections 3 and 4 were not, so past 1280px
+   two of the three headings simply stopped growing while the one above them
+   kept going. Side by side one section looked a whole rem smaller than its
+   neighbour, which is exactly how it was spotted.
+
+   That is the recurring cause of small type on this site - not a size chosen
+   too small, but the same size chosen again by hand in a new file and one
+   breakpoint forgotten. A heading written as `h2-section` cannot drift,
+   and changing the ramp changes every section at once.
+
+   The hero h1 sits one step above this on purpose (2.6 -> 5rem) and is the
+   only heading on the page allowed to.
+   -------------------------------------------------------------------------- */
+@utility h2-section {
+  /* ONE KNOB, AND THE RAMP FOLLOWS IT. The four steps used to be four
+     hard-coded sizes, which meant a section wanting a different top size had
+     to restate all four and could get one of them wrong - which is exactly
+     how sections 3 and 4 ended up a whole rem short of section 2 in the
+     first place. Now a section overrides --h2 alone and the steps below it
+     scale with it.
+
+     The multipliers reproduce the original ramp: at the default 4.6rem they
+     give 2.3 / 3.22 / 4.09 / 4.6rem. */
+  --h2: 4.6rem;
+  font-size: calc(var(--h2) * 0.5);
+  line-height: 1.08;
+
+  @media (width >= 40rem) {
+    font-size: calc(var(--h2) * 0.7);
+  }
+  @media (width >= 64rem) {
+    font-size: calc(var(--h2) * 0.89);
+  }
+  @media (width >= 80rem) {
+    font-size: var(--h2);
+  }
+}
+
+/* The paragraph under a section heading. Same reason. */
+@utility lead-section {
+  font-size: 16.5px;
+  line-height: 1.625;
+
+  @media (width >= 48rem) {
+    font-size: 18.5px;
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Headings carry negative tracking at display sizes — at 60px+ the default
+     spacing reads as loose and is most of why big type looks amateur. */
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+/* Everything above is decoration. None of it may move for anyone who has
+   asked the OS for less motion — the page must read identically without it,
+   which is why every animation is an entrance and never carries meaning. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
