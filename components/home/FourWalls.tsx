@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import { motion, type Variants } from "motion/react";
 import { channelIcons } from "@/components/ui/icons";
 import { fourWalls, queues, type Enquiry } from "@/lib/content/queues";
@@ -27,8 +28,9 @@ import type { ChannelId } from "@/lib/content/home";
    cards have gone. These start bright where the columns are solid and fade
    out with them, which also reads as what they are: walls, going up.
 
-   FOUR GHOSTS, NOT FORTY, and they line up across all four columns at the
-   same depth. One unanswered card per channel reads as an ordinary Tuesday
+   FOUR GHOSTS, NOT FORTY, and they are deliberately NOT at the same depth
+   in each column - see queues.ts, where the reason is written out. One
+   unanswered card per channel reads as an ordinary Tuesday
    and is believed; a wall of them reads as invented outrage, and once a
    visitor stops believing the picture the section is worth less than
    nothing. They are drawn by SUBTRACTION - no fill, a dashed edge, the
@@ -43,6 +45,34 @@ import type { ChannelId } from "@/lib/content/home";
    between channels that used to be one business. Cards rise in behind them,
    already separated. Then it stops - `once: true`, no loop. A problem
    statement that keeps re-animating becomes decoration.
+
+   NOTHING SCROLLS SIDEWAYS ANY MORE, AND THAT WAS A REAL MISTAKE. The
+   four columns used to be 680px wide inside a phone screen, with the
+   overflow hidden and the scrollbar hidden too. The note that used to sit
+   here argued it was deliberate - that having to travel sideways delivered
+   the argument as an interaction rather than a picture.
+
+   It does not. A phone showed WhatsApp, Instagram and a sliver of a third
+   column, with nothing on screen saying there was more to the right. A
+   visitor who does not guess to drag sees half the evidence and the section
+   makes half its case - and that is the good outcome, because the bad one
+   is a vertical scroll that swallows a sideways drag and the page simply
+   moves on. An argument the reader has to discover is an argument most
+   readers do not get.
+
+   So the columns are 2x2 below 640px and 4 across above it, and at no width
+   does anything overflow. The walls survive the change: the one at 50%
+   stays, the ones at 25% and 75% are hidden, and a fourth wall is drawn
+   across between the two rows - so a phone gets a cross of walls with a
+   channel walled off in each quarter, which is the same sentence the four
+   columns say.
+
+   MEASURED, NOT ESTIMATED. At 360px each card carries about 112px of text
+   and the longest message - "What do you charge for a consultation?" -
+   takes three lines; the average is two. The padding ramps in three steps
+   rather than two because the old jump from px-2.5 straight to px-6 at
+   768px made the cards NARROWER at that width than they had been just
+   below it.
 
    THE DATA IS NOT LOCAL. It comes from lib/content/queues.ts because
    SECTION 3 REUSES IT - the same cards collapse into one inbox and the
@@ -61,6 +91,12 @@ const grid: Variants = {
 const wall: Variants = {
   hidden: { scaleY: 0 },
   show: { scaleY: 1, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
+};
+
+/* Same draw, turned 90 degrees, for the wall that only exists on a phone. */
+const wallAcross: Variants = {
+  hidden: { scaleX: 0 },
+  show: { scaleX: 1, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
 };
 
 const column: Variants = {
@@ -109,16 +145,13 @@ export function FourWalls() {
           </p>
         </div>
 
-        {/* On a phone the four columns are wider than the screen ON PURPOSE.
-            Having to travel sideways to see all four channels delivers the
-            argument as an interaction rather than a picture. */}
-        <div className="mt-16 -mx-5 overflow-x-auto px-5 md:mx-0 md:mt-24 md:overflow-visible md:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="mt-16 md:mt-24">
           <motion.div
             variants={grid}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.2 }}
-            className="relative mx-auto grid min-w-[680px] max-w-[1340px] grid-cols-4 pb-44 md:min-w-0 md:pb-56"
+            className="relative mx-auto grid max-w-[1340px] grid-cols-2 pb-44 sm:grid-cols-4 md:pb-56"
           >
             {/* ---- THE WALLS ---- brightest at the top, gone by the bottom,
                 so they fade out with the columns instead of outlasting them. */}
@@ -128,7 +161,11 @@ export function FourWalls() {
                 aria-hidden
                 variants={wall}
                 style={{ left: `${n * 25}%`, originY: 0 }}
-                className="pointer-events-none absolute top-0 bottom-0 w-px"
+                /* At two columns there is only one division to draw, and it
+                   is the one already sitting at 50%. */
+                className={`pointer-events-none absolute top-0 bottom-0 w-px ${
+                  n === 2 ? "" : "hidden sm:block"
+                }`}
               >
                 {/* A hairline alone is 1px on a dark ground and reads as an
                     artefact rather than as a thing. The blurred copy behind
@@ -151,29 +188,72 @@ export function FourWalls() {
               </motion.span>
             ))}
 
-            {queues.map((queue) => (
-              <motion.div
-                key={queue.channel}
-                variants={column}
-                className="min-w-0 px-2.5 md:px-6"
-              >
-                <ColumnHeading channel={queue.channel} label={queue.label} />
+            {queues.map((queue, i) => (
+              <Fragment key={queue.channel}>
+                {/* THE FOURTH WALL, and it only exists at two columns. It is
+                    a grid item spanning both of them, so it lands on the
+                    true row boundary - the two rows are not the same height
+                    and a line absolutely positioned at 50% would miss it.
 
-                <ul className="mt-5 space-y-3 md:mt-6 md:space-y-3.5">
-                  {queue.enquiries.map((enquiry) => (
-                    <motion.li key={enquiry.id} variants={card}>
-                      <EnquiryCard enquiry={enquiry} channel={queue.channel} />
-                    </motion.li>
-                  ))}
-                </ul>
-              </motion.div>
+                    It fades at both ends for the same reason the vertical
+                    ones fade at the bottom: a rule that stops dead is a
+                    border, and this is meant to read as a wall. */}
+                {i === 2 && (
+                  <motion.span
+                    aria-hidden
+                    variants={wallAcross}
+                    style={{
+                      originX: 0,
+                      background:
+                        "linear-gradient(90deg, transparent 0%, var(--color-night-line) 18%, var(--color-night-line) 82%, transparent 100%)",
+                    }}
+                    className="col-span-2 my-9 h-px w-full sm:hidden"
+                  />
+                )}
+
+                {/* THE GUTTER IS WIDEST ON A PHONE AND NARROWEST JUST
+                    ABOVE IT, which looks backwards and is not. Two columns
+                    on a 390px screen give each channel 167px; four columns
+                    at 640px give it 146px. The padding follows the cell, so
+                    every card keeps at least 106px of text at every width -
+                    three lines for the longest message, two on average. */}
+                <motion.div
+                  variants={column}
+                  className="min-w-0 px-2.5 sm:px-1.5 md:px-3 lg:px-6"
+                >
+                  <ColumnHeading
+                    channel={queue.channel}
+                    label={queue.label}
+                  />
+
+                  <ul className="mt-5 space-y-3 md:mt-6 md:space-y-3.5">
+                    {queue.enquiries.map((enquiry) => (
+                      <motion.li key={enquiry.id} variants={card}>
+                        <EnquiryCard
+                          enquiry={enquiry}
+                          channel={queue.channel}
+                        />
+                      </motion.li>
+                    ))}
+                  </ul>
+                </motion.div>
+              </Fragment>
             ))}
 
             {/* The queue dissolves rather than ending. A veil, so it is
-                aria-hidden and takes no pointer events. */}
+                aria-hidden and takes no pointer events.
+
+                ITS HEIGHT MATCHES THE PADDING BELOW THE CARDS - h-44 with
+                pb-44, h-56 with pb-56 - and that is not tidiness. It was
+                h-56 at both, so on a phone the veil reached 48px further up
+                than the padding did and settled over the bottom of the last
+                card in the tallest column. That column is Website, whose
+                unanswered card is its fourth and last, and the line the veil
+                was dimming was "no reply - 2h". The one thing in the column
+                the section exists to show. */}
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-gradient-to-b from-transparent via-night/80 to-night"
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-b from-transparent via-night/80 to-night md:h-56"
             />
           </motion.div>
         </div>
@@ -229,8 +309,8 @@ function EnquiryCard({
     <div
       className={
         ghost
-          ? "rounded-2xl border border-dashed border-night-line px-4 py-3.5 md:px-5 md:py-4"
-          : "rounded-2xl border border-white/8 bg-night-card px-4 py-3.5 shadow-[0_2px_10px_-2px_rgba(0,0,0,0.5)] transition-colors hover:border-white/15 md:px-5 md:py-4"
+          ? "rounded-2xl border border-dashed border-night-line px-3.5 py-3.5 md:px-4 md:py-4 lg:px-5"
+          : "rounded-2xl border border-white/8 bg-night-card px-3.5 py-3.5 shadow-[0_2px_10px_-2px_rgba(0,0,0,0.5)] transition-colors hover:border-white/15 md:px-4 md:py-4 lg:px-5"
       }
     >
       <div className="flex items-center gap-1.5">

@@ -31,8 +31,28 @@ export function HeroCopy() {
         {hero.eyebrow}
       </p>
 
-      {/* The only h1 on this route. */}
-      <h1 className="mt-5 text-[2.6rem] leading-[1.05] font-extrabold sm:text-[3.6rem] lg:text-[4.5rem] xl:text-[5rem]">
+      {/* The only h1 on this route.
+
+          3rem ON A PHONE, NOT 2.6, AND THE OLD SIZE DID NOT FIT. Measured
+          off Manrope ExtraBold, "Turn every enquiry" is 9.24em wide, so at
+          2.6rem it needs 385px. A 390px phone gives this column 334px after
+          the section's p-2 and the stage's px-5 - and a 430px phone gives
+          374px. The first line was wrapping on EVERY real handset, orphaning
+          the word "enquiry", and it only looked correct in a preview pane
+          wider than any phone sold.
+
+          So the hand-set break is now a sm: and up arrangement, and below
+          that the headline wraps on its own - see the h1-hero block in
+          globals.css. Balanced, 3rem settles on the same four lines at 360,
+          390 and 430 ("Turn every / enquiry into / a clear sales /
+          journey."), longest line 287px inside 304px at the narrowest. The
+          type is 15% bigger than before and it fits, which the old size did
+          not. Past 3.2rem it goes to five lines on a 360px screen.
+
+          If the headline copy ever changes, re-measure. The number that
+          matters is the widest word - "journey." at 4.11em - because that is
+          what overflows rather than wraps. */}
+      <h1 className="h1-hero mt-5 text-[3rem] leading-[1.05] font-extrabold sm:text-[3.6rem] lg:text-[4.5rem] xl:text-[5rem]">
         {hero.headline.map((line, i) => (
           <span key={line.text} className="reveal-mask">
             <span
@@ -45,6 +65,11 @@ export function HeroCopy() {
                   {line.accent}{" "}
                 </span>
               ) : null}
+              {/* Below sm these spans are inline and reflow into each
+                  other, and JSX puts no whitespace between siblings - so
+                  without this the phone reads "enquiryinto". It collapses
+                  to nothing when they are blocks again. */}
+              {" "}
             </span>
           </span>
         ))}

@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import logoLockup from "@/public/logo-lockup.png";
 import { ArrowIcon } from "@/components/ui/icons";
-import { site } from "@/lib/site";
+import { nav, site } from "@/lib/site";
 
 /* ==========================================================================
    HEADER
@@ -40,12 +40,6 @@ import { site } from "@/lib/site";
    Four items, per requirements section 5 - "keep the header clean". At five
    pages there is nothing to group, so no dropdown and no mega-menu.
    ========================================================================== */
-
-const nav = [
-  { label: "Features", href: "/features" },
-  { label: "How It Works", href: "/how-it-works" },
-  { label: "FAQ", href: "/faq" },
-];
 
 export function Header() {
   const [open, setOpen] = useState(false);
@@ -93,7 +87,12 @@ export function Header() {
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-full px-4 py-2 text-[15px] font-semibold text-ink/70 transition-colors hover:bg-ink/6 hover:text-ink"
+              /* THE SAME WEIGHT, SIZE AND COLOUR AS THE PHONE MENU.
+                 They had drifted: the panel set its links at 16.5px bold in
+                 full ink and the bar set the same three at 15px semibold at
+                 70% ink, which on a frosted white bar reads as disabled
+                 rather than as quiet. One nav, one treatment. */
+              className="rounded-full px-4 py-2 text-[16.5px] font-bold text-ink transition-colors hover:bg-ink/6 hover:text-brand"
             >
               {item.label}
             </Link>

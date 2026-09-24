@@ -26,6 +26,33 @@ import { oneInbox, unanswered } from "@/lib/content/queues";
    assistant message with it, and it is the one detail that distinguishes this
    from a shared inbox with a person typing fast.
 
+   BOTH PANES ON A PHONE, STACKED - list above, thread below. This went
+   through three wrong answers first and the last one is the reason for
+   this one.
+
+     hidden lg:flex   the thread simply did not exist below 1024px, so the
+                      beat this section is built around - the assistant
+                      writing the reply, with the AI badge on it - was
+                      rendered into a pane nobody could see, typewriter and
+                      all.
+     one at a time    list until the reply starts, thread after. It read
+                      well and left a 250px hole of white inside the panel,
+                      because one phone pane is 428px and the pinned frame
+                      is about 690px.
+     stretch to fill  the same hole, just distributed - an inbox panel with
+                      four conversations and a quarter of a screen of
+                      nothing under them.
+
+   The hole was never a placement problem. A viewport-tall frame wants a
+   viewport of content, and one pane is not that. Two panes are: the list
+   sits at its natural height and the THREAD's message area is the flexible
+   part, so it takes whatever is left on a tall phone and gives it back on
+   a short one.
+
+   The two buttons at the top right of the thread - Open, Assigned - stay
+   held back to lg, because they are chrome rather than argument and the
+   header has to carry a name, a channel and a timer first.
+
    NO FIGURES ANYWHERE. Times of day and message ages are content; counts,
    values and response-time averages are statistics. The unread pill is the
    one number on screen and it is the length of the list beside it.
@@ -38,6 +65,36 @@ type Props = {
   typed: string;
   typing: boolean;
 };
+
+/* WHERE EACH HEADING AND ITS CARD SIT, BY HAND, because two sibling grids
+   cannot interleave. The headings and the cards used to be two grids stacked
+   one above the other, which lines up at four columns - heading i sits over
+   card i - and comes apart at two, where auto-flow puts ALL FOUR headings in
+   the first two rows and all four cards below them. On a phone that read as
+   "WhatsApp, Instagram, Facebook, Website" and then four unlabelled cards,
+   with Facebook's heading directly above WhatsApp's enquiry.
+
+   One grid, explicit placement. At two columns the rows run heading, card,
+   heading, card; at lg they collapse to one row of headings over one row of
+   cards, which is the arrangement that was always intended. */
+const CELL = [
+  {
+    head: "col-start-1 row-start-1 lg:col-start-1 lg:row-start-1",
+    card: "col-start-1 row-start-2 lg:col-start-1 lg:row-start-2",
+  },
+  {
+    head: "col-start-2 row-start-1 lg:col-start-2 lg:row-start-1",
+    card: "col-start-2 row-start-2 lg:col-start-2 lg:row-start-2",
+  },
+  {
+    head: "col-start-1 row-start-3 lg:col-start-3 lg:row-start-1",
+    card: "col-start-1 row-start-4 lg:col-start-3 lg:row-start-2",
+  },
+  {
+    head: "col-start-2 row-start-3 lg:col-start-4 lg:row-start-1",
+    card: "col-start-2 row-start-4 lg:col-start-4 lg:row-start-2",
+  },
+];
 
 const AVATAR_TINTS = [
   "bg-[#e8f0ff] text-[#2f5fd0]",
@@ -55,16 +112,20 @@ export function InboxMock({ merged, answered, typed, typing }: Props) {
       transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1] }}
       className={
         merged
-          ? "overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_30px_80px_-40px_rgba(10,16,32,0.45)]"
+          ? "flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_30px_80px_-40px_rgba(10,16,32,0.45)] md:h-auto"
           : ""
       }
     >
-      <div className="flex">
+      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
         {/* ---------------- LEFT: the conversation list ---------------- */}
         <motion.div
           layout
           transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1] }}
-          className={merged ? "w-full lg:w-[38%] lg:border-r lg:border-line" : "w-full"}
+          className={
+            merged
+              ? "inbox-list w-full shrink-0 border-b border-line md:w-[38%] md:border-r md:border-b-0"
+              : "w-full"
+          }
         >
           {/* Search + filters. They do not exist before the merge, because
               there is no single list to search yet. */}
@@ -73,7 +134,13 @@ export function InboxMock({ merged, answered, typed, typing }: Props) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.55, delay: 0.5 }}
-              className="border-b border-line px-3 py-3"
+              /* HIDDEN ON A PHONE, and it is the block that makes both
+                 panes fit. It is 53px of fixed height; without it the list
+                 and the thread come to 568px against the 608px a common
+                 phone has, and with it they come to 621px and do not. The
+                 rows are the argument, the search bar is chrome, so the
+                 chrome goes. It is back from 768px up. */
+              className="hidden border-b border-line px-3 py-2 md:block md:py-3"
             >
               <div className="flex items-center gap-2">
                 <div className="flex h-9 flex-1 items-center gap-2 rounded-lg border border-line bg-bg px-3">
@@ -87,7 +154,7 @@ export function InboxMock({ merged, answered, typed, typing }: Props) {
                 </span>
               </div>
 
-              <div className="mt-2.5 flex items-center gap-1.5">
+              <div className="mt-2.5 hidden items-center gap-1.5 md:flex">
                 <Chip active>All</Chip>
                 <Chip>
                   Unread
@@ -101,20 +168,35 @@ export function InboxMock({ merged, answered, typed, typing }: Props) {
             </motion.div>
           )}
 
-          {/* THE CHANNEL HEADINGS, UNMERGED ONLY. Without them the opening
-              is four loose cards; with them it is four separate places, which
-              is the state the section starts from and has to be readable in
-              the very first frame. Tinted chips rather than bare icons for
-              the same reason they are tinted in section 2 - four small grey
-              marks all read as "small grey mark". */}
-          {!merged && (
-            <div className="mb-3 grid grid-cols-4 gap-3">
-              {unanswered.map((e) => {
+          {/* FOUR ACROSS ONLY AT lg. Four columns inside a 342px phone
+              give each card about 80px - an avatar, a truncated name and
+              nothing else, which is not a smaller version of the idea but
+              an unreadable one. Two columns hold a name, the message and
+              the amber line, and two rows of two still read as four
+              separate places. Below lg that is what this draws. */}
+          <div
+            className={
+              merged
+                ? "flex flex-col p-1.5"
+                : "grid grid-cols-2 gap-x-3 lg:grid-cols-4"
+            }
+          >
+            {/* THE CHANNEL HEADINGS, UNMERGED ONLY. Without them the opening
+                is four loose cards; with them it is four separate places,
+                which is the state the section starts from and has to be
+                readable in the very first frame. Tinted chips rather than
+                bare icons for the same reason they are tinted in section 2 -
+                four small grey marks all read as "small grey mark".
+
+                They are children of the SAME grid as the cards now. See
+                CELL above for why. */}
+            {!merged &&
+              unanswered.map((e, i) => {
                 const Icon = channelIcons[e.channel];
                 return (
                   <div
                     key={`head-${e.id}`}
-                    className="flex items-center gap-2 border-b border-line pb-2.5"
+                    className={`mb-2.5 flex items-center gap-2 border-b border-line pb-2.5 ${CELL[i].head}`}
                   >
                     <span
                       className="grid size-7 shrink-0 place-items-center rounded-lg"
@@ -131,16 +213,7 @@ export function InboxMock({ merged, answered, typed, typing }: Props) {
                   </div>
                 );
               })}
-            </div>
-          )}
 
-          <div
-            className={
-              merged
-                ? "flex flex-col p-1.5"
-                : "grid grid-cols-4 gap-3"
-            }
-          >
             {unanswered.map((e, i) => (
               <motion.button
                 key={e.id}
@@ -149,14 +222,24 @@ export function InboxMock({ merged, answered, typed, typing }: Props) {
                 transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1] }}
                 className={
                   merged
-                    ? `flex w-full items-start gap-3 rounded-lg px-3 py-3.5 text-left transition-colors ${
+                    ? `flex w-full items-start gap-3 rounded-lg px-3 py-2.5 text-left transition-colors md:py-3.5 ${
                         i === 0 ? "bg-brand-tint" : "hover:bg-bg"
                       }`
-                    : "flex w-full items-start gap-3 rounded-2xl border border-dashed border-line-strong px-4 py-5 text-left"
+                    : `flex w-full items-start gap-3 rounded-2xl border border-dashed border-line-strong px-3.5 py-4 text-left mb-3 lg:mb-0 lg:px-4 lg:py-5 ${CELL[i].card}`
                 }
               >
+                {/* NO AVATAR IN A TWO-COLUMN CELL. Measured: the cell is
+                    165px, so with the avatar and its gap the text column is
+                    85px and the name row needs 103 - which is why the phone
+                    showed "Ana..." and "Pra...". Without it the column is
+                    137px, the name and its timestamp both fit whole, and
+                    the message takes two lines instead of three truncated
+                    ones. The channel heading directly above the card is
+                    already doing the identifying an avatar initial does. */}
                 <span
-                  className={`grid size-9 shrink-0 place-items-center rounded-full text-[14px] font-bold ${AVATAR_TINTS[i]}`}
+                  className={`${
+                    merged ? "grid" : "hidden lg:grid"
+                  } size-9 shrink-0 place-items-center rounded-full text-[14px] font-bold ${AVATAR_TINTS[i]}`}
                 >
                   {e.name.charAt(0)}
                 </span>
@@ -173,7 +256,11 @@ export function InboxMock({ merged, answered, typed, typing }: Props) {
                   </span>
 
                   <span className="mt-0.5 flex items-start gap-1.5">
-                    <span className="line-clamp-1 flex-1 text-[14px] text-muted sm:text-[14.5px]">
+                    <span
+                      className={`flex-1 text-[14px] text-muted sm:text-[14.5px] ${
+                        merged ? "line-clamp-1" : "line-clamp-2 lg:line-clamp-1"
+                      }`}
+                    >
                       {answered ? e.reply : e.text}
                     </span>
                     {!answered && (
@@ -194,14 +281,15 @@ export function InboxMock({ merged, answered, typed, typing }: Props) {
         </motion.div>
 
         {/* ---------------- RIGHT: the live thread ----------------
-            Desktop only. At phone width a two-pane workspace is two
-            unreadable panes, and the list alone still makes the point. */}
+            BESIDE THE LIST FROM 768px, UNDERNEATH IT BELOW THAT. It is the
+            only place the assistant's reply is actually drawn, so it can
+            never be the pane that gets dropped at a narrow width. */}
         {merged && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.55 }}
-            className="hidden w-[62%] flex-col bg-bg/40 lg:flex"
+            className="inbox-thread flex min-h-0 w-full flex-1 flex-col bg-bg/40 md:w-[62%] md:flex-none"
           >
             <div className="flex items-center gap-2.5 border-b border-line bg-surface px-4 py-3">
               <span
@@ -214,7 +302,7 @@ export function InboxMock({ merged, answered, typed, typing }: Props) {
               <span className="ml-1 rounded-full bg-brand-tint px-2 py-0.5 text-[12.5px] font-semibold text-brand">
                 21h remaining
               </span>
-              <span className="ml-auto flex items-center gap-2">
+              <span className="ml-auto hidden items-center gap-2 lg:flex">
                 <span className="rounded-lg border border-line bg-surface px-2.5 py-1 text-[13px] font-semibold">
                   Open
                 </span>
@@ -229,7 +317,7 @@ export function InboxMock({ merged, answered, typed, typing }: Props) {
 
             {/* Thread. The faint dot grid is the messaging-app ground every
                 customer already knows. */}
-            <div className="relative flex min-h-[400px] flex-1 flex-col gap-2.5 p-4 [background-image:radial-gradient(var(--color-line)_1px,transparent_1px)] [background-size:16px_16px]">
+            <div className="relative flex min-h-[96px] flex-1 flex-col gap-2.5 p-3.5 [background-image:radial-gradient(var(--color-line)_1px,transparent_1px)] [background-size:16px_16px] md:min-h-[400px] md:p-4">
               <span className="mx-auto rounded-full border border-line bg-surface px-2.5 py-0.5 text-[12px] font-semibold text-muted">
                 Today
               </span>

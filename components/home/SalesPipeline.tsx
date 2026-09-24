@@ -13,6 +13,7 @@ import { ArrowIcon, CheckIcon, channelIcons } from "@/components/ui/icons";
 import { pipeline } from "@/lib/content/pipeline";
 import { unanswered } from "@/lib/content/queues";
 import funnelArt from "@/public/funnel-final.png";
+import funnelUpright from "@/public/funnel-upright.png";
 
 /* ==========================================================================
    SECTION 4 - THE SALES PIPELINE, AS A FUNNEL
@@ -61,6 +62,75 @@ import funnelArt from "@/public/funnel-final.png";
    survive each stage. The client's call, twice; the caption says the stages
    are examples and no figure appears anywhere, so the shape carries no
    number.
+
+   BELOW 1296px THE FUNNEL STANDS UP. The artwork is 2048x768 and the rail
+   holds it at a 1180px floor, which with this section's 104px of padding
+   needs a 1284px viewport - so every tablet and most laptops were dragging
+   it sideways, not just phones. A drag nobody is told about is a stage
+   nobody sees, and the stage off the right-hand edge was Won.
+
+   Rotating the PICTURE does not work - a 768x2048 tube is 912px tall on a
+   phone before a single label is placed. So below 1296px there is a second
+   piece of artwork, funnel-upright.png, and the stages are a list beneath
+   it rather than labels beside it.
+
+   THE STAGES SIT BESIDE THE FUNNEL AT EVERY WIDTH. From 640px up the two
+   columns balance: the artwork is 897x1752 - 1:1.95 - so at 304px wide it
+   stands 594px, which is about what six stages of name-plus-sentence take.
+
+   THE TWO COLUMNS PULL IN OPPOSITE DIRECTIONS AND THAT IS THE WHOLE
+   PROBLEM. The funnel's height is fixed by its width - 1.95 times it. The
+   list's height moves the other way: a wide text column wraps fewer lines
+   and gets SHORTER. So widening the funnel shortens the list and lengthens
+   the picture at the same time, and the gap between them opens twice as
+   fast as it looks like it should.
+
+   At 304px the funnel column stood 339px taller than the list on a laptop,
+   which is what it looked like. Measured across 640px to 1290px, 208px of
+   funnel inside a 704px block holds the two within +73/-7 of each other at
+   every width. That is why the block is capped well below the page's own
+   max width: letting it run to 960px makes the text column wide enough to
+   unwrap every line, and the list collapses to 416px against a 489px
+   picture.
+
+   A PHONE CANNOT BE BALANCED AT ALL. The closest is a 120px funnel, which
+   is 282px of column against a much taller list. Wider is worse, for the
+   reason above, so the picture is simply smaller than the list it sits
+   beside and is centred against it.
+
+   A TETHER WAS TRIED IN THAT GAP AND TAKEN OUT AGAIN - a hairline running
+   from the arrow's point down to a target parked beside the Won row. It
+   filled the space and it was wrong: a 300px thread down a phone screen
+   reads as a loading bar, and it pushed the target so far from the arrow
+   that the arrow stopped pointing at anything. The badge sits under the
+   arrow's point where it belongs, and the leftover height stays empty.
+
+   A 1:5 version of the artwork would let the rings sit beside their own
+   rows and make the tether unnecessary. It is the one asset that would
+   change this section again.
+
+   The two columns are NOT aligned ring-to-row, and that is a limit of the
+   file rather than a choice. The rings are 27%, 16%, 15%, 12%, 12% and 15%
+   of the height apart - they crowd as the funnel narrows, the way
+   perspective makes them - where six rows of type are near enough equal. To
+   pin row five to ring five, that row would have to be 54px tall at 768px,
+   which is less than a heading and a sentence take. They run in the same
+   order and share a colour, and that is the join.
+
+   NOTHING MOVES BELOW 1296px. The deals that ride the wide funnel are gone
+   here - asked for, and right: four names appearing and vanishing beside a
+   static picture reads as a glitch rather than as travel, because there is
+   no tube for them to be travelling along. The stage colours and the light
+   pools stay, fixed. The wide funnel keeps its animation.
+
+   A funnel is normally drawn vertically in any case. The horizontal one is
+   the client's reference and it is kept where there is room for it.
+
+   ONE TIMER, TWO DRAWINGS. Both read the same `beat`, the same `live` and
+   the same GATES, so the deals are in the same place in both and neither
+   can drift from the artwork. The switch is CSS, not JavaScript, so there
+   is no first-paint flash - and the artwork is lazy-loaded inside a
+   display:none box, so a phone never downloads it.
    ========================================================================== */
 
 const ART = { w: 2048, h: 768, top: 120 };
@@ -103,6 +173,24 @@ const GOAL = { x: 2200, y: 524, r: 100, fill: "#34d399", tick: "#04234d" };
 /* How far above a gate its deal rides. */
 const RIDE = 70;
 
+/* WHERE EACH RING SITS IN public/funnel-upright.png (897x1752), found by
+   the silhouette rather than by eye: a ring protrudes past the tube, so
+   every one is a local maximum in the image's width-per-row profile. The
+   sixth entry is the arrowhead, which is where Won goes.
+
+   `y` is the ring's centre as a percentage of the image HEIGHT and `w` its
+   outer width as a percentage of the image WIDTH. Both are percentages so
+   the overlays hold at any rendered size. Replace the artwork and these
+   six pairs are the only numbers that change. */
+const UPRIGHT = [
+  { y: 22.5, w: 85 },
+  { y: 38.0, w: 71 },
+  { y: 53.7, w: 59 },
+  { y: 67.1, w: 49 },
+  { y: 78.0, w: 38 },
+  { y: 90.1, w: 23 },
+];
+
 /* EVERY LABEL SITS ON ONE BASELINE, and that is the fix for the section
    reading dull. They used to hang a fixed distance below each ring, which
    stepped them up as the funnel narrowed - the arrangement the reference
@@ -136,6 +224,10 @@ const STILL_STEP = [5, 2, 4, 0];
 
 export function SalesPipeline() {
   const railRef = useRef<HTMLDivElement>(null);
+
+  /* Only the wide funnel animates now, and it is the only thing this
+     observer watches. Below 1296px the rail is display:none, so this never
+     fires and the timer never starts - which is exactly the intent. */
   const inView = useInView(railRef, { amount: 0.3 });
   const reduced = useReducedMotion();
   const still = reduced === true;
@@ -210,12 +302,12 @@ export function SalesPipeline() {
           </p>
         </div>
 
-        {/* ---- THE FUNNEL ----
-            Six labels and five gates do not fit on a phone at a size anyone
-            can read, and scaling them down would make every caption smaller
-            than the body text above it. It travels sideways instead, the
-            same as the inbox and the board do. */}
-        <div className="relative -mx-4 mt-6 overflow-x-auto px-4 pb-2 md:mx-0 md:mt-10 md:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {/* ---- THE FUNNEL, STANDING UP ---- below 1296px. */}
+        <VerticalFunnel marks={marks} />
+
+        {/* ---- THE FUNNEL, LYING DOWN ---- 1296px and up, where the
+            artwork's 1180px floor clears this section's padding. */}
+        <div className="relative mt-10 hidden min-[81rem]:block">
           <div
             ref={railRef}
             className="relative mx-auto max-w-6xl min-w-[1180px]"
@@ -433,6 +525,155 @@ export function SalesPipeline() {
    135px apart on screen at the narrow end and a name and a reason on one
    line is wider than that, so the reason goes underneath. It reads better
    too: the name arrives first and the verdict lands under it. */
+/* ==========================================================================
+   THE FUNNEL, UPRIGHT - below 1296px
+   --------------------------------------------------------------------------
+   The artwork on the left and the six stages beside it, stacking under it on
+   a phone. See the note at the top of the file for why the rows are not
+   pinned to the rings and why nothing moves here.
+
+   THE LIGHT POOLS ARE THE SAME DEVICE THE WIDE FUNNEL USES. One blurred
+   ellipse of each ring's own colour, behind the image. Behind rather than
+   on top: a coloured wash over a glossy 3D render reads as a stain, where
+   the same wash underneath reads as the ring throwing light. They are fixed
+   at the dim value here, because nothing is standing on a gate to brighten
+   them.
+
+   THE WON BADGE IS AN OVERLAY, NOT PART OF THE PICTURE. The upright artwork
+   ends in a bare arrow tip, where the wide funnel's ends in a green target
+   with a tick cut out of it. Without it the last row is a stage the funnel
+   does not draw, and "Won" is the one the whole picture is pointing at. It
+   straddles the tip so the arrow reads as landing in it.
+   ========================================================================== */
+function VerticalFunnel({
+  marks,
+}: {
+  marks: readonly { name: string; line: string }[];
+}) {
+  return (
+    <div className="mt-8 min-[81rem]:hidden">
+      {/* max-w-[44rem], not the page's usual width - see the note at the
+          top. Wider unwraps the list and the picture wins by 300px. */}
+      <div className="mx-auto flex max-w-[44rem] items-center gap-3 sm:gap-10 md:gap-14">
+        {/* ---- THE ARTWORK ---- */}
+        {/* Picture, then target. Nothing between them and nothing that
+            grows - see the note at the top for the thread that used to be
+            here. */}
+        <div className="flex w-[7.5rem] shrink-0 flex-col items-center sm:w-[13rem]">
+          <div className="relative w-full">
+            {UPRIGHT.map((ring, i) => (
+              <span
+                key={`pool-${i}`}
+                aria-hidden
+                className="pointer-events-none absolute left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full blur-[34px]"
+                style={{
+                  top: `${ring.y}%`,
+                  width: `${ring.w * 1.15}%`,
+                  height: "7%",
+                  background: GATES[i].glow,
+                  opacity: 0.16,
+                }}
+              />
+            ))}
+
+            <Image
+              src={funnelUpright}
+              alt="The sales pipeline drawn as a funnel standing upright: five coloured rings down a narrowing tube, ending in a downward arrow."
+              sizes="208px"
+              className="relative h-auto w-full"
+            />
+
+          </div>
+
+          {/* THE TARGET THE ARROW POINTS INTO, and it is the wide funnel's
+              badge redrawn rather than a green circle with an icon dropped
+              in it - same fill, same inner ring, same tick geometry, same
+              deep ink. The first attempt was a plain disc with a generic
+              check glyph and it read as a status chip rather than as the
+              end of the funnel.
+
+              White on this green measures 2.4:1 and fails; the deep ink
+              measures 8.1, which is why the tick is cut in ink rather than
+              laid on in white. */}
+          <svg
+            aria-hidden
+            viewBox="0 0 200 200"
+            className="mt-2 w-10 shrink-0 drop-shadow-[0_10px_20px_rgba(10,16,32,0.28)] sm:mt-3 sm:w-16"
+          >
+            <circle cx="100" cy="100" r="100" fill={GOAL.fill} />
+            <circle
+              cx="100"
+              cy="100"
+              r="70"
+              fill="none"
+              stroke={GOAL.tick}
+              strokeWidth="9"
+            />
+            <path
+              d="M 66,102 l 23,25 l 45,-52"
+              fill="none"
+              stroke={GOAL.tick}
+              strokeWidth="16"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+
+        {/* ---- THE STAGES ---- */}
+        <ol className="min-w-0 flex-1 space-y-3 sm:space-y-3.5">
+          {marks.map((mark, i) => {
+            const gate = GATES[i];
+            const won = i === GOAL_AT;
+
+            return (
+              /* A CARD EACH, the way the wide funnel gives every stage its
+                 own plate rather than a line in a list. Six names and six
+                 sentences in one column run together into a paragraph with
+                 bold bits; six cards are six things.
+
+                 The tint and the edge are the ring's own colour, which is
+                 what says which card belongs to which ring now that they
+                 are not side by side. 5% and 24% - any more and six cards
+                 in a column become six competing colours. */
+              <li
+                key={mark.name}
+                className="rounded-2xl border p-3.5 sm:p-4"
+                style={{
+                  borderColor: `color-mix(in oklab, ${gate.glow} 24%, transparent)`,
+                  background: `color-mix(in oklab, ${gate.glow} 5%, var(--color-surface))`,
+                }}
+              >
+                <div className="flex items-center gap-2.5">
+                  {/* `ink` not `glow` - the glow values are pitched for a
+                      dark scene and the amber measures 1.7:1 on white. */}
+                  <span
+                    className="grid size-6 shrink-0 place-items-center rounded-lg text-[12.5px] font-extrabold sm:size-7 sm:text-[13px]"
+                    style={{
+                      color: gate.ink,
+                      background: `color-mix(in oklab, ${gate.glow} 18%, transparent)`,
+                    }}
+                  >
+                    {won ? <CheckIcon className="size-3 sm:size-3.5" /> : i + 1}
+                  </span>
+
+                  <h3 className="min-w-0 text-[16.5px] leading-tight font-extrabold text-balance sm:text-[17.5px]">
+                    {mark.name}
+                  </h3>
+                </div>
+
+                <p className="mt-2 text-[14px] leading-snug text-muted sm:text-[15px]">
+                  {mark.line}
+                </p>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    </div>
+  );
+}
+
 function DealPill({
   deal,
   closed,

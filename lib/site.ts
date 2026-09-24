@@ -36,6 +36,26 @@ export const site = {
   bookingUrl: "https://crm.mntfuture.com/b/abb8c76365cd45a4a5c495f33013adea",
 } as const;
 
+/* THE PAGES, IN ONE PLACE. The header carried its own copy of this and the
+   footer was about to carry a second. Three routes written out twice drift
+   the moment a page is renamed, and the way you find out is a visitor
+   following a link from the footer that the header no longer has.
+
+   All five 404 today. That is recorded below rather than hidden by not
+   linking to them: a named route in the markup is a job anyone can see,
+   where a missing legal column is one nobody trips over until a lawyer
+   asks. */
+export const nav = [
+  { label: "Features", href: "/features" },
+  { label: "How It Works", href: "/how-it-works" },
+  { label: "FAQ", href: "/faq" },
+] as const;
+
+export const legal = [
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Terms and Conditions", href: "/terms" },
+] as const;
+
 /* Walk this list before launch. Add a row whenever a stand-in goes onto the
    site — the cost of an extra row is nothing, the cost of a missed one is a
    placeholder in production. */
@@ -75,5 +95,21 @@ export const PLACEHOLDERS = [
   {
     where: "lib/site.ts \u2014 what the booking form collects",
     what: "bookingUrl now points at MnT Future's own CRM booking page, so /book-a-demo does not need building. But \u00a720 specifies the fields the lead form should capture \u2014 full name, business name, work email, WhatsApp number, city, business type, team size, whether they run Meta ads, their main enquiry channels and their main business challenge. If the CRM booking form does not ask for those, that qualification is lost at the one point every visitor passes through. Worth opening the link once and checking against \u00a720 before launch.",
+  },
+  {
+    where: "app/privacy and app/terms — not built",
+    what: "The footer links to /privacy and /terms and both 404. §31's launch checklist requires a published Privacy Policy and published Terms; they are not drafting jobs for this repo but the routes have to exist and be filled before launch. /features, /how-it-works and /faq are the same - linked from the header and the footer, not yet built.",
+  },
+  {
+    where: "components/site/Footer.tsx — no contact block",
+    what: "§32 asks for a company address, a contact email, a phone number and social links before launch and none were supplied, so the footer has none. They were deliberately not invented: a made-up address in a footer is the single most likely thing on a marketing site to be copied into a contract. Send them and the block goes in.",
+  },
+  {
+    where: "components/site/Footer.tsx — trademark line",
+    what: "The page names Meta, WhatsApp, Instagram and Facebook throughout. A trademark attribution in the footer is standard for that and is NOT written, because unreviewed legal text is not something to publish on a guess. Worth asking whoever signs off §31 whether they want one.",
+  },
+  {
+    where: "public/logo-full.png — now unused",
+    what: "It is the lockup WITH the 'Product of MnT Future' tagline, and it was cut for the footer. The footer sets that tagline as text instead: the tagline is 10.6% of the file's height, so at a legible ~15px the whole lockup is 395px wide and will not fit a 390px phone. The file is kept in case a wide surface wants it.",
   },
 ] as const;
