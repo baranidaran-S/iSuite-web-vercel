@@ -559,7 +559,12 @@ function VerticalFunnel({
         {/* Picture, then target. Nothing between them and nothing that
             grows - see the note at the top for the thread that used to be
             here. */}
-        <div className="flex w-[7.5rem] shrink-0 flex-col items-center sm:w-[13rem]">
+        {/* 5rem BELOW 360px, AND THAT IS ABOUT ONE WORD. At 320 the
+            section has 272px; a 120px funnel leaves the stage card 78px for
+            its heading, and "Appointment" is 108px of unbreakable word at
+            16.5px - so it ran out through the card's right edge. An 80px
+            funnel leaves 118px, which fits it with ten to spare. */}
+        <div className="flex w-[5rem] shrink-0 flex-col items-center min-[360px]:w-[7.5rem] sm:w-[13rem]">
           <div className="relative w-full">
             {UPRIGHT.map((ring, i) => (
               <span

@@ -59,7 +59,17 @@ export function Header() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 md:px-5 md:pt-4">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 rounded-full border border-white/70 bg-white/75 py-2.5 pr-2.5 pl-4 shadow-[0_6px_28px_-10px_rgba(10,16,32,0.3)] backdrop-blur-xl md:gap-4 md:py-3 md:pr-3 md:pl-6">
+      {/* EVERYTHING STEPS DOWN BELOW 360px. Measured at 320: the bar has
+          296px and the contents came to 324 - a 101px logo, a 139px button
+          and a 40px hamburger with 34px of padding and gaps between them -
+          so the button and the burger were pushed out through the right-hand
+          edge of the bar.
+
+          Trimmed to a 89px logo, a 131px button, a 36px burger and tighter
+          gaps it comes to 287px and fits, with everything restored at 360.
+          Nothing here is a font size: the label is the same 14px it was, it
+          is the space around it that gives. */}
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 rounded-full border border-white/70 bg-white/75 py-2.5 pr-2 pl-3 shadow-[0_6px_28px_-10px_rgba(10,16,32,0.3)] backdrop-blur-xl min-[360px]:gap-3 min-[360px]:pr-2.5 min-[360px]:pl-4 md:gap-4 md:py-3 md:pr-3 md:pl-6">
         {/* THE REAL LOCKUP, MARK AND WORDMARK TOGETHER.
 
             This was briefly the mark as an image beside the wordmark set in
@@ -102,7 +112,7 @@ export function Header() {
             src={logoLockup}
             alt="iSuite AI"
             priority
-            className="h-8 w-auto select-none md:h-10"
+            className="h-7 w-auto select-none min-[360px]:h-8 md:h-10"
           />
         </Link>
 
@@ -123,10 +133,10 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex shrink-0 items-center gap-1.5">
+        <div className="flex shrink-0 items-center gap-1 min-[360px]:gap-1.5">
           <Link
             href={site.bookingUrl}
-            className="group inline-flex shrink-0 items-center gap-1.5 rounded-full bg-ink px-4 py-2.5 text-[14px] font-bold text-white transition-all hover:bg-ink/90 md:px-6 md:py-3 md:text-[15px]"
+            className="group inline-flex shrink-0 items-center gap-1.5 rounded-full bg-ink px-3 py-2.5 text-[14px] font-bold text-white transition-all hover:bg-ink/90 min-[360px]:px-4 md:px-6 md:py-3 md:text-[15px]"
           >
             Book a Demo
             <ArrowIcon className="size-3.5 transition-transform group-hover:translate-x-0.5" />
@@ -138,7 +148,7 @@ export function Header() {
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? "Close menu" : "Open menu"}
-            className="grid size-10 shrink-0 place-items-center rounded-full text-ink transition-colors hover:bg-ink/6 md:hidden"
+            className="grid size-9 shrink-0 place-items-center rounded-full text-ink transition-colors hover:bg-ink/6 min-[360px]:size-10 md:hidden"
           >
             <MenuGlyph open={open} />
           </button>
