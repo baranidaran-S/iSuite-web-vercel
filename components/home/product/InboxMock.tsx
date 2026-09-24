@@ -50,9 +50,31 @@ import { oneInbox, unanswered } from "@/lib/content/queues";
    part, so it takes whatever is left on a tall phone and gives it back on
    a short one.
 
-   The two buttons at the top right of the thread - Open, Assigned - stay
-   held back to lg, because they are chrome rather than argument and the
-   header has to carry a name, a channel and a timer first.
+   ON A PHONE THE THREAD IS THE TWO MESSAGES AND NOTHING ELSE, and the
+   arithmetic is why. Both panes drawn in full come to 765px on a 320px
+   screen, and the frame they sit in is one viewport tall less 140px of
+   section furniture - so they need 905px of small-viewport height. No
+   handset has that, which is why the reply bubble was painting straight
+   over the composer.
+
+   So everything that is chrome rather than argument goes below 768px:
+
+     the thread header   61px, and it printed "Anand R." directly under
+                         Anand R.'s own list row, which is already tinted
+                         to say it is the open one
+     the composer        57px of a box nobody can type in
+     "One shared inbox"  39px, and the stepper pill sitting immediately
+                         above the panel already reads One shared inbox
+     the "Today" chip    31px
+
+   What is left is the question, the reply, the AI badge on it and the line
+   saying what the assistant did - which is the entire beat. The bubbles go
+   to 92% and 88% at the same time, because a narrow bubble buys nothing on
+   a narrow screen and costs a line: the reply sets in 5 lines at 78% of a
+   320px screen and 4 at 92%.
+
+   765px becomes 532. The two buttons at the top right of the thread - Open,
+   Assigned - are still held back to lg for the same reason as the rest.
 
    NO FIGURES ANYWHERE. Times of day and message ages are content; counts,
    values and response-time averages are statistics. The unread pill is the
@@ -236,7 +258,7 @@ export function InboxMock({ merged, answered, still = false }: Props) {
                 transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1] }}
                 className={
                   merged
-                    ? `flex w-full items-start gap-3 rounded-lg px-3 py-2.5 text-left transition-colors md:py-3.5 ${
+                    ? `flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left transition-colors md:py-3.5 ${
                         i === 0 ? "bg-brand-tint" : "hover:bg-bg"
                       }`
                     : `flex w-full items-start gap-3 rounded-2xl border border-dashed border-line-strong px-3.5 py-4 text-left mb-3 lg:mb-0 lg:px-4 lg:py-5 ${CELL[i].card}`
@@ -305,7 +327,9 @@ export function InboxMock({ merged, answered, still = false }: Props) {
             transition={{ duration: 0.6, delay: 0.55 }}
             className="inbox-thread flex min-h-0 w-full flex-1 flex-col bg-bg/40 md:w-[62%] md:flex-none"
           >
-            <div className="flex items-center gap-2.5 border-b border-line bg-surface px-4 py-3">
+            {/* See the note at the top: below 768px this repeats the
+                list row directly above it, and costs 61px to do it. */}
+            <div className="hidden items-center gap-2.5 border-b border-line bg-surface px-4 py-3 md:flex">
               <span
                 className={`grid size-9 shrink-0 place-items-center rounded-full text-[14px] font-bold ${AVATAR_TINTS[0]}`}
               >
@@ -331,12 +355,19 @@ export function InboxMock({ merged, answered, still = false }: Props) {
 
             {/* Thread. The faint dot grid is the messaging-app ground every
                 customer already knows. */}
-            <div className="relative flex min-h-[96px] flex-1 flex-col gap-2.5 p-3.5 [background-image:radial-gradient(var(--color-line)_1px,transparent_1px)] [background-size:16px_16px] md:min-h-[400px] md:p-4">
-              <span className="mx-auto rounded-full border border-line bg-surface px-2.5 py-0.5 text-[12px] font-semibold text-muted">
+            {/* overflow-hidden IS A BACKSTOP, NOT THE LAYOUT. min-h is a
+                floor and not a cap, so when this area was handed less height
+                than its content needed it did not clip - it overflowed, and
+                a five-line reply bubble painted over the composer and the
+                label beneath it. The measurements above are what make it
+                fit; this makes the failure mode a clean edge rather than
+                two rows of the panel with a bubble lying across them. */}
+            <div className="relative flex min-h-[96px] flex-1 flex-col gap-2.5 overflow-hidden p-3.5 [background-image:radial-gradient(var(--color-line)_1px,transparent_1px)] [background-size:16px_16px] md:min-h-[400px] md:p-4">
+              <span className="mx-auto hidden rounded-full border border-line bg-surface px-2.5 py-0.5 text-[12px] font-semibold text-muted md:block">
                 Today
               </span>
 
-              <span className="max-w-[72%] self-start rounded-2xl rounded-tl-md border border-line bg-surface px-3 py-2 shadow-sm">
+              <span className="max-w-[88%] self-start rounded-2xl rounded-tl-md border border-line bg-surface px-3 py-2 shadow-sm md:max-w-[72%]">
                 <span className="block text-[14.5px] leading-snug">
                   {lead.text}
                 </span>
@@ -353,7 +384,8 @@ export function InboxMock({ merged, answered, still = false }: Props) {
               />
             </div>
 
-            <div className="flex items-center gap-2 border-t border-line bg-surface px-3.5 py-3">
+            {/* 57px of a box nobody can type in - held back to 768px. */}
+            <div className="hidden items-center gap-2 border-t border-line bg-surface px-3.5 py-3 md:flex">
               <span className="text-muted">
                 <ClipGlyph />
               </span>
@@ -374,7 +406,10 @@ export function InboxMock({ merged, answered, still = false }: Props) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.7 }}
-          className="border-t border-line px-4 py-2.5 text-[13px] font-semibold text-muted"
+          /* The stepper pill immediately above the panel already reads
+             "One shared inbox" on a phone, where it is the only step drawn.
+             Saying it twice inside one viewport costs 39px. */
+          className="hidden border-t border-line px-4 py-2.5 text-[13px] font-semibold text-muted md:block"
         >
           {oneInbox.inboxLabel}
         </motion.div>
@@ -422,7 +457,7 @@ function AssistantReply({
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35 }}
-        className="max-w-[78%] self-end rounded-2xl rounded-br-md bg-brand px-3 py-2 text-white shadow-sm"
+        className="max-w-[92%] self-end rounded-2xl rounded-br-md bg-brand px-3 py-2 text-white shadow-sm md:max-w-[78%]"
       >
         <span className="block text-[14.5px] leading-snug">
           {shown}

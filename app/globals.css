@@ -203,18 +203,35 @@
 /* A SHORT PHONE GETS THE CONVERSATION LIST ALONE. Section 3 pins a frame
    one viewport tall, and below 768px it fills that frame with both panes of
    the inbox - the list above, the thread below - because one pane leaves a
-   quarter-screen of white inside the panel. Measured, the two come to 568px
-   of content, which fits the 608px a 390x844 handset has and does not fit
-   the 407px an iPhone SE has.
+   quarter-screen of white inside the panel.
 
-   So under 45rem of height the thread is dropped and the list takes the
-   whole panel. It is the right one to keep at that size: the list is where
-   all four enquiries are, and the reply is still spelled out in the row
-   previews once the assistant has answered.
+   THE NUMBER THAT USED TO BE HERE WAS 568px AND IT WAS WRONG BY 200. It
+   counted the thread's message area at the min-h of 96px written on it.
+   min-height is a FLOOR, not a cap: that area holds a Today chip, the
+   question, a reply that sets in five lines at 320px and the line saying
+   what the assistant did, which is 324px of content. The two panes measured
+   765px on a 320px screen - 905 once this section's 140px of furniture is
+   paid for, which is taller than any handset made. So the frame never fit
+   at any height above this threshold, and the reply bubble spent that
+   overflow painting across the composer.
+
+   45rem WAS THEREFORE A CLIFF WITH NOTHING ON EITHER SIDE OF IT. Under it
+   the thread was deleted, which took the assistant's reply and the AI badge
+   with it - the beat the whole section is built around - and left a list of
+   four rows and nothing happening. Over it the panel overflowed. There was
+   no viewport height where the section worked.
+
+   The phone thread is now the question, the reply and what the assistant
+   did - see InboxMock for the 200px of chrome that came out - and the two
+   panes measure 532px on a 320px screen and 512 from 360px up. That needs
+   652px of viewport, so the threshold is 41rem: a handset that clears it
+   keeps the chat, and only the genuinely small ones - an SE at 553, a 13
+   mini at 629 - fall back to the list, where the reply is still spelled out
+   in the row previews.
 
    Width AND height, not height alone - a 1280x600 desktop window is short
    too, and there the two panes sit side by side and fit comfortably. */
-@media (width < 48rem) and (height < 45rem) {
+@media (width < 48rem) and (height < 41rem) {
   .inbox-thread {
     display: none;
   }
@@ -223,12 +240,15 @@
     flex: 1 1 auto;
     border-bottom: 0;
   }
+}
 
-  /* The board has the same problem and the same answer. Boxed stages with
-     roomy rows come to 510px, which an iPhone SE's 407px of stage cannot
-     take; stripped of the box and down to tight rows it is 386px and fits.
-     The stage chips and every name, owner and next step survive either
-     way - what goes is padding. */
+/* The board has the same problem and the same answer, and it keeps its own
+   45rem because its arithmetic did not change. Boxed stages with roomy rows
+   come to 510px, which an iPhone SE's 407px of stage cannot take; stripped
+   of the box and down to tight rows it is 386px and fits. The stage chips
+   and every name, owner and next step survive either way - what goes is
+   padding. */
+@media (width < 48rem) and (height < 45rem) {
   .board-stage {
     padding: 0;
     background: none;
