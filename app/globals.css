@@ -343,6 +343,232 @@
 }
 
 /* --------------------------------------------------------------------------
+   THE CHAPTER SCENES - components/features/chapter
+   --------------------------------------------------------------------------
+   Three small loops for the lit layer each /features chapter opens on: a
+   channel mark bobbing over the conversation it brought in, a ring where
+   its beam meets the layer, and a message travelling down the beam - or,
+   for the assistant, a reply travelling up it.
+
+   All transform and opacity, inside the scene's own 3D space. The reduced
+   motion rule at the foot of this file stops every one of them after a
+   frame, and each element's own style is its resting state - the mark
+   floating at its height, the ring and the travelling dot not drawn - so
+   stopping them leaves a still picture rather than a half-played one. */
+@keyframes pin-bob {
+  0%,
+  100% {
+    transform: translateZ(var(--z0));
+  }
+  50% {
+    transform: translateZ(var(--z1));
+  }
+}
+
+@keyframes pin-ping {
+  from {
+    transform: scale(0.45);
+    opacity: 0.85;
+  }
+  to {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+/* The travelling dot is two elements, one moving and one fading, on the
+   same clock. Fading the moving one would flatten the dot inside it - an
+   element below full opacity cannot hold anything in 3D - and the dot is
+   turned to face the reader. */
+@keyframes pin-travel {
+  from {
+    transform: translateZ(var(--from));
+  }
+  to {
+    transform: translateZ(var(--to));
+  }
+}
+
+@keyframes pin-fade {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  15%,
+  80% {
+    opacity: 1;
+  }
+}
+
+@utility anim-pin-bob {
+  animation: pin-bob var(--dur, 5.5s) ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+
+@utility anim-pin-ping {
+  animation: pin-ping var(--dur, 2.8s) ease-out infinite;
+  animation-delay: var(--d, 0s);
+}
+
+@utility anim-pin-travel {
+  animation: pin-travel var(--dur, 2.8s) cubic-bezier(0.55, 0, 0.45, 1)
+    infinite;
+  animation-delay: var(--d, 0s);
+}
+
+@utility anim-pin-fade {
+  animation: pin-fade var(--dur, 2.8s) linear infinite;
+  animation-delay: var(--d, 0s);
+}
+
+/* THE CHAPTER FLOWS - components/features/chapter/FlowScene. A message
+   travelling a wire from one part of the system to the next, drawn along
+   the wire's own path with offset-path. Its resting style is invisible,
+   so under reduced motion the wires are simply drawn, with nothing on
+   them. */
+@keyframes flow-along {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  12%,
+  84% {
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+@utility anim-flow {
+  animation: flow-along var(--dur, 2.8s) cubic-bezier(0.45, 0, 0.3, 1)
+    infinite;
+  animation-delay: var(--d, 0s);
+}
+
+/* THE SAME TRIP, TAKEN IN A QUARTER OF THE LOOP. For several things
+   sharing one short wire - the assistant's four replies, one per language
+   - each travels in the first quarter of its loop and waits out the rest,
+   and they start a quarter-loop apart: one on the wire at a time, never
+   two overlapping. With every loop the full length, two were always on it
+   together, a label's width apart on a wire barely two labels long. */
+@keyframes flow-along-quick {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  4%,
+  21% {
+    opacity: 1;
+  }
+  25%,
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+@utility anim-flow-quick {
+  animation: flow-along-quick var(--dur, 5.6s) cubic-bezier(0.45, 0, 0.3, 1)
+    infinite;
+  animation-delay: var(--d, 0s);
+}
+
+/* The ring of light turning round a flow's hub. Its own keyframes rather
+   than Tailwind's `spin`, which is only emitted when animate-spin itself
+   is used somewhere. */
+@keyframes ring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@utility anim-ring {
+  animation: ring-spin var(--dur, 7s) linear infinite;
+}
+
+/* CHAPTER 02'S TOUR - components/features/sales/Showcase. How long until
+   the playing feature gives way to the next, drawn along the foot of its
+   tab. It only runs while the tour plays, and the tour never plays under
+   reduced motion. */
+@keyframes fill-x {
+  from { scale: 0 1; }
+  to { scale: 1 1; }
+}
+@utility anim-fill {
+  transform-origin: left;
+  animation: fill-x var(--dur, 7s) linear both;
+}
+
+/* ...and the feature taking its place comes in over a moment rather than
+   appearing all at once, so its words move with the phone beside them. */
+@keyframes swap-in {
+  from { opacity: 0; translate: 0 8px; }
+  to { opacity: 1; translate: 0 0; }
+}
+@utility anim-swap {
+  animation: swap-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* CHAPTER 03'S BOARD - components/features/marketing/Board. A lead
+   arriving, or a message's status moving on, turns over like a split-flap
+   display, top row first. Only while the board is on screen, and never
+   under reduced motion, where the rows are simply there. */
+@keyframes flap-in {
+  from { transform: rotateX(-88deg); opacity: 0.25; }
+  to { transform: rotateX(0deg); opacity: 1; }
+}
+@utility anim-flap {
+  transform-origin: 50% 0;
+  animation: flap-in 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
+  animation-delay: var(--d, 0s);
+}
+
+/* CHAPTER 04'S DESK - components/features/operations/Desk. A patch cable
+   drawn from socket to socket (pathLength 1, so one dash is the whole
+   cable) and its plugs pushed home; a line of the run log written across
+   the display; a dashboard lamp brightening as a refresh passes it. Only
+   while the desk is on screen. Each one's resting state is the desk set
+   up - cables in, lamps on - so under reduced motion that is simply what
+   is there. */
+@keyframes cable-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@utility anim-cable {
+  stroke-dasharray: 1;
+  animation: cable-draw 0.6s cubic-bezier(0.3, 0, 0.2, 1) both;
+  animation-delay: var(--d, 0s);
+}
+@keyframes plug-in {
+  from { opacity: 0; scale: 1.7; }
+  to { opacity: 1; scale: 1; }
+}
+@utility anim-plug {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: plug-in 0.28s cubic-bezier(0.3, 0, 0.2, 1) both;
+  animation-delay: var(--d, 0s);
+}
+@keyframes type-in {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@utility anim-type {
+  animation: type-in 0.45s steps(12, end) both;
+  animation-delay: var(--d, 0s);
+}
+@keyframes lamp-hot {
+  0%, 22%, 100% { opacity: 0; }
+  8% { opacity: 1; }
+}
+@utility anim-lamp {
+  animation: lamp-hot var(--dur, 4.8s) ease-out infinite;
+  animation-delay: var(--d, 0s);
+}
+
+/* --------------------------------------------------------------------------
    SECTION TYPE SCALE
    --------------------------------------------------------------------------
    EVERY SECTION HEADING USES THIS. It exists because they drifted: section 2
@@ -396,8 +622,14 @@
 
 @layer base {
   html {
-    scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+  }
+
+  /* Smooth from the moment the page has arrived, and not before: arriving
+     at a link from elsewhere is a jump. components/site/SmoothScroll sets
+     the attribute and says why. */
+  html[data-arrived] {
+    scroll-behavior: smooth;
   }
 
   body {
@@ -409,9 +641,13 @@
 
   /* Headings carry negative tracking at display sizes — at 60px+ the default
      spacing reads as loose and is most of why big type looks amateur. */
+  /* h4 since /features, where a chapter (h2) holds features (h3) holding
+     groups of capabilities (h4) - the first page on the site three levels
+     deep. */
   h1,
   h2,
-  h3 {
+  h3,
+  h4 {
     letter-spacing: -0.03em;
     text-wrap: balance;
   }

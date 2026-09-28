@@ -33,15 +33,27 @@ const clouds = [
   { l: "-10%", t: "31%", w: "40%", h: "13%", o: 0.34, blur: 70, dx: "2.5%", dy: "0.9%", dur: "131s" },
 ] as const;
 
-export function SkyBackdrop() {
+/* WHERE THE SKY TURNS WHITE. "high" is the home hero's: white by 60% and
+   held there, so the dashboard's own white chrome lands on a neutral ground.
+   "low" keeps the blue for most of the card and only reaches white at the
+   foot - for /features, whose hero puts a white index panel where the home
+   page puts a screenshot, and a white panel on a white ground is an object
+   with nothing to stand out against. */
+const GROUND = {
+  high: "linear-gradient(180deg, var(--color-sky-top) 0%, var(--color-sky-mid) 17%, var(--color-sky-low) 36%, var(--color-sky-base) 60%)",
+  low: "linear-gradient(180deg, var(--color-sky-top) 0%, var(--color-sky-mid) 30%, var(--color-sky-low) 62%, var(--color-sky-base) 100%)",
+} as const;
+
+export function SkyBackdrop({
+  horizon = "high",
+}: {
+  horizon?: keyof typeof GROUND;
+}) {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0">
       <div
         className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(180deg, var(--color-sky-top) 0%, var(--color-sky-mid) 17%, var(--color-sky-low) 36%, var(--color-sky-base) 60%)",
-        }}
+        style={{ background: GROUND[horizon] }}
       />
 
       {clouds.map((c, i) => (
@@ -66,14 +78,17 @@ export function SkyBackdrop() {
 
       {/* Holds the bottom third near-white so the dashboard lands on a
           neutral ground rather than on blue, where its own white chrome
-          would have nothing to sit against. */}
-      <div
-        className="absolute inset-x-0 bottom-0 h-[55%]"
-        style={{
-          background:
-            "linear-gradient(180deg, transparent 0%, var(--color-sky-base) 48%)",
-        }}
-      />
+          would have nothing to sit against. The low horizon exists to
+          skip exactly this. */}
+      {horizon === "high" && (
+        <div
+          className="absolute inset-x-0 bottom-0 h-[55%]"
+          style={{
+            background:
+              "linear-gradient(180deg, transparent 0%, var(--color-sky-base) 48%)",
+          }}
+        />
+      )}
     </div>
   );
 }

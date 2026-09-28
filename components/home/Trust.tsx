@@ -51,19 +51,20 @@ export function Trust() {
   const reduced = useReducedMotion();
   const still = reduced === true;
 
-  const enter = (i = 0) =>
-    still
-      ? {}
+  /* The same props for everyone; reduced motion only sets the timing to
+     nothing (see FinalCta, and components/ui/useStill). */
+  const enter = (i = 0) => ({
+    initial: { opacity: 0, y: 14 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, amount: 0.2 },
+    transition: still
+      ? { duration: 0 }
       : {
-          initial: { opacity: 0, y: 14 },
-          whileInView: { opacity: 1, y: 0 },
-          viewport: { once: true, amount: 0.2 },
-          transition: {
-            duration: 0.5,
-            delay: i * 0.05,
-            ease: [0.16, 1, 0.3, 1] as const,
-          },
-        };
+          duration: 0.5,
+          delay: i * 0.05,
+          ease: [0.16, 1, 0.3, 1] as const,
+        },
+  });
 
   return (
     <section id="faq" className="p-2 md:p-3">

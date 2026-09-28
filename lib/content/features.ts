@@ -151,10 +151,20 @@ export const features = {
      The four groups are lifted verbatim from the product menu in the
      requirements. Do not regroup them here without regrouping them there -
      a visitor who learns the shape of the product on this page and then
-     cannot find it in the app has been taught the wrong thing. */
+     cannot find it in the app has been taught the wrong thing.
+
+     `slug` IS AN ADDRESS, NOT A LABEL. Every group and every feature has
+     its own section on /features, and the slug is that section's id -
+     /features#one-inbox, /features#sales. The callouts in that page's
+     hero link to it, and anything else that wants to point at one
+     feature should link to it rather than to the top of the page. It also
+     keys the feature's picture - components/features/minis.
+     Renaming one breaks every link to it, including any a visitor has
+     saved or shared, so treat a slug the way you would treat a URL. */
   groups: [
     {
       name: "Conversations",
+      slug: "conversations",
       tagline: "One inbox.\nYour own number.",
       n: "01",
       accent: "#1e5bff",
@@ -163,12 +173,14 @@ export const features = {
       items: [
         {
           name: "One Inbox",
+          slug: "one-inbox",
           short: "Every channel, one place.",
           mark: "inbox",
           line: "Every channel in one place, on your own WhatsApp number, with your team in it.",
         },
         {
           name: "AI Sales Assistant",
+          slug: "ai-sales-assistant",
           short: "Replies, qualifies, books.",
           mark: "assistant",
           line: "Replies, qualifies, books and follows up, using the prices and rules you set.",
@@ -177,6 +189,7 @@ export const features = {
     },
     {
       name: "Sales",
+      slug: "sales",
       tagline: "Your stages.\nYour fields.",
       n: "02",
       accent: "#1e86f5",
@@ -185,24 +198,28 @@ export const features = {
       items: [
         {
           name: "Contacts and Custom Fields",
+          slug: "contacts",
           short: "One record per customer.",
           mark: "contacts",
           line: "One record per customer, with the fields you decide are worth keeping.",
         },
         {
           name: "Sales Pipeline",
+          slug: "sales-pipeline",
           short: "Your stages, your board.",
           mark: "pipeline",
           line: "Your own stages, an owner on every deal, a recorded reason when it closes.",
         },
         {
           name: "Follow-ups",
+          slug: "follow-ups",
           short: "Due and overdue, listed.",
           mark: "followups",
           line: "Due and overdue lists, owner reminders, and what the assistant promised.",
         },
         {
           name: "Appointments",
+          slug: "appointments",
           short: "Calendars, buffers, reminders.",
           mark: "appointments",
           line: "Calendars, working hours, buffers, reminders, reschedule and cancel links.",
@@ -211,6 +228,7 @@ export const features = {
     },
     {
       name: "Marketing",
+      slug: "marketing",
       tagline: "Your ads.\nYour templates.",
       n: "03",
       accent: "#12a7e8",
@@ -219,18 +237,23 @@ export const features = {
       items: [
         {
           name: "Meta Ads",
+          slug: "meta-ads",
           short: "See which ad they came from.",
           mark: "ads",
-          line: "Connect your ad account and see which ad an enquiry came from.",
+          line: "Campaigns and lead forms built in iSuite AI, and every enquiry traced to its ad.",
         },
         {
           name: "Broadcasts and Templates",
+          slug: "broadcasts",
           short: "Templates, sent to a segment.",
           mark: "broadcasts",
-          line: "WhatsApp templates and saved replies, sent to a segment you choose.",
+          /* Templates only: saved replies are One Inbox's (§6), not
+             §14's. */
+          line: "WhatsApp templates approved by Meta, sent to a segment you choose.",
         },
         {
           name: "Lead Capture",
+          slug: "lead-capture",
           short: "Forms, ads and booking pages.",
           mark: "capture",
           line: "Meta lead forms, click-to-WhatsApp ads, website forms and booking pages.",
@@ -239,6 +262,7 @@ export const features = {
     },
     {
       name: "Operations",
+      slug: "operations",
       tagline: "Set the rules once.\nThen leave them.",
       n: "04",
       accent: "#00c8f8",
@@ -247,27 +271,37 @@ export const features = {
       items: [
         {
           name: "Automations",
+          slug: "automations",
           short: "Triggers and actions, no code.",
           mark: "automations",
           line: "No-code triggers and actions, so the routine part happens on its own.",
         },
         {
           name: "Reports and Dashboard",
-          short: "Enquiries, deals, follow-ups.",
+          slug: "reports",
+          short: "Conversations, deals, bookings.",
           mark: "reports",
-          line: "Enquiries, replies, deals, follow-ups and ad activity, in one place.",
+          /* §16's own figures, in both. The line said "follow-ups and ad
+             activity, in one place", and the short "Enquiries, deals,
+             follow-ups" - follow-ups and ad activity are not on §16's
+             dashboard, and §23 says there is no single view of the whole
+             funnel. */
+          line: "Conversations, deals, bookings and response times, on one dashboard.",
         },
         {
           name: "Team and Permissions",
+          slug: "team-permissions",
           short: "Roles, and who sees what.",
           mark: "team",
           line: "Roles, conversation assignment, and what each person is allowed to see.",
         },
         {
           name: "Chat Commerce in India",
+          slug: "chat-commerce",
           short: "Built for selling over chat.",
           mark: "commerce",
-          line: "Built for customers who ask, decide and buy over chat, not on a website.",
+          /* §18, in the order a sale goes. */
+          line: "Your Meta catalogue in the chat, carts turned into orders, payments requested and recorded.",
         },
       ],
     },

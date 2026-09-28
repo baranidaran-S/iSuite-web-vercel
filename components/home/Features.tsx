@@ -70,20 +70,23 @@ export function Features() {
 
   /* One entrance, used twice. Short and shallow on purpose - 18px and just
      over half a second, which registers as the panel arriving rather than
-     as an effect being played at you. */
-  const enter = (i = 0) =>
-    still
-      ? {}
+     as an effect being played at you.
+
+     THE SAME PROPS FOR EVERYONE; REDUCED MOTION ONLY SETS THE TIMING TO
+     NOTHING. Handing a reduced-motion visitor no props at all disagreed
+     with the server's HTML (see FinalCta, and components/ui/useStill). */
+  const enter = (i = 0) => ({
+    initial: { opacity: 0, y: 18 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, amount: 0.15 },
+    transition: still
+      ? { duration: 0 }
       : {
-          initial: { opacity: 0, y: 18 },
-          whileInView: { opacity: 1, y: 0 },
-          viewport: { once: true, amount: 0.15 },
-          transition: {
-            duration: 0.55,
-            delay: i * 0.07,
-            ease: [0.16, 1, 0.3, 1] as const,
-          },
-        };
+          duration: 0.55,
+          delay: i * 0.07,
+          ease: [0.16, 1, 0.3, 1] as const,
+        },
+  });
 
   return (
     <section id="features" className="p-2 md:p-3">
@@ -182,42 +185,47 @@ export function Features() {
                     {group.name}
                   </h3>
 
-                  {/* ---- THE FEATURES ---- */}
+                  {/* ---- THE FEATURES ----
+                      EACH ROW IS A LINK to its feature on /features. It
+                      always looked like one - it lifts and its chevron
+                      points on hover - and for a while it led nowhere. */}
                   <ul className="mt-6 flex flex-col gap-2.5">
                     {group.items.map((item) => {
                       const Mark = featureMarks[item.mark];
                       return (
-                        <li
-                          key={item.name}
-                          style={
-                            {
-                              "--acc": group.deep,
-                              backgroundColor: `${group.accent}17`,
-                              borderColor: `${group.accent}3d`,
-                            } as React.CSSProperties
-                          }
-                          className="group/f flex items-center gap-3 rounded-xl border py-3 pr-2.5 pl-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--acc)] hover:shadow-[0_14px_28px_-16px_var(--acc)]"
-                        >
-                          <span
-                            className="grid size-11 shrink-0 place-items-center rounded-lg bg-surface shadow-[0_2px_6px_rgba(10,16,32,0.1)]"
-                            style={{ color: group.deep }}
+                        <li key={item.name}>
+                          <Link
+                            href={`/features#${item.slug}`}
+                            style={
+                              {
+                                "--acc": group.deep,
+                                backgroundColor: `${group.accent}17`,
+                                borderColor: `${group.accent}3d`,
+                              } as React.CSSProperties
+                            }
+                            className="group/f flex items-center gap-3 rounded-xl border py-3 pr-2.5 pl-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--acc)] hover:shadow-[0_14px_28px_-16px_var(--acc)]"
                           >
-                            <Mark className="size-[22px]" />
-                          </span>
-
-                          <span className="min-w-0 flex-1">
-                            <span className="block text-[15.5px] leading-snug font-extrabold">
-                              {item.name}
+                            <span
+                              className="grid size-11 shrink-0 place-items-center rounded-lg bg-surface shadow-[0_2px_6px_rgba(10,16,32,0.1)]"
+                              style={{ color: group.deep }}
+                            >
+                              <Mark className="size-[22px]" />
                             </span>
-                            <span className="mt-0.5 block text-[13.5px] leading-snug text-muted">
-                              {item.short}
-                            </span>
-                          </span>
 
-                          <ChevronMark
-                            className="size-3.5 shrink-0 transition-transform duration-300 group-hover/f:translate-x-0.5"
-                            style={{ color: group.deep, opacity: 0.5 }}
-                          />
+                            <span className="min-w-0 flex-1">
+                              <span className="block text-[15.5px] leading-snug font-extrabold">
+                                {item.name}
+                              </span>
+                              <span className="mt-0.5 block text-[13.5px] leading-snug text-muted">
+                                {item.short}
+                              </span>
+                            </span>
+
+                            <ChevronMark
+                              className="size-3.5 shrink-0 transition-transform duration-300 group-hover/f:translate-x-0.5"
+                              style={{ color: group.deep, opacity: 0.5 }}
+                            />
+                          </Link>
                         </li>
                       );
                     })}

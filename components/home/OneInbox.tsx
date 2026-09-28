@@ -5,9 +5,9 @@ import {
   AnimatePresence,
   motion,
   useMotionValueEvent,
-  useReducedMotion,
   useScroll,
 } from "motion/react";
+import { useStill } from "@/components/ui/useStill";
 import { InboxMock } from "@/components/home/product/InboxMock";
 import { PipelineMock } from "@/components/home/product/PipelineMock";
 import { oneInbox } from "@/lib/content/queues";
@@ -145,7 +145,6 @@ const BEATS = { merge: 0.015, reply: 0.26, board: 0.56 };
 
 export function OneInbox() {
   const runwayRef = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
   const [stage, setStage] = useState(0);
 
   const { scrollYProgress } = useScroll({
@@ -165,8 +164,13 @@ export function OneInbox() {
      places or the inbox at all, which is two thirds of the argument
      withheld from the people least able to ask for it back. It takes the
      stacked layout instead: the same three beats, in order, with nothing
-     moving. */
-  const still = reduced === true;
+     moving.
+
+     ONCE THE PAGE IS ON SCREEN, NOT BEFORE. Read on the first render, the
+     stacked layout disagreed with the server's HTML, which is always the
+     pinned one, and React rebuilt the whole page in the browser (error #418
+     in production). useStill answers as the server did for that render. */
+  const still = useStill();
 
   /* The stacked layout survives for exactly one audience. Scroll-driven
      beats are useless to someone who has asked the system for less motion,

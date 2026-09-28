@@ -9,3 +9,7 @@ build
 .vercel
 next-env.d.ts
 tsconfig.tsbuildinfo
+
+# The Playwright MCP browser tool's logs and screenshots. Ignored so Tailwind,
+# which watches every file git does not ignore, does not rebuild on each log line.
+.playwright-mcp

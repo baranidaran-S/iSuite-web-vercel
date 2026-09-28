@@ -78,9 +78,13 @@ export function Footer() {
           {/* ---- THE MARK ---- */}
           <div className="max-w-sm">
             <Link href="/" className="inline-flex">
+              {/* EAGER, LIKE THE HEADER'S. The same file, already loaded
+                  for the header, so it costs nothing - and a lazy copy of
+                  the page's largest image set off Next's LCP warning. */}
               <Image
                 src={logoLockup}
                 alt={site.product}
+                loading="eager"
                 className="h-9 w-auto select-none md:h-10"
               />
             </Link>

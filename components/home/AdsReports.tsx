@@ -10,6 +10,7 @@ import {
 } from "motion/react";
 import { PlayIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { MegaphoneMark } from "@/components/ui/businessIcons";
+import { useStill } from "@/components/ui/useStill";
 import { ads, clip, type Turn } from "@/lib/content/ads";
 
 /* ==========================================================================
@@ -101,11 +102,16 @@ import { ads, clip, type Turn } from "@/lib/content/ads";
    ========================================================================== */
 
 export function AdsReports() {
-  const reduced = useReducedMotion();
-  const still = reduced === true;
+  /* REDUCED MOTION, TWICE OVER. As the browser reports it straight away,
+     for the entrances' timing, which is never written into the HTML; and
+     once the page is on screen, for whether the clip plays at all, which
+     changes what is drawn - read on the first render, it disagreed with
+     the server's HTML (components/ui/useStill). */
+  const reduced = useReducedMotion() === true;
+  const still = useStill();
 
   /* The clip is decoration and carries no information, so reduced motion
-     skips it outright and the section starts revealed. */
+     skips it outright and the section is revealed. */
   const plays = Boolean(clip.src) && !still;
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -116,6 +122,15 @@ export function AdsReports() {
      hidden: the AI Studio panel's bloom is drawn at -inset-6 and blurred
      70px, so a permanent overflow clip would slice it off. */
   const [unclipped, setUnclipped] = useState(!plays);
+
+  /* Revealed at once when the clip is not going to play. For a visitor who
+     asked for less motion that is known only just after the first render,
+     which has to match the server's - clip and all. */
+  useEffect(() => {
+    if (plays) return;
+    setRevealed(true);
+    setUnclipped(true);
+  }, [plays]);
 
   /* autoPlay would fire on load, which for a section this far down the page
      means the clip is long over before anybody reaches it. It plays when
@@ -139,19 +154,20 @@ export function AdsReports() {
     return () => timers.forEach(clearTimeout);
   }, [plays, inView]);
 
-  const enter = (i = 0, delay = 0) =>
-    still
-      ? {}
+  /* The same props for everyone; reduced motion only sets the timing to
+     nothing (see FinalCta). */
+  const enter = (i = 0, delay = 0) => ({
+    initial: { opacity: 0, y: 14 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, amount: 0.2 },
+    transition: reduced
+      ? { duration: 0 }
       : {
-          initial: { opacity: 0, y: 14 },
-          whileInView: { opacity: 1, y: 0 },
-          viewport: { once: true, amount: 0.2 },
-          transition: {
-            duration: 0.45,
-            delay: delay + i * 0.12,
-            ease: [0.16, 1, 0.3, 1] as const,
-          },
-        };
+          duration: 0.45,
+          delay: delay + i * 0.12,
+          ease: [0.16, 1, 0.3, 1] as const,
+        },
+  });
 
   return (
     <section id="ads-reports" className="p-2 md:p-3">
@@ -224,7 +240,7 @@ export function AdsReports() {
               ref={slotRef}
               initial={false}
               exit={{ opacity: 0, scale: 0.94, height: 0, marginTop: 0 }}
-              transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+              transition={still ? { duration: 0 } : { duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
               className="relative mx-auto mt-12 flex justify-center overflow-hidden md:mt-14"
             >
               <video
@@ -258,7 +274,7 @@ export function AdsReports() {
         <motion.div
           initial={false}
           animate={{ height: revealed ? "auto" : 0, opacity: revealed ? 1 : 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          transition={still ? { duration: 0 } : { duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           onAnimationComplete={() => revealed && setUnclipped(true)}
           style={{ overflow: unclipped ? "visible" : "hidden" }}
         >
