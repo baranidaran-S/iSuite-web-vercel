@@ -1,8 +1,9 @@
 "use client";
 
-import Link from "next/link";
+// Link and ArrowIcon come back with the full-FAQ button below.
+// import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
-import { ArrowIcon } from "@/components/ui/icons";
+// import { ArrowIcon } from "@/components/ui/icons";
 import { trust } from "@/lib/content/close";
 
 /* ==========================================================================
@@ -127,10 +128,11 @@ export function Trust() {
         </div>
 
         {/* ---- THE WAY OUT ----
-            §18 asks for a link to the full FAQ. The route does not exist yet
-            and will 404 until /faq is built, the same as /features and
-            /how-it-works - it is listed in PLACEHOLDERS. */}
-        <motion.div
+            §18 asks for a link to the full FAQ. /faq is not built yet, so
+            the button is commented out rather than left to 404 - see
+            PLACEHOLDERS. Uncomment it, and the two imports at the top,
+            when the page exists. */}
+        {/* <motion.div
           {...enter(1)}
           className="relative mx-auto mt-10 max-w-6xl text-center"
         >
@@ -141,7 +143,7 @@ export function Trust() {
             {trust.moreLabel}
             <ArrowIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
-        </motion.div>
+        </motion.div> */}
       </div>
     </section>
   );

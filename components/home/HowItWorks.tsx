@@ -8,13 +8,14 @@ import { journeyFrags } from "@/components/home/product/JourneyFrags";
 import { journey } from "@/lib/content/journey";
 
 /* ==========================================================================
-   HOW IT WORKS - BUILT, UNRENDERED, WAITING FOR /how-it-works
+   HOW IT WORKS - BUILT, UNRENDERED, NOT USED BY /how-it-works
    --------------------------------------------------------------------------
    This was section 4 of the home page until the sales pipeline took that
    slot. Nothing is wrong with it - the home page simply needed that space
-   for the pipeline, and a thirteen-step journey was always a better fit for
-   its own route than for a home page. Imported by nothing today, so it costs
-   no bundle. Do not tidy it away.
+   for the pipeline. It was kept for /how-it-works, which was then built
+   with its own thirteen-step journey (components/how/journey) instead.
+   Imported by nothing, so it costs no bundle. Deleting it is the client's
+   call; until then, leave it.
    --------------------------------------------------------------------------
    --------------------------------------------------------------------------
    Section 3 said what iSuite AI is. This says what it DOES, in order, and it

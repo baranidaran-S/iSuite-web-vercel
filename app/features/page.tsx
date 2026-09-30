@@ -77,6 +77,8 @@ export const metadata: Metadata = {
   title: "Features",
   description:
     "All thirteen iSuite AI features in detail: one inbox for WhatsApp, Instagram, Facebook and website chat, the AI sales assistant, sales pipeline, appointments, follow-ups, Meta ads, automations and reports.",
+  /* Its own address, resolved against metadataBase (app/layout.tsx). */
+  alternates: { canonical: "/features" },
 };
 
 /* The chapters laid out as one compact section, each with its own. Every

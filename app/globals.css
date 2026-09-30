@@ -568,6 +568,89 @@
   animation-delay: var(--d, 0s);
 }
 
+/* HOW IT WORKS - THE CAST - components/how/Cast. The enquiry carried along
+   the row of everyone it passes through: a bubble that stops over each of
+   the five cards in turn, a fifth of an eight-second loop at each, and
+   slips back to the start unseen. Each card's light and each label take
+   their turn a fifth apart (--d), so they are on while the bubble stands
+   over their card. The resting state of both is off, and the bubble itself
+   is not drawn under reduced motion. */
+@keyframes baton-move {
+  0%, 16% { left: 10%; opacity: 1; }
+  20%, 36% { left: 30%; opacity: 1; }
+  40%, 56% { left: 50%; opacity: 1; }
+  60%, 76% { left: 70%; opacity: 1; }
+  80%, 94% { left: 90%; opacity: 1; }
+  97% { left: 90%; opacity: 0; }
+  98% { left: 10%; opacity: 0; }
+  100% { left: 10%; opacity: 1; }
+}
+@utility anim-baton {
+  animation: baton-move 8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@keyframes baton-turn {
+  0% { opacity: 0; }
+  3%, 16% { opacity: 1; }
+  20%, 100% { opacity: 0; }
+}
+@utility anim-baton-turn {
+  animation: baton-turn 8s linear infinite;
+  animation-delay: var(--d, 0s);
+}
+/* The cast's Pause button (components/how/CastPause) stops the loop where
+   it stands. It runs for ever, and motion that starts by itself and lasts
+   more than five seconds needs a way to stop it (WCAG 2.2.2). */
+[data-paused] .anim-baton,
+[data-paused] .anim-baton-turn {
+  animation-play-state: paused;
+}
+
+/* HOW IT WORKS - THE JOURNEY, FROM BOTH SIDES - components/how/journey.
+   Each step plays once as it scrolls in: the customer's message arrives,
+   the business's is typed first - three dots for a moment where it will
+   land - and then what the team sees changes, its parts stamped in one
+   after another (anim-pop). Each element's room is kept while it waits,
+   so nothing below moves as it arrives.
+
+   Under reduced motion each is simply its end: the message there, the dots
+   gone, the signal to Meta not sent round. */
+@keyframes bubble-in {
+  from { opacity: 0; translate: 0 8px; scale: 0.97; }
+  to { opacity: 1; translate: 0 0; scale: 1; }
+}
+@utility anim-bubble {
+  animation: bubble-in 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.1) both;
+  animation-delay: var(--d, 0s);
+}
+@keyframes typing-flash {
+  0% { opacity: 0; }
+  15%, 78% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@utility anim-typing {
+  opacity: 0;
+  animation: typing-flash var(--dur, 0.9s) ease both;
+  animation-delay: var(--d, 0s);
+}
+@keyframes dot-bounce {
+  0%, 60%, 100% { translate: 0 0; opacity: 0.45; }
+  30% { translate: 0 -3px; opacity: 1; }
+}
+@utility anim-dot {
+  animation: dot-bounce 1s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+@keyframes signal-out {
+  0% { opacity: 0; translate: 0 0; scale: 0.5; }
+  30% { opacity: 1; }
+  100% { opacity: 0; translate: var(--tx, 18px) var(--ty, -18px); scale: 1; }
+}
+@utility anim-signal {
+  opacity: 0;
+  animation: signal-out 1.4s ease-out 3;
+  animation-delay: var(--d, 0s);
+}
+
 /* --------------------------------------------------------------------------
    SECTION TYPE SCALE
    --------------------------------------------------------------------------

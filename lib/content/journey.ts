@@ -1,11 +1,12 @@
 /* ==========================================================================
    HOW IT WORKS - THE SIX-STEP JOURNEY
    --------------------------------------------------------------------------
-   NOT ON THE HOME PAGE ANY MORE, AND NOT DEAD EITHER. This was section 4
-   until the sales pipeline took that slot. It is finished, it builds, and it
-   is waiting for /how-it-works, which is where a thirteen-step explanation
-   belonged in the first place. Its components are HowItWorks.tsx and
-   JourneyFrags.tsx. Do not delete any of the three.
+   NOT ON THE HOME PAGE ANY MORE, AND NOT ON /how-it-works EITHER. This was
+   section 4 until the sales pipeline took that slot. It is finished and it
+   builds. It was kept for /how-it-works, which was then built with its own
+   thirteen-step journey (lib/content/howItWorks.ts) and does not use it.
+   Its components are HowItWorks.tsx and JourneyFrags.tsx. Whether to delete
+   the three is the client's call - until it is made, leave them.
    --------------------------------------------------------------------------
    --------------------------------------------------------------------------
    Requirements SS19 lists the journey as THIRTEEN steps. Thirteen on a home

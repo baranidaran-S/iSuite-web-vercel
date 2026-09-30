@@ -15,8 +15,8 @@
    stop.
 
    The six-step journey it replaced still exists in full - journey.ts,
-   HowItWorks.tsx and JourneyFrags.tsx - and is waiting for /how-it-works,
-   which is where a thirteen-step explanation always belonged.
+   HowItWorks.tsx and JourneyFrags.tsx - unrendered. /how-it-works was built
+   with its own thirteen-step journey and does not use it.
 
    NOTHING HERE IS AN OUTCOME. The section shows deals being moved and closed,
    never how many or how fast. One of the three example deals is LOST, on

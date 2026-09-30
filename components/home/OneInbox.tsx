@@ -464,7 +464,14 @@ function FlowBeat({
 }
 
 /* One pill, both layouts. It was written twice for a while and the two
-   copies had already drifted by a pixel of padding. */
+   copies had already drifted by a pixel of padding.
+
+   NO FADE. The pills used to fade - to 80% once done, to 50% still to
+   come - and faded text failed contrast: 2.1:1 for the steps to come and
+   3.5:1 for the ones done, against 4.5 (Lighthouse, WCAG 1.4.3). The three
+   states are told apart by colour alone now - filled, tinted, plain - and
+   each holds 4.5:1 or better, the numbers included: the live one's number
+   sat white on a quarter-white circle at 3.5:1, and is brand on white now. */
 function StepPill({
   n,
   label,
@@ -478,11 +485,9 @@ function StepPill({
   const done = state === "done";
 
   return (
-    <motion.span
-      animate={{ opacity: active ? 1 : done ? 0.8 : 0.5 }}
-      transition={{ duration: 0.4 }}
+    <span
       className={
-        "inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-[14px] font-bold whitespace-nowrap md:text-[16px] " +
+        "inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-[14px] font-bold whitespace-nowrap transition-colors duration-[400ms] md:text-[16px] " +
         (active
           ? "border-brand bg-brand text-white"
           : done
@@ -492,13 +497,13 @@ function StepPill({
     >
       <span
         className={
-          "grid size-5 place-items-center rounded-full text-[11px] font-bold " +
-          (active ? "bg-white/25" : done ? "bg-brand/15" : "bg-line")
+          "grid size-5 place-items-center rounded-full text-[11px] font-bold transition-colors duration-[400ms] " +
+          (active ? "bg-white text-brand" : done ? "bg-white" : "bg-line")
         }
       >
         {n}
       </span>
       {label}
-    </motion.span>
+    </span>
   );
 }

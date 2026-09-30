@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { AdsReports } from "@/components/home/AdsReports";
 import { Features } from "@/components/home/Features";
 import { FourWalls } from "@/components/home/FourWalls";
@@ -28,10 +29,11 @@ import { WhoItsFor } from "@/components/home/WhoItsFor";
    somebody else's closing beat. It has its own section now.
 
    The journey it replaced is not deleted. journey.ts, HowItWorks.tsx and
-   JourneyFrags.tsx are intact and unrendered, waiting for /how-it-works,
-   which is where thirteen steps always belonged. They are the ONLY unused
-   components in the tree and they are unused on purpose - do not tidy them
-   away.
+   JourneyFrags.tsx are intact and unrendered. They were kept for
+   /how-it-works, which was then built with its own thirteen-step journey
+   (components/how/journey) and does not use them. They are the ONLY unused
+   components in the tree; deleting them is the client's call, so they stay
+   until someone makes it.
 
    ALL NINE ARE BUILT. SectionStub.tsx and the `sections` array it rendered
    from are gone, deleted as the last stub was replaced - which was the rule
@@ -46,6 +48,14 @@ import { WhoItsFor } from "@/components/home/WhoItsFor";
    margins too, so the page ends by opening outward rather than by
    stopping.
    ========================================================================== */
+
+/* The title and description are the layout's defaults; this adds only the
+   page's own canonical address, resolved against metadataBase
+   (app/layout.tsx), as /features and /how-it-works have theirs. */
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
+
 export default function HomePage() {
   return (
     <>
