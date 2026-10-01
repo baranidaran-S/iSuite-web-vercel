@@ -148,6 +148,83 @@ export function CommerceMark({ className, style }: P) {
   );
 }
 
+/* ---- THE MARKS ADDED WITH THE APP'S OWN FEATURE LIST (2026-09-30) ----------
+   The same family: the website widget is a page with a chat bubble in its
+   corner; leads, a person found under a lens; the quotation, a document
+   with its lines; forms, a sheet of fields. The two AI agents carry the
+   assistant's spark beside what they work on - a megaphone, a chart. */
+
+export function WidgetMark({ className, style }: P) {
+  return (
+    <svg {...S} className={className} style={style} aria-hidden>
+      <rect x="2.8" y="3.8" width="18.4" height="16.4" rx="2.6" />
+      <path d="M2.8 8.2h18.4" />
+      <path d="M18.2 15.2a2 2 0 0 1-2 2h-1.9l-1.9 1.5v-1.5h-.2a2 2 0 0 1-2-2v-1.6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2z" />
+    </svg>
+  );
+}
+
+export function LeadsMark({ className, style }: P) {
+  return (
+    <svg {...S} className={className} style={style} aria-hidden>
+      <circle cx="10.4" cy="10.4" r="7" />
+      <path d="m15.4 15.4 5.2 5.2" />
+      <circle cx="10.4" cy="8.8" r="1.9" />
+      <path d="M7.1 13.8a3.7 3.7 0 0 1 6.6 0" />
+    </svg>
+  );
+}
+
+export function QuoteMark({ className, style }: P) {
+  return (
+    <svg {...S} className={className} style={style} aria-hidden>
+      <path d="M6.2 2.8h8L19 7.6v12a1.6 1.6 0 0 1-1.6 1.6H6.2a1.6 1.6 0 0 1-1.6-1.6V4.4a1.6 1.6 0 0 1 1.6-1.6z" />
+      <path d="M14 2.8v4.8h5" />
+      <path d="M8.2 12.2h7.4M8.2 15.6h4.4" />
+    </svg>
+  );
+}
+
+export function EmailMark({ className, style }: P) {
+  return (
+    <svg {...S} className={className} style={style} aria-hidden>
+      <rect x="2.8" y="5" width="18.4" height="14" rx="2.4" />
+      <path d="m3.4 6.6 8.6 6.4 8.6-6.4" />
+    </svg>
+  );
+}
+
+export function FormsMark({ className, style }: P) {
+  return (
+    <svg {...S} className={className} style={style} aria-hidden>
+      <rect x="4" y="2.8" width="16" height="18.4" rx="2.4" />
+      <path d="M7.6 7.2h8.8" />
+      <rect x="7.6" y="10.4" width="8.8" height="3.2" rx="1" />
+      <path d="M7.6 17.4h4.4" />
+    </svg>
+  );
+}
+
+export function MarketingAgentMark({ className, style }: P) {
+  return (
+    <svg {...S} className={className} style={style} aria-hidden>
+      <path d="M3.4 10.2v4a1.4 1.4 0 0 0 1.4 1.4h1.6l5.6 3.8V5L6.4 8.8H4.8a1.4 1.4 0 0 0-1.4 1.4z" />
+      <path d="M18.4 3.4l.8 2.1 2.1.8-2.1.8-.8 2.1-.8-2.1-2.1-.8 2.1-.8z" />
+      <path d="M15.4 13.4a3.2 3.2 0 0 0 0-2.8" />
+    </svg>
+  );
+}
+
+export function AnalyticsAgentMark({ className, style }: P) {
+  return (
+    <svg {...S} className={className} style={style} aria-hidden>
+      <path d="M3.4 20.4h17.2" />
+      <path d="M6.6 20.4v-5.2M11.2 20.4v-8.6M15.8 20.4v-6.2" />
+      <path d="M18.6 3.2l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z" />
+    </svg>
+  );
+}
+
 /* ---- THE FOUR GROUP MARKS -------------------------------------------------
    Bigger than the feature marks and set in a larger tile, so a panel opens
    on a picture rather than on a heading. Same family, same stroke. */
@@ -221,6 +298,13 @@ export const featureMarks = {
   reports: ReportsMark,
   team: TeamMark,
   commerce: CommerceMark,
+  widget: WidgetMark,
+  leads: LeadsMark,
+  quote: QuoteMark,
+  email: EmailMark,
+  forms: FormsMark,
+  marketingAgent: MarketingAgentMark,
+  analyticsAgent: AnalyticsAgentMark,
 } as const;
 
 export type FeatureMark = keyof typeof featureMarks;

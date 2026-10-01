@@ -117,13 +117,16 @@ export function LanguageDemo() {
             lengths and a panel that resizes on every swap reads as the page
             twitching rather than as a language changing. */}
         <div className="flex min-h-[224px] flex-col justify-center gap-3 rounded-2xl bg-white/[0.06] p-5 md:min-h-[238px] md:p-6">
+          {/* The same `initial` for everyone - the server writes it into
+              the HTML - and reduced motion only sets the timing to nothing
+              (see FinalCta, and components/ui/useStill). */}
           <AnimatePresence mode="wait">
             <motion.div
               key={turn.id}
-              initial={still ? false : { opacity: 0, y: 14 }}
+              initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+              transition={still ? { duration: 0 } : { duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-col gap-3"
             >
               <span className="max-w-[88%] self-start rounded-2xl rounded-tl-md bg-white/12 px-4 py-3">

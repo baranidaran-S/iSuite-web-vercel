@@ -304,9 +304,12 @@ export function InboxMock({ merged, answered, still = false }: Props) {
                     )}
                   </span>
 
-                  {/* The amber wound from section 2, closing. */}
+                  {/* The amber wound from section 2, closing. Section 2's
+                      amber is for the night ground; on these light rows it
+                      measured 2.2:1, so it is the darker amber the site
+                      uses for text on white - 5.8:1 here. */}
                   {!answered && (
-                    <span className="mt-1.5 block text-[12.5px] font-semibold text-night-warn">
+                    <span className="mt-1.5 block text-[12.5px] font-semibold text-[#8a5212]">
                       no reply &middot; {e.waited}
                     </span>
                   )}

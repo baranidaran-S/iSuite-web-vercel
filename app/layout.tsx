@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Instrument_Serif, Manrope } from "next/font/google";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
+import { SmoothScroll } from "@/components/site/SmoothScroll";
 import { site } from "@/lib/site";
 import "./globals.css";
 
@@ -69,12 +70,18 @@ export const viewport: Viewport = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  /* data-scroll-behavior: the page glides to a link within it (globals.css),
+     and this is what tells Next.js to switch that off while it moves to a
+     new page - without it, going from the home page to a section of
+     /features animated there instead of opening on it. */
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${manrope.variable} ${instrument.variable}`}
     >
       <body>
+        <SmoothScroll />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-full focus:bg-ink focus:px-5 focus:py-2.5 focus:text-sm focus:font-bold focus:text-white"

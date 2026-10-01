@@ -41,14 +41,18 @@ export const site = {
    the moment a page is renamed, and the way you find out is a visitor
    following a link from the footer that the header no longer has.
 
-   All five 404 today. That is recorded below rather than hidden by not
-   linking to them: a named route in the markup is a job anyone can see,
-   where a missing legal column is one nobody trips over until a lawyer
-   asks. */
+   FAQ IS COMMENTED OUT UNTIL /faq IS BUILT. Features and How It Works are
+   the only pages there are for now, and a nav link to a 404 is the first
+   thing a visitor clicks and the first console error on every page (the
+   header prefetches it). Put the line back when the page exists.
+
+   The legal two still 404, and are kept on purpose - see PLACEHOLDERS: a
+   named route in the markup is a job anyone can see, where a missing legal
+   column is one nobody trips over until a lawyer asks. */
 export const nav = [
   { label: "Features", href: "/features" },
   { label: "How It Works", href: "/how-it-works" },
-  { label: "FAQ", href: "/faq" },
+  // { label: "FAQ", href: "/faq" },
 ] as const;
 
 export const legal = [
@@ -74,7 +78,7 @@ export const PLACEHOLDERS = [
   },
   {
     where: "lib/site.ts — siteUrl",
-    what: "example.com. Must be the real domain before launch or every canonical and share card resolves to nothing. The fake email and phone that sat beside it were deleted rather than left waiting for a footer - they go back when something renders them.",
+    what: "example.com. Must be the real domain before launch or every canonical, share card, sitemap entry (app/sitemap.ts) and the sitemap line in robots.txt (app/robots.ts) points at example.com. All of them read this one value, so setting it fixes every one. The fake email and phone that sat beside it were deleted rather than left waiting for a footer - they go back when something renders them.",
   },
   {
     where: "public/devices/dashboard-2.png — the figures inside it",
@@ -89,8 +93,8 @@ export const PLACEHOLDERS = [
     what: "Section 6 has three dark tiles - Showroom, Salon and Agency - whose `photo.src` is null. They are designed to work empty, so the section is finished and shippable as it stands; a photograph simply slots in behind the existing scrim. What they need is REAL images: the client's own customers or premises, or Indian showroom, salon and small-agency interiors. Stock photography of a Western open-plan office would undercut this section harder than having no photograph at all, which is the one outcome worse than the current state. Each tile's `alt` is written as the shooting brief for the picture that belongs there.",
   },
   {
-    where: "components/home/Trust.tsx — the full-FAQ link",
-    what: "Section 8 links to /faq because §18 requires a link to the full FAQ, and /faq does not exist. It 404s, the same as /features, /how-it-works and /book-a-demo — which the hero button, the header and the final CTA all point at. Every one of those is a dead route until those four pages are built.",
+    where: "/faq — not built; its three links are commented out",
+    what: "§18 asks for a link to the full FAQ, and /faq does not exist yet. Its links - the header and footer nav (the `nav` list above) and section 8's \"Read the full FAQ\" button in components/home/Trust.tsx - are commented out rather than left to 404. Build the page, then uncomment all three. /features and /how-it-works are built, and /book-a-demo is not needed now that bookingUrl goes to the CRM's own booking page.",
   },
   {
     where: "lib/site.ts \u2014 what the booking form collects",
@@ -98,7 +102,7 @@ export const PLACEHOLDERS = [
   },
   {
     where: "app/privacy and app/terms — not built",
-    what: "The footer links to /privacy and /terms and both 404. §31's launch checklist requires a published Privacy Policy and published Terms; they are not drafting jobs for this repo but the routes have to exist and be filled before launch. /features, /how-it-works and /faq are the same - linked from the header and the footer, not yet built.",
+    what: "The footer links to /privacy and /terms and both 404. §31's launch checklist requires a published Privacy Policy and published Terms; they are not drafting jobs for this repo but the routes have to exist and be filled before launch.",
   },
   {
     where: "components/site/Footer.tsx — no contact block",

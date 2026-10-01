@@ -7,9 +7,9 @@ import {
   AnimatePresence,
   motion,
   useInView,
-  useReducedMotion,
 } from "motion/react";
 import { ArrowIcon, CheckIcon, channelIcons } from "@/components/ui/icons";
+import { useStill } from "@/components/ui/useStill";
 import { pipeline } from "@/lib/content/pipeline";
 import { unanswered } from "@/lib/content/queues";
 import funnelArt from "@/public/funnel-final.png";
@@ -229,8 +229,10 @@ export function SalesPipeline() {
      observer watches. Below 1296px the rail is display:none, so this never
      fires and the timer never starts - which is exactly the intent. */
   const inView = useInView(railRef, { amount: 0.3 });
-  const reduced = useReducedMotion();
-  const still = reduced === true;
+  /* The still frame puts the deals somewhere else, so it waits until the
+     page is on screen - the first render has to match the server's HTML,
+     which is always the moving one's first frame (components/ui/useStill). */
+  const still = useStill();
 
   const [beat, setBeat] = useState(0);
 

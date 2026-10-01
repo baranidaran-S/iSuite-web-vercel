@@ -1,8 +1,9 @@
 "use client";
 
-import Link from "next/link";
+// Link and ArrowIcon come back with the full-FAQ button below.
+// import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
-import { ArrowIcon } from "@/components/ui/icons";
+// import { ArrowIcon } from "@/components/ui/icons";
 import { trust } from "@/lib/content/close";
 
 /* ==========================================================================
@@ -51,19 +52,20 @@ export function Trust() {
   const reduced = useReducedMotion();
   const still = reduced === true;
 
-  const enter = (i = 0) =>
-    still
-      ? {}
+  /* The same props for everyone; reduced motion only sets the timing to
+     nothing (see FinalCta, and components/ui/useStill). */
+  const enter = (i = 0) => ({
+    initial: { opacity: 0, y: 14 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, amount: 0.2 },
+    transition: still
+      ? { duration: 0 }
       : {
-          initial: { opacity: 0, y: 14 },
-          whileInView: { opacity: 1, y: 0 },
-          viewport: { once: true, amount: 0.2 },
-          transition: {
-            duration: 0.5,
-            delay: i * 0.05,
-            ease: [0.16, 1, 0.3, 1] as const,
-          },
-        };
+          duration: 0.5,
+          delay: i * 0.05,
+          ease: [0.16, 1, 0.3, 1] as const,
+        },
+  });
 
   return (
     <section id="faq" className="p-2 md:p-3">
@@ -126,10 +128,11 @@ export function Trust() {
         </div>
 
         {/* ---- THE WAY OUT ----
-            §18 asks for a link to the full FAQ. The route does not exist yet
-            and will 404 until /faq is built, the same as /features and
-            /how-it-works - it is listed in PLACEHOLDERS. */}
-        <motion.div
+            §18 asks for a link to the full FAQ. /faq is not built yet, so
+            the button is commented out rather than left to 404 - see
+            PLACEHOLDERS. Uncomment it, and the two imports at the top,
+            when the page exists. */}
+        {/* <motion.div
           {...enter(1)}
           className="relative mx-auto mt-10 max-w-6xl text-center"
         >
@@ -140,7 +143,7 @@ export function Trust() {
             {trust.moreLabel}
             <ArrowIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
-        </motion.div>
+        </motion.div> */}
       </div>
     </section>
   );

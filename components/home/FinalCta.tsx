@@ -104,19 +104,35 @@ export function FinalCta() {
   const reduced = useReducedMotion();
   const still = reduced === true;
 
-  const enter = (i = 0) =>
-    still
-      ? {}
+  /* THE SAME PROPS FOR EVERYONE, AND REDUCED MOTION ONLY CHANGES THE
+     TIMING. This used to hand reduced-motion visitors no animation props at
+     all, which is a hydration bug: the server cannot know the setting, so it
+     rendered `initial` - opacity 0 - into the HTML, while the browser's first
+     render, which can know it, rendered nothing. React does not repair a
+     mismatched attribute, so the heading, the line and the button stayed at
+     opacity 0 for exactly the people who had asked for less motion.
+
+     It went unnoticed on the home page only because section 3 renders a
+     different layout for reduced motion, a big enough mismatch that React
+     re-renders the whole page in the browser and repairs this by accident.
+     On /features nothing does.
+
+     Now both sides render the same `initial`, and a reduced-motion visitor
+     gets a zero-length transition: the content is simply there when it
+     comes into view. Transition timing is never written into the HTML, so
+     it cannot disagree with it. */
+  const enter = (i = 0) => ({
+    initial: { opacity: 0, y: 16 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, amount: 0.3 },
+    transition: still
+      ? { duration: 0 }
       : {
-          initial: { opacity: 0, y: 16 },
-          whileInView: { opacity: 1, y: 0 },
-          viewport: { once: true, amount: 0.3 },
-          transition: {
-            duration: 0.55,
-            delay: i * 0.09,
-            ease: [0.16, 1, 0.3, 1] as const,
-          },
-        };
+          duration: 0.55,
+          delay: i * 0.09,
+          ease: [0.16, 1, 0.3, 1] as const,
+        },
+  });
 
   return (
     <section

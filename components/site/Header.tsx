@@ -121,12 +121,18 @@ export function Header() {
             <Link
               key={item.href}
               href={item.href}
+              /* THE PAGE YOU ARE ON IS MARKED, now that there is more than
+                 one page to be on. aria-current carries it for a screen
+                 reader and the same attribute carries the style, so the
+                 two cannot disagree - a link that looks current and is not
+                 announced as current is a bug nobody sighted will find. */
+              aria-current={pathname === item.href ? "page" : undefined}
               /* THE SAME WEIGHT, SIZE AND COLOUR AS THE PHONE MENU.
                  They had drifted: the panel set its links at 16.5px bold in
                  full ink and the bar set the same three at 15px semibold at
                  70% ink, which on a frosted white bar reads as disabled
                  rather than as quiet. One nav, one treatment. */
-              className="rounded-full px-4 py-2 text-[16.5px] font-bold text-ink transition-colors hover:bg-ink/6 hover:text-brand"
+              className="rounded-full px-4 py-2 text-[16.5px] font-bold text-ink transition-colors hover:bg-ink/6 hover:text-brand aria-[current=page]:bg-brand-tint aria-[current=page]:text-brand"
             >
               {item.label}
             </Link>
@@ -172,7 +178,8 @@ export function Header() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="flex items-center justify-between rounded-2xl px-4 py-3.5 text-[16.5px] font-bold text-ink transition-colors hover:bg-brand-tint"
+                aria-current={pathname === item.href ? "page" : undefined}
+                className="flex items-center justify-between rounded-2xl px-4 py-3.5 text-[16.5px] font-bold text-ink transition-colors hover:bg-brand-tint aria-[current=page]:bg-brand-tint aria-[current=page]:text-brand"
               >
                 {item.label}
                 <ArrowIcon className="size-4 text-brand" />

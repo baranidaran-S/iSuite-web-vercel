@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowIcon, PlayIcon, channelIcons } from "@/components/ui/icons";
+import { RevealHeadline } from "@/components/ui/RevealHeadline";
 import { channels, hero } from "@/lib/content/home";
 import { site } from "@/lib/site";
 
@@ -51,29 +52,11 @@ export function HeroCopy() {
 
           If the headline copy ever changes, re-measure. The number that
           matters is the widest word - "journey." at 4.11em - because that is
-          what overflows rather than wraps. */}
-      <h1 className="h1-hero mt-5 text-[3rem] leading-[1.05] font-extrabold sm:text-[3.6rem] lg:text-[4.5rem] xl:text-[5rem]">
-        {hero.headline.map((line, i) => (
-          <span key={line.text} className="reveal-mask">
-            <span
-              className="anim-reveal"
-              style={{ "--d": `${0.08 + i * 0.1}s` } as React.CSSProperties}
-            >
-              {line.text}
-              {"accent" in line && line.accent ? (
-                <span className="font-serif font-normal text-brand italic">
-                  {line.accent}{" "}
-                </span>
-              ) : null}
-              {/* Below sm these spans are inline and reflow into each
-                  other, and JSX puts no whitespace between siblings - so
-                  without this the phone reads "enquiryinto". It collapses
-                  to nothing when they are blocks again. */}
-              {" "}
-            </span>
-          </span>
-        ))}
-      </h1>
+          what overflows rather than wraps.
+
+          The markup and the size ramp are in RevealHeadline, shared with
+          /features so the two headlines cannot drift apart. */}
+      <RevealHeadline lines={hero.headline} className="mt-5" />
 
       <p
         className="anim-rise mx-auto mt-7 max-w-[56ch] text-[17px] leading-relaxed text-ink/65 md:text-[19.5px]"
