@@ -1,11 +1,10 @@
 /* ==========================================================================
    A DRAWING AT ITS OWN SIZE, FITTED TO ITS COLUMN
    --------------------------------------------------------------------------
-   The full product screens on /features are laid out at a fixed size - the
-   inbox is 800 by 500 - because a real interface has a real width, and a
-   screen that reflowed to fit its column would stop looking like one. This
-   scales the whole drawing to whatever width it is given, the way the
-   hero's stack is scaled.
+   Sales' phone (sales/phone.tsx) is laid out at a fixed size - a real phone
+   has a real width, and a phone that reflowed to fit its column would stop
+   looking like one. This scales the whole drawing to whatever width it is
+   given.
 
    THE SCALE IS CSS, NOT JAVASCRIPT, so it is right in the first HTML the
    server sends and nothing moves at hydration. The box is a size container
@@ -17,8 +16,8 @@
 
    `max` is the box's largest width. A number lets a drawing grow past its
    own size where the column is wider than it; a CSS length can hold it to
-   something else as well - the story layout holds its pinned screen to
-   the window's height. Without it the box stops at the drawing's width.
+   something else as well - the window's height. Without it the box stops
+   at the drawing's width.
    ========================================================================== */
 export function ScaledScreen({
   w,

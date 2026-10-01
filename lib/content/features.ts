@@ -1,17 +1,26 @@
 /* ==========================================================================
-   SECTION 5 COPY - THE FEATURES
+   THE FEATURES - ONE LIST FOR THE WHOLE SITE
    --------------------------------------------------------------------------
-   All thirteen, in the four groups the requirements themselves use for the
-   product menu - Conversations, Sales, Marketing, Operations. Grouping them
-   the way the product is organised means a visitor who reads this section
-   can already navigate the app, and it stops the section being a list of
-   thirteen equal things where nothing has a shape.
+   The home page's section 5 names them, /features explains them, the
+   feature bar and /how-it-works link to them - all from this list.
 
-   THREE OF THE THIRTEEN HAVE ALREADY HAD A SECTION EACH. The inbox, the
-   assistant and the sales pipeline were sections 3 and 4. They are still
-   named here, in their group, at the same weight as the rest - leaving them
-   out would make the count wrong and the menu unrecognisable. The lead says
-   plainly that they have been covered.
+   FIFTEEN, AND THEY ARE THE APP'S. On 2026-09-30 the client gave the
+   list from the real product (crm.mntfuture.com) and it replaced the
+   thirteen the requirements document described: Meta Ads, Reports and
+   Dashboard, Team and Permissions and Chat Commerce left the list, and
+   the website chat widget, leads, quotations and invoices, email
+   marketing, forms and three AI agents came in. The names are the
+   client's own, word for word apart from capitals.
+
+   FOUR GROUPS - Conversations, Sales, Marketing, Automation & Insights.
+   The app's own menu splits the same features five ways (Inbox, CRM,
+   Commerce, Broadcasts, Automation); four groups keep the page's four
+   chapters, and a feature is still where its job is: the widget with the
+   inbox it feeds, quotations with the deals they close.
+
+   THE MARKETING AI AGENT IS THE APP'S STUDIO, building Meta ads - the
+   client confirmed it on 2026-10-01, after it had sat here as a feature
+   whose details were on their way (PENDING, below, held it back).
 
    THE LANGUAGE PROOF LIVES HERE, and it is here because it was deliberately
    pulled OUT of section 3. The first conversation a visitor reads is where
@@ -21,24 +30,24 @@
    point. This is that place.
 
    EVERY LINE IS A CAPABILITY, NEVER AN OUTCOME. No line below promises a
-   lead, a sale, a reply time or Meta approval. "Connect your ad account and
-   see which ad an enquiry came from" is a thing the software does; "get more
-   leads from your ads" would be a thing it cannot promise.
+   lead, a sale or a reply time. "Bulk WhatsApp messages from your approved
+   templates" is a thing the software does; "reach more customers" would
+   be a thing it cannot promise.
    ========================================================================== */
 
 export const features = {
   eyebrow: "The whole system",
 
-  heading: "Thirteen features. One system.",
+  heading: "Fifteen features. One system.",
 
-  lead: "The shared inbox, the AI assistant and the sales board are three of them, and you have just seen those. Here are all thirteen, grouped the way the product itself is.",
+  lead: "The shared inbox, the Sales AI Agent and the sales board are three of them, and you have just seen those. Here are all fifteen, in four groups.",
 
   /* ------------------------------------------------------------------
      THE LANGUAGE DEMONSTRATION
      ------------------------------------------------------------------
      The same exchange four times over, and it cycles rather than sitting
      still: a visitor who speaks Tamil sees Tamil arrive on its own, and a
-     visitor who does not still watches the assistant change language
+     visitor who does not still watches the Sales AI Agent change language
      without anyone explaining that it can.
 
      THE MONEY IS THE SAME MONEY AS SECTION 3. Anand was told a first
@@ -95,225 +104,192 @@ export const features = {
     ],
   },
 
-  /* `short` IS WHAT THE CARD SHOWS - three to five words, because it sits
-     on one line inside a panel column about 230px wide and a second line
-     would push every card in the column out of step with its neighbours.
+  /* `short` IS WHAT THE HOME PAGE'S CARD SHOWS - three to five words,
+     because it sits on one line inside a panel column about 230px wide.
 
-     NONE OF THE THIRTEEN PROMISES A RESULT, and that took rewriting. The
-     design this was built from had "Never miss a next step" on Follow-ups,
-     "Turn interest into opportunity" on Lead Capture and "Do more,
-     automatically" on Automations. Each one is a promise about what happens
-     to a business rather than a statement of what the software does, which
-     is the line SS31 draws. "Due and overdue, listed" is duller and it is
-     true.
+     `line` IS /features' - the sentence on the chapter card, under the
+     feature's name. Both are capabilities, never results.
 
-     `line` IS NOT RENDERED ON THE HOME PAGE ANY MORE. The cards carry a
-     mark and a name and nothing else - the home page names the thirteen,
-     the feature pages explain them, and a sentence under every card was
-     making the section run on.
+     `accent` and `mark` are not decoration. A colour per GROUP (not per
+     feature) gives the four bands a rhythm the eye can use, and a mark per
+     feature gives every item an anchor to land on. The four hues walk the
+     logo's own gradient - royal blue, blue, sky, cyan.
 
-     The thirteen lines are kept rather than deleted because they are
-     written and claim-checked, and /features is a route in the plan. When
-     that page is built it should start from these. If the route is ever
-     dropped, delete them in the same change - copy waiting for a page that
-     is never coming is how dead content survives a review.
-
-     `accent` and `mark` are not decoration. Thirteen features set as plain
-     headings and paragraphs read as a specification sheet - correct,
-     complete and impossible to scan. A colour per GROUP (not per feature)
-     gives the four bands a rhythm the eye can use, and a mark per feature
-     gives every item an anchor to land on.
-
-     THE FOUR HUES ARE ONE HUE NOW - the logo's. They were blue, teal,
-     green and amber: four invented colours, and the green and the amber in
-     particular belong to no other part of this site. globals.css opens by
-     saying the palette is limited so that colour earns attention by being
-     rare; inventing four more for one section is the opposite of that, and
-     it is exactly why the section looked like it came from somewhere else.
-
-     They walk the wordmark's own gradient instead - royal blue, blue, sky,
-     cyan, deep end to bright end across the four panels in order. Still
-     four distinguishable groups, no colour on the page that is not already
-     the brand's.
-
-     TWO VALUES PER GROUP, because the section is dark and the four panels
-     inside it are light. `deep` is everything that has to READ on white -
-     the numeral tile's ground, the marks, the tagline - and clears AA at
-     4.7:1 or better. `accent` is everything that only has to TINT - the
-     chip behind a mark, the rule, the wash at the foot of a panel - and is
-     the same hue taken bright, which makes a better pastel at 10% than a
-     deep colour does.
-
-     The pair has been added, removed and added again as the panels went
-     white, dark and white. If they go dark for good, `deep` goes with them
-     in the same change.
-
-     The four groups are lifted verbatim from the product menu in the
-     requirements. Do not regroup them here without regrouping them there -
-     a visitor who learns the shape of the product on this page and then
-     cannot find it in the app has been taught the wrong thing.
+     TWO VALUES PER GROUP. `deep` is everything that has to READ on white
+     and clears AA at 4.7:1 or better; `accent` is everything that only has
+     to TINT.
 
      `slug` IS AN ADDRESS, NOT A LABEL. Every group and every feature has
      its own section on /features, and the slug is that section's id -
-     /features#one-inbox, /features#sales. The callouts in that page's
-     hero link to it, and anything else that wants to point at one
-     feature should link to it rather than to the top of the page. It also
-     keys the feature's picture - components/features/minis.
-     Renaming one breaks every link to it, including any a visitor has
-     saved or shared, so treat a slug the way you would treat a URL. */
+     /features#unified-inbox, /features#sales. The home page's feature rows,
+     /features' feature bar and /how-it-works link to it, and it keys the
+     feature's pictures (closeups.ts and shots.ts).
+     A group's slug and a feature's slug are both ids on one page, so no
+     two may be the same - the fourth group is automation-insights because
+     its first feature is automation. */
   groups: [
     {
       name: "Conversations",
       slug: "conversations",
-      tagline: "One inbox.\nYour own number.",
+      tagline: "Every channel.\nOne inbox.",
       n: "01",
       accent: "#1e5bff",
       deep: "#0b3fd4",
       mark: "conversations",
       items: [
         {
-          name: "One Inbox",
-          slug: "one-inbox",
-          short: "Every channel, one place.",
+          name: "Unified Inbox",
+          slug: "unified-inbox",
+          short: "WhatsApp, Instagram, Messenger, web.",
           mark: "inbox",
-          line: "Every channel in one place, on your own WhatsApp number, with your team in it.",
+          line: "WhatsApp, Instagram, Messenger and your website's chat in one inbox your whole team works from.",
         },
         {
-          name: "AI Sales Assistant",
-          slug: "ai-sales-assistant",
-          short: "Replies, qualifies, books.",
+          name: "Website AI Chat Widget",
+          slug: "website-ai-chat-widget",
+          short: "A chat bubble on your site.",
+          mark: "widget",
+          line: "A chat bubble on every page of your website, answered by the Sales AI Agent, each chat landing in the inbox.",
+        },
+        {
+          name: "Sales AI Agent",
+          slug: "sales-ai-agent",
+          short: "Replies, books, hands over.",
           mark: "assistant",
-          line: "Replies, qualifies, books and follows up, using the prices and rules you set.",
+          line: "Replies in the customer's language from what you tell it, books a time, and hands over to your team by your rules.",
         },
       ],
     },
     {
       name: "Sales",
       slug: "sales",
-      tagline: "Your stages.\nYour fields.",
+      tagline: "From first lead\nto final invoice.",
       n: "02",
       accent: "#1e86f5",
       deep: "#0a4f9e",
       mark: "sales",
       items: [
         {
-          name: "Contacts and Custom Fields",
-          slug: "contacts",
-          short: "One record per customer.",
+          name: "Leads Management",
+          slug: "leads-management",
+          short: "Businesses you found, kept apart.",
+          mark: "leads",
+          line: "Businesses you found, kept apart from your contacts until somebody has spoken to them, with a call list to work through.",
+        },
+        {
+          name: "Contacts Management",
+          slug: "contacts-management",
+          short: "Every customer, one record.",
           mark: "contacts",
-          line: "One record per customer, with the fields you decide are worth keeping.",
+          line: "One record per customer, with your own fields, tags and groups, saved views, import and export.",
         },
         {
-          name: "Sales Pipeline",
-          slug: "sales-pipeline",
-          short: "Your stages, your board.",
+          name: "Sales Pipeline Management",
+          slug: "sales-pipeline-management",
+          short: "Your pipelines, your stages.",
           mark: "pipeline",
-          line: "Your own stages, an owner on every deal, a recorded reason when it closes.",
+          line: "As many pipelines as you sell in, each with its own stages, as a board or a list.",
         },
         {
-          name: "Follow-ups",
-          slug: "follow-ups",
-          short: "Due and overdue, listed.",
+          name: "Follow-up Management",
+          slug: "follow-up-management",
+          short: "Who to chase, and when.",
           mark: "followups",
-          line: "Due and overdue lists, owner reminders, and what the assistant promised.",
+          line: "The work owed to people, sorted into overdue, today and this week - for the whole team or just you.",
         },
         {
-          name: "Appointments",
-          slug: "appointments",
-          short: "Calendars, buffers, reminders.",
+          name: "Booking Management",
+          slug: "booking-management",
+          short: "Booking links and calendars.",
           mark: "appointments",
-          line: "Calendars, working hours, buffers, reminders, reschedule and cancel links.",
+          line: "Calendars customers book from a link, every booking saved as a contact and confirmed on WhatsApp.",
+        },
+        {
+          name: "Quotation & Invoice",
+          slug: "quotation-invoice",
+          short: "Quote it, bill it, track it.",
+          mark: "quote",
+          line: "Quotations with GST and a link the customer accepts from, invoices, and where each one stands.",
         },
       ],
     },
     {
       name: "Marketing",
       slug: "marketing",
-      tagline: "Your ads.\nYour templates.",
+      tagline: "Your templates.\nYour lists.",
       n: "03",
       accent: "#12a7e8",
       deep: "#0a6187",
       mark: "marketing",
       items: [
         {
-          name: "Meta Ads",
-          slug: "meta-ads",
-          short: "See which ad they came from.",
-          mark: "ads",
-          line: "Campaigns and lead forms built in iSuite AI, and every enquiry traced to its ad.",
-        },
-        {
-          name: "Broadcasts and Templates",
-          slug: "broadcasts",
-          short: "Templates, sent to a segment.",
+          name: "WhatsApp Marketing",
+          slug: "whatsapp-marketing",
+          short: "Approved templates, sent in bulk.",
           mark: "broadcasts",
-          /* Templates only: saved replies are One Inbox's (§6), not
-             §14's. */
-          line: "WhatsApp templates approved by Meta, sent to a segment you choose.",
+          line: "Bulk WhatsApp messages from your approved templates, sent to a group, with delivery and reads tracked.",
         },
         {
-          name: "Lead Capture",
-          slug: "lead-capture",
-          short: "Forms, ads and booking pages.",
-          mark: "capture",
-          line: "Meta lead forms, click-to-WhatsApp ads, website forms and booking pages.",
+          name: "Email Marketing",
+          slug: "email-marketing",
+          short: "Campaigns through your own key.",
+          mark: "email",
+          line: "Email campaigns with a subject, preview text and your own HTML, sent to a list through your own sending key.",
+        },
+        {
+          name: "Forms",
+          slug: "forms",
+          short: "Web forms and Meta ad forms.",
+          mark: "forms",
+          line: "Forms you build and put on your site, and your Meta lead forms - every submission saved as a contact.",
+        },
+        {
+          name: "Marketing AI Agent",
+          slug: "marketing-ai-agent",
+          short: "Meta ads, built from your poster.",
+          mark: "marketingAgent",
+          line: "Attach your poster and say what you want: it builds the campaign on your Meta ad account, paused until you say it can run.",
         },
       ],
     },
     {
-      name: "Operations",
-      slug: "operations",
-      tagline: "Set the rules once.\nThen leave them.",
+      name: "Automation & Insights",
+      slug: "automation-insights",
+      tagline: "Set the rules once.\nAsk your CRM.",
       n: "04",
       accent: "#00c8f8",
       deep: "#0b6f80",
       mark: "operations",
       items: [
         {
-          name: "Automations",
-          slug: "automations",
+          name: "Automation",
+          slug: "automation",
           short: "Triggers and actions, no code.",
           mark: "automations",
-          line: "No-code triggers and actions, so the routine part happens on its own.",
+          line: "Workflows that start on an event - a message, a booking, a quotation accepted - and run the steps you chose.",
         },
         {
-          name: "Reports and Dashboard",
-          slug: "reports",
-          short: "Conversations, deals, bookings.",
-          mark: "reports",
-          /* §16's own figures, in both. The line said "follow-ups and ad
-             activity, in one place", and the short "Enquiries, deals,
-             follow-ups" - follow-ups and ad activity are not on §16's
-             dashboard, and §23 says there is no single view of the whole
-             funnel. */
-          line: "Conversations, deals, bookings and response times, on one dashboard.",
-        },
-        {
-          name: "Team and Permissions",
-          slug: "team-permissions",
-          short: "Roles, and who sees what.",
-          mark: "team",
-          line: "Roles, conversation assignment, and what each person is allowed to see.",
-        },
-        {
-          name: "Chat Commerce in India",
-          slug: "chat-commerce",
-          short: "Built for selling over chat.",
-          mark: "commerce",
-          /* §18, in the order a sale goes. */
-          line: "Your Meta catalogue in the chat, carts turned into orders, payments requested and recorded.",
+          name: "Analytics AI Agent",
+          slug: "analytics-ai-agent",
+          short: "Ask your CRM a question.",
+          mark: "analyticsAgent",
+          line: "Ask about your deals, contacts, conversations and ads in plain words, and see the tools it used to answer.",
         },
       ],
     },
   ],
 
-  /* The rail under the four panels. The design had "ALL THE TOOLS YOU
-     NEED" and "BUILT FOR REAL BUSINESS" here - both unprovable and both
-     the kind of line a visitor has read on forty other sites. The count
-     and the positioning are true and say more. */
-  railLeft: "Thirteen features",
+  /* The rail under the four panels: the count and the positioning, both
+     true. */
+  railLeft: "Fifteen features",
   railRight: "One system",
 
   moreLabel: "Open the full feature list",
   moreHref: "/features",
 } as const;
+
+/* FEATURES WHOSE DETAILS ARE STILL BEING CONFIRMED. Named in the list;
+   every place that would explain one says the details are on their way
+   instead. Remove a slug once its words are written in featureDetails.ts
+   and its picture exists. */
+export const PENDING: ReadonlySet<string> = new Set<string>();

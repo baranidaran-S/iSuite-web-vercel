@@ -211,7 +211,10 @@ export function RecordCard({
                   New
                 </Stamp>
               </span>
-              <span className="block truncate text-[12px] font-semibold text-ink/70">{step.chat[0]?.text}</span>
+              {/* Wraps rather than truncates, as the last message does in
+                  "Good to know": cut, it read "Saturday check-up ku slot
+                  irukk…" on every screen under 1280px. */}
+              <span className="mt-0.5 block text-[12px] leading-snug font-semibold text-ink/70">{step.chat[0]?.text}</span>
             </span>
             <span className="flex flex-col items-end gap-1">
               <span className="text-[10.5px] font-bold text-[#0f7a40] tabular-nums">{step.time}</span>
@@ -336,7 +339,7 @@ export function RecordCard({
           <span className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-full bg-brand-tint px-2 py-1 text-[11.5px] font-bold text-brand">
               <SparkGlyph className="size-3" />
-              AI sales assistant
+              Sales AI Agent
             </span>
             <Arrow />
             <Stamp
@@ -436,10 +439,8 @@ export function RecordCard({
               </Stamp>
             ))}
           </span>
-          {/* The ad's own report: its lead and its won deal, counted side
-              by side. An arrow between them drew one enquiry followed from
-              ad to sale - beside Good to know's rule, at this very step,
-              that no report does that. */}
+          {/* The ad's own report, Ad return: its lead and its won deal,
+              counted side by side. */}
           <Stamp mode={mode} at={s(3)} className="mt-1.5 flex items-center gap-1.5 rounded-xl bg-[#f5f7fb] px-2 py-1.5 text-[11px] font-bold">
             <AdsMark className="size-3.5 shrink-0 text-[#1a4fb8]" />
             <span className="min-w-0 flex-1 leading-tight">Dental check-up ad</span>

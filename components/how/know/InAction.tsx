@@ -28,9 +28,9 @@ import { goodToKnow, type KnowNote } from "@/lib/content/howItWorks";
      the 24 hours       the clock runs out from the customer's last
                         message, free text locks, and the approved
                         template is what is left to send
-     the reports        three reports rise, each with its own chart, and a
-                        line reaching for the one that would follow an
-                        enquiry end to end breaks off - not in the product
+     the reports        three reports rise, each with its own chart, and
+                        Ad return joins what the ads cost to the deals
+                        they won - the wins as the team records them
 
    EACH SCENE GOES ROUND WHILE IT IS ON SCREEN (useLoop): it plays, holds
    its end long enough to read, fades and plays again - the scenes on
@@ -323,7 +323,7 @@ function Reports({ mode }: { mode: Reveal }) {
   const parts = [
     { t: "Dashboard", s: "The business at a glance", Icon: ReportsMark, bars: [45, 70, 55, 90] },
     { t: "Pipeline", s: "Deals by stage", Icon: PipelineMark, bars: [90, 65, 45, 28] },
-    { t: "Ads", s: "What each ad brought in", Icon: AdsMark, bars: [35, 70, 50, 80] },
+    { t: "Ad return", s: "What each ad cost and won", Icon: AdsMark, bars: [35, 70, 50, 80] },
   ];
   return (
     <div className="w-full">
@@ -352,20 +352,31 @@ function Reports({ mode }: { mode: Reveal }) {
           </span>
         ))}
       </div>
-      {/* The one report that would join them, first ad to final sale:
-          reached for, and not there. */}
+      {/* Ad return joins the two ends - what the ads cost, and the deals
+          they brought in - as far as the team has marked them won. It
+          was a line reaching for a report that joins them and breaking
+          off, "not in the product"; the app has that report. */}
       <div className="mt-4 flex items-center gap-2">
+        <span className={`shrink-0 rounded-lg bg-white px-2 py-1 text-[11px] font-extrabold ${CARD}`} style={rise(mode, 1.2)}>
+          Ad spend
+        </span>
         <span
-          className="h-0 flex-1 origin-left border-t-2 border-dashed border-[#0b6f80]/60"
+          className="h-0 flex-1 origin-left border-t-2 border-[#0b6f80]/60"
           style={{ scale: on ? "1 1" : "0 1", ...move(mode, 1.35, 0.5) }}
         />
-        <span className="grid size-6 shrink-0 place-items-center rounded-full bg-[#c0283f] text-white" style={pop(mode, 1.85)}>
-          <Cross className="size-3" />
+        <span className="grid size-6 shrink-0 place-items-center rounded-full bg-[#0f7a40] text-white" style={pop(mode, 1.85)}>
+          <CheckIcon className="size-3" />
         </span>
-        <span className="h-0 flex-1 border-t-2 border-dotted border-ink/15" />
+        <span
+          className="h-0 flex-1 origin-right border-t-2 border-[#0b6f80]/60"
+          style={{ scale: on ? "1 1" : "0 1", ...move(mode, 1.35, 0.5) }}
+        />
+        <span className={`shrink-0 rounded-lg bg-white px-2 py-1 text-[11px] font-extrabold ${CARD}`} style={rise(mode, 1.2)}>
+          Won deals
+        </span>
       </div>
       <p className="mt-2 text-center text-[12px] leading-snug font-bold text-ink/75" style={{ opacity: on ? 1 : 0, ...move(mode, 2.0, 0.4) }}>
-        First ad to final sale, in one report &middot; not in the product
+        Ad return &middot; counts the wins your team records
       </p>
     </div>
   );
@@ -471,10 +482,13 @@ function Rule({ note, index }: { note: KnowNote; index: number }) {
             (LOOK), so it runs to as many lines as its neighbour's. */}
         <p className={`mt-2 max-w-[31rem] text-[15px] leading-relaxed text-ink/75 ${look.measure}`}>{note.line}</p>
         {/* At the foot from 1024, level across a row of cards whose
-            words run to different lengths. */}
-        <div className="flex pt-4 lg:mt-auto lg:pt-5">
-          <FeatureLink slug={note.feature} />
-        </div>
+            words run to different lengths - where the rule has a feature
+            on the list to point to. */}
+        {note.feature && (
+          <div className="flex pt-4 lg:mt-auto lg:pt-5">
+            <FeatureLink slug={note.feature} />
+          </div>
+        )}
       </div>
     </li>
   );

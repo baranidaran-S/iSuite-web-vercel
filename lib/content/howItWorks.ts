@@ -14,16 +14,18 @@ import type { FeatureSlug } from "@/lib/content/featureDetails";
    on /features. The team is Sara and Ravi, who work that inbox on both.
    No pronoun is used for anyone in the journey.
 
-   CLAIM DISCIPLINE, AS EVERYWHERE: "AI sales assistant", never a promise
-   that it replaces anyone; "can be booked", "can be assigned", "where
+   CLAIM DISCIPLINE, AS EVERYWHERE: the AI is the Sales AI Agent - the
+   app's own feature list's name, since 2026-09-30 - never a promise that
+   it replaces anyone; "can be booked", "can be assigned", "where
    configured" kept wherever §19 says them; no figures.
 
-   EVERY STEP AND EVERY RULE LINKS TO ITS FEATURE: `feature` is the slug
-   of the /features section that explains it (§27, internal linking), so
-   /features#appointments. Each is the one section whose own words cover
-   the step - the hand-over to Sara is the assistant's, whose hand-off
-   rules name payments; the 24-hour rule is Follow-ups', which states it
-   for exactly the step it is pinned to.
+   A STEP OR A RULE LINKS TO ITS FEATURE: `feature` is the slug of the
+   /features section that explains it (§27, internal linking), so
+   /features#booking-management. Each is the one section whose own words
+   cover the step - the hand-over to Sara is the Sales AI Agent's, whose
+   hand-off rules route it; the 24-hour rule is Follow-up Management's. The
+   ad click, the reports and Meta hearing back have no feature on the
+   client's list, so those steps link nowhere.
    ========================================================================== */
 
 export const howItWorksHero = {
@@ -37,7 +39,7 @@ export const howItWorksHero = {
     { text: "every ", accent: "enquiry." },
   ],
 
-  lead: "Follow one enquiry from the ad a customer clicks to a deal won or lost: what the AI sales assistant does, where your team takes over, and what iSuite AI keeps on record.",
+  lead: "Follow one enquiry from the ad a customer clicks to a deal won or lost: what the Sales AI Agent does, where your team takes over, and what iSuite AI keeps on record.",
 } as const;
 
 /* ---- THE CAST ---------------------------------------------------------------
@@ -63,7 +65,7 @@ export const cast: readonly {
   },
   {
     id: "assistant",
-    role: "AI sales assistant",
+    role: "Sales AI Agent",
     title: "Replies first",
     line: "Answers in the customer's language from your prices and rules, asks your questions, and can book the visit.",
     passes: "Replied in Tanglish",
@@ -141,8 +143,9 @@ export type Step = {
   record: readonly string[];
   /* Where the enquiry changes hands in a way worth naming. */
   handover?: string;
-  /* The /features section the step's explaining line links to. */
-  feature: FeatureSlug;
+  /* The /features section the step's explaining line links to - none
+     where no feature on the list covers the step. */
+  feature?: FeatureSlug;
 };
 
 export const steps: readonly Step[] = [
@@ -156,7 +159,6 @@ export const steps: readonly Step[] = [
     time: "09:26",
     chat: [{ from: "customer", text: "Saturday check-up ku slot irukka?" }],
     record: ["New conversation · WhatsApp"],
-    feature: "lead-capture",
   },
   {
     n: 2,
@@ -168,19 +170,19 @@ export const steps: readonly Step[] = [
     time: "09:26",
     chat: [],
     record: ["Contact created", "Deal · New Enquiry", "Source: Dental check-up ad"],
-    feature: "one-inbox",
+    feature: "unified-inbox",
   },
   {
     n: 3,
     phase: "answer",
     actor: "assistant",
-    title: "The assistant replies in Tanglish",
+    title: "The agent replies in Tanglish",
     line: "In the language Anand wrote in, from the prices, timings and rules you gave it - so the customer has an answer instead of a wait.",
     day: "Mon",
     time: "09:26",
     chat: [{ from: "business", text: "Vanakkam Anand! Saturday-la slots irukku." }],
-    record: ["Replied by the AI sales assistant"],
-    feature: "ai-sales-assistant",
+    record: ["Replied by the Sales AI Agent"],
+    feature: "sales-ai-agent",
   },
   {
     n: 4,
@@ -195,7 +197,7 @@ export const steps: readonly Step[] = [
       { from: "customer", text: "Aamaa, first visit. Anna Nagar." },
     ],
     record: ["Asked: first visit, branch"],
-    feature: "ai-sales-assistant",
+    feature: "sales-ai-agent",
   },
   {
     n: 5,
@@ -207,19 +209,19 @@ export const steps: readonly Step[] = [
     time: "09:28",
     chat: [],
     record: ["First visit", "Branch: Anna Nagar", "Deal → Qualified"],
-    feature: "contacts",
+    feature: "contacts-management",
   },
   {
     n: 6,
     phase: "book",
     actor: "assistant",
     title: "A visit is booked",
-    line: "The assistant checks your calendar and can book the time that suits - Saturday at 11:00 - with a reminder before it.",
+    line: "The agent checks your calendar and can book the time that suits - Saturday at 11:00 - with a reminder before it.",
     day: "Mon",
     time: "09:30",
     chat: [{ from: "business", text: "Booked: Saturday, 11:00 at Anna Nagar. We'll send a reminder." }],
     record: ["Calendar · Sat 11:00 · Anna Nagar", "Deal → Appointment Booked"],
-    feature: "appointments",
+    feature: "booking-management",
   },
   {
     n: 7,
@@ -235,7 +237,7 @@ export const steps: readonly Step[] = [
     ],
     record: ["Assigned to Sara · payment question"],
     handover: "Handed to Sara",
-    feature: "ai-sales-assistant",
+    feature: "sales-ai-agent",
   },
   {
     n: 8,
@@ -247,7 +249,7 @@ export const steps: readonly Step[] = [
     time: "11:20",
     chat: [{ from: "business", text: "Hi Anand, Sara here - yes, we can go through EMI at your visit." }],
     record: ["Note for Ravi: asked about EMI"],
-    feature: "contacts",
+    feature: "contacts-management",
   },
   {
     n: 9,
@@ -258,7 +260,7 @@ export const steps: readonly Step[] = [
        long gone: the follow-up can only be an approved template - the
        rule Good to know pins to this step. WhatsApp shows a template as
        an ordinary message, so it is the team's side that says so. */
-    line: "Sara set it on Monday, and on Thursday it is on Sara's due list. Anand last wrote on Monday, so the follow-up goes as an approved template. If a customer goes quiet, the assistant can follow up the same way.",
+    line: "Sara set it on Monday, and on Thursday it is on Sara's due list. Anand last wrote on Monday, so the follow-up goes as an approved template. If a customer goes quiet, the agent can follow up the same way.",
     day: "Thu",
     time: "10:00",
     chat: [
@@ -266,7 +268,7 @@ export const steps: readonly Step[] = [
       { from: "customer", text: "Yes, varen!" },
     ],
     record: ["Follow-up · Thu 10:00 · Sara · done", "Sent as an approved template"],
-    feature: "follow-ups",
+    feature: "follow-up-management",
   },
   {
     n: 10,
@@ -278,7 +280,7 @@ export const steps: readonly Step[] = [
     time: "11:45",
     chat: [],
     record: ["Deal → Discussion · Ravi"],
-    feature: "sales-pipeline",
+    feature: "sales-pipeline-management",
   },
   {
     n: 11,
@@ -290,21 +292,21 @@ export const steps: readonly Step[] = [
     time: "12:10",
     chat: [],
     record: ["Won · went ahead with the treatment plan"],
-    feature: "sales-pipeline",
+    feature: "sales-pipeline-management",
   },
   {
     n: 12,
     phase: "learn",
     actor: "system",
     title: "It shows in your reports",
-    /* Each report counts its own part - Good to know's rule at this step
-       is that none follows the enquiry end to end. */
+    /* The ad's own report is Ad return, which sets what the ad cost
+       against the deals it brought in - Good to know's rule at this step
+       is that it counts only the wins the team records. */
     line: "The dashboard counts the new contact, the booking and the win, and the Dental check-up ad's own report counts its lead and its won deal.",
     day: "Sat",
     time: "12:10",
     chat: [],
     record: ["Dashboard: new contacts, bookings, wins", "Ad: lead and won deal"],
-    feature: "reports",
   },
   {
     n: 13,
@@ -317,16 +319,16 @@ export const steps: readonly Step[] = [
     chat: [],
     record: ["Sent to Meta: qualified lead, won deal"],
     handover: "Back to Meta",
-    feature: "meta-ads",
   },
 ];
 
 /* ---- GOOD TO KNOW -------------------------------------------------------------
    The rules and limits the journey above depends on, each pinned to the
-   step it applies to. Every line is the requirements' own: §22 and §15
+   step it applies to. The lines are the requirements' own - §22 and §15
    (the ad account, charges separate), §9 and §23 (no calendar sync, no
-   automatic no-show detection, no single end-to-end report) and §14 (the
-   24-hour window).
+   automatic no-show detection) and §14 (the 24-hour window) - except the
+   reports rule: §23 said no report follows an enquiry end to end, and the
+   app has Ad return, which sets an ad's cost against the deals it won.
 
    THE SAME TRUTHS /features STATES FEATURE BY FEATURE, told here by where
    in one enquiry's journey they bite - which is what this page is for. A
@@ -352,8 +354,9 @@ export const goodToKnow: {
     steps: readonly number[];
     title: string;
     line: string;
-    /* The /features section that states the same rule - see the top. */
-    feature: FeatureSlug;
+    /* The /features section that states the same rule - see the top.
+       None where no feature on the list covers it. */
+    feature?: FeatureSlug;
   }[];
 } = {
   eyebrow: "Good to know",
@@ -368,7 +371,7 @@ export const goodToKnow: {
       steps: [1],
       title: "The ad runs on your own ad account",
       line: "Ads run on your own Meta ad account, which Meta must approve for these features. Meta's ad charges are separate from MnT Future's.",
-      feature: "meta-ads",
+      feature: "forms",
     },
     {
       id: "booking",
@@ -376,7 +379,7 @@ export const goodToKnow: {
       steps: [6],
       title: "Bookings stay in iSuite AI",
       line: "Visits go into iSuite AI's own calendars - there is no Google Calendar or Outlook sync. Your team marks a no-show; it is not detected automatically.",
-      feature: "appointments",
+      feature: "booking-management",
     },
     {
       id: "window",
@@ -384,15 +387,18 @@ export const goodToKnow: {
       steps: [9],
       title: "After 24 hours, only templates",
       line: "Once 24 hours pass after a customer's last message, WhatsApp allows only an approved template. Meta bills the messaging separately.",
-      feature: "follow-ups",
+      feature: "follow-up-management",
     },
     {
       id: "reports",
       label: "Step 12",
       steps: [12],
-      title: "Counted in parts, not end to end",
-      line: "The dashboard, the pipeline and each ad have their own reports, but none follows an enquiry from first ad to final sale in one view.",
-      feature: "reports",
+      /* It was "Counted in parts, not end to end": §23 said no report
+         follows an enquiry from first ad to final sale. The app has one -
+         Ad return, under Reports - so the rule is the limit that report
+         does have. */
+      title: "Ad return counts the wins you record",
+      line: "Ad return sets what your Meta ads cost against the deals they brought in, so it can only count the wins your team records.",
     },
   ],
 };
@@ -461,8 +467,8 @@ export const gettingStarted: {
     },
     {
       id: "business",
-      title: "What the assistant should know",
-      line: "Your business information for setting up the AI sales assistant: your services, packages, prices and policies.",
+      title: "What the agent should know",
+      line: "Your business information for setting up the Sales AI Agent: your services, packages, prices and policies.",
       steps: [3, 4],
     },
     {
@@ -489,7 +495,7 @@ export const gettingStarted: {
   stepNames: {
     1: "A customer taps your ad",
     2: "It lands in your inbox",
-    3: "The assistant replies",
+    3: "The agent replies",
     4: "It asks your questions",
     6: "A visit is booked",
     7: "Your team takes over",

@@ -1,21 +1,22 @@
 import { CheckIcon, channelIcons } from "@/components/ui/icons";
 import {
   AdsMark,
+  AnalyticsAgentMark,
   AutomationMark,
   BroadcastMark,
   CalendarMark,
-  CaptureMark,
-  CommerceMark,
   ContactsMark,
+  EmailMark,
   FollowUpMark,
+  FormsMark,
   InboxMark,
+  LeadsMark,
   OperationsMark,
   PipelineMark,
-  ReportsMark,
-  TeamMark,
+  QuoteMark,
 } from "@/components/ui/featureIcons";
 import { AVATAR_TINTS } from "@/components/features/minis/parts";
-import { HandGlyph, RepeatGlyph, SparkGlyph } from "@/components/features/kit/glyphs";
+import { HandGlyph, SparkGlyph } from "@/components/features/kit/glyphs";
 import { features } from "@/lib/content/features";
 import type { FeatureSlug } from "@/lib/content/featureDetails";
 import { unanswered } from "@/lib/content/queues";
@@ -27,13 +28,11 @@ import { unanswered } from "@/lib/content/queues";
    where it goes, what comes out - drawn as a few nodes and the wires
    between them, with the traffic travelling the wires.
 
-   ONE PICTURE PER KIND OF THING, AND THIS IS THE THIRD KIND. The hero
-   shows the product's STRUCTURE, four layers taken apart. Each feature
-   shows its SCREEN. This shows the MOVEMENT. The chapter openings were
-   first the hero's stack again with one layer lit, and that was the same
-   picture twice in a row - the hero ends on a stack and the next thing on
-   the page was another one - four more times down the page, with an inbox
-   drawn on it directly above the section that draws the inbox in full.
+   ONE PICTURE PER KIND OF THING. The hero shows the product at work - a
+   video, still being made. Each feature shows its SCREEN, the real
+   product's. This shows the MOVEMENT. The chapter openings were first the
+   hero's old exploded stack again with one layer lit, and that was the
+   same picture twice in a row.
 
    NO INTERFACE IN IT. Nodes carry a mark and a name, never a screen, so
    nothing here repeats the feature sections underneath.
@@ -289,19 +288,25 @@ function Hub({
 /* ==========================================================================
    01 CONVERSATIONS
    --------------------------------------------------------------------------
-   Four channels in, one inbox, and two ways out: the assistant's reply,
-   and what it hands to the team. The first half is One Inbox and the
-   second is the AI Sales Assistant, which is how the two feature cards
+   Four channels in, one inbox, and two ways out: the agent's reply, and
+   what it hands to the team. The channels and the inbox are the Unified
+   Inbox; the website's channel is also the Website AI Chat Widget's; the
+   way out is the Sales AI Agent's - which is how the three feature cards
    beside it split the picture when they are pointed at.
 
-   The labels are claims and are held to the page's rules: "your own
-   number" is §6's, and "takes what it hands over" is §7's handoff - the
-   team is not drawn as a fallback for an assistant that failed.
+   The labels are claims and are held to the page's rules: "takes what it
+   hands over" is the agent's handoff - the team is not drawn as a
+   fallback for an agent that failed.
    ========================================================================== */
 
-const INBOX: readonly FeatureSlug[] = ["one-inbox"];
-const ASSISTANT: readonly FeatureSlug[] = ["ai-sales-assistant"];
-const BOTH: readonly FeatureSlug[] = ["one-inbox", "ai-sales-assistant"];
+const INBOX: readonly FeatureSlug[] = ["unified-inbox"];
+/* The website's channel is the chat widget's, and lights for it too. */
+const WEB: readonly FeatureSlug[] = ["unified-inbox", "website-ai-chat-widget"];
+/* The agent's replies go out for the agent, and for the widget it answers. */
+const ASSISTANT: readonly FeatureSlug[] = ["sales-ai-agent", "website-ai-chat-widget"];
+/* The team takes what the agent hands over, and works the inbox. */
+const TEAM_OUT: readonly FeatureSlug[] = ["sales-ai-agent", "unified-inbox"];
+const ALL: readonly FeatureSlug[] = ["unified-inbox", "website-ai-chat-widget", "sales-ai-agent"];
 
 /* In the order of `unanswered`, so channel i is the channel person i wrote
    on - WhatsApp, Instagram, Messenger, website. */
@@ -322,6 +327,8 @@ const WIRE_FROM: Record<(typeof CHANNELS)[number]["id"], string> = {
 };
 
 const LANGS = features.language.turns;
+
+const channelParts = (i: number) => (CHANNELS[i].id === "web" ? WEB : INBOX);
 
 function ChannelTile({
   id,
@@ -372,7 +379,7 @@ function Reply({ label }: { label: string }) {
 
 function Handed() {
   return (
-    <span className="flex h-[26px] items-center gap-1 rounded-full bg-[#fff6ea] px-2.5 text-[12px] font-bold whitespace-nowrap text-[#a16326] shadow-[0_0_18px_2px_rgba(255,236,210,0.5)]">
+    <span className="flex h-[26px] items-center gap-1 rounded-full bg-[#fff6ea] px-2.5 text-[12px] font-bold whitespace-nowrap text-[#8a5212] shadow-[0_0_18px_2px_rgba(255,236,210,0.5)]">
       <HandGlyph className="size-3.5" />
       Payment
     </span>
@@ -414,7 +421,7 @@ function AiLabel({ stacked = false }: { stacked?: boolean }) {
       </span>
       <span>
         <span className="block text-[16px] leading-tight font-extrabold text-white">
-          AI sales assistant
+          Sales AI Agent
         </span>
         <span className="mt-1 block text-[12.5px] leading-snug text-white/70">
           Replies in their language
@@ -474,7 +481,7 @@ const wideIn: Wire[] = SRC.ys.map((y, i) => {
     y1: y,
     x2,
     y2: HUB.cy,
-    parts: INBOX,
+    parts: channelParts(i),
   };
 });
 
@@ -489,7 +496,7 @@ const wideOut: Wire[] = OUT.ys.map((y, i) => {
     y1: HUB.cy,
     x2,
     y2: y,
-    parts: ASSISTANT,
+    parts: i === 0 ? ASSISTANT : TEAM_OUT,
   };
 });
 
@@ -502,8 +509,6 @@ function ConversationsWide({
   deep: string;
   glow: string;
 }) {
-  const inboxOn = lights(INBOX, lit);
-  const aiOn = lights(ASSISTANT, lit);
   return (
     <Box w={WIDE.w} h={WIDE.h} className={WIDE_SHOWN}>
       <Wires w={WIDE.w} h={WIDE.h} glow={glow} lit={lit} wires={[...wideIn, ...wideOut]} />
@@ -515,7 +520,7 @@ function ConversationsWide({
           y={SRC.ys[i] - SRC.h / 2}
           w={SRC.w}
           h={SRC.h}
-          on={inboxOn}
+          on={lights(channelParts(i), lit)}
         >
           <div className="flex h-full items-center gap-3 px-3.5">
             <ChannelTile id={c.id} size={42} />
@@ -531,19 +536,19 @@ function ConversationsWide({
         </Node>
       ))}
 
-      <Hub cx={HUB.cx} cy={HUB.cy} r={HUB.r} on={lights(BOTH, lit)}>
+      <Hub cx={HUB.cx} cy={HUB.cy} r={HUB.r} on={lights(ALL, lit)}>
         <HubLabel deep={deep} />
       </Hub>
 
-      <Node x={OUT.x} y={OUT.ys[0] - OUT.h / 2} w={OUT.w} h={OUT.h} on={aiOn}>
+      <Node x={OUT.x} y={OUT.ys[0] - OUT.h / 2} w={OUT.w} h={OUT.h} on={lights(ASSISTANT, lit)}>
         <AiLabel />
       </Node>
-      <Node x={OUT.x} y={OUT.ys[1] - OUT.h / 2} w={OUT.w} h={OUT.h} on={aiOn}>
+      <Node x={OUT.x} y={OUT.ys[1] - OUT.h / 2} w={OUT.w} h={OUT.h} on={lights(TEAM_OUT, lit)}>
         <TeamLabel />
       </Node>
 
       {wideIn.map((wire, i) => (
-        <Traveller key={wire.id} d={wire.d} delay={i * 0.7} lit={lit} parts={INBOX}>
+        <Traveller key={wire.id} d={wire.d} delay={i * 0.7} lit={lit} parts={channelParts(i)}>
           <Sender i={i} />
         </Traveller>
       ))}
@@ -560,7 +565,7 @@ function ConversationsWide({
           <Reply label={t.label} />
         </Traveller>
       ))}
-      <Traveller d={wideOut[1].d} delay={2.2} dur={5.6} lit={lit} parts={ASSISTANT}>
+      <Traveller d={wideOut[1].d} delay={2.2} dur={5.6} lit={lit} parts={TEAM_OUT}>
         <Handed />
       </Traveller>
     </Box>
@@ -584,7 +589,7 @@ const tallIn: Wire[] = TSRC.xs.map((x, i) => {
     y1,
     x2: THUB.cx,
     y2,
-    parts: INBOX,
+    parts: channelParts(i),
   };
 });
 
@@ -599,7 +604,7 @@ const tallOut: Wire[] = TOUT.xs.map((x, i) => {
     y1,
     x2,
     y2: TOUT.top,
-    parts: ASSISTANT,
+    parts: i === 0 ? ASSISTANT : TEAM_OUT,
   };
 });
 
@@ -612,8 +617,6 @@ function ConversationsTall({
   deep: string;
   glow: string;
 }) {
-  const inboxOn = lights(INBOX, lit);
-  const aiOn = lights(ASSISTANT, lit);
   return (
     <Box w={TALL.w} h={TALL.h} className={TALL_SHOWN}>
       <Wires w={TALL.w} h={TALL.h} glow={glow} lit={lit} wires={[...tallIn, ...tallOut]} />
@@ -626,7 +629,7 @@ function ConversationsTall({
             left: TSRC.xs[i] - 50,
             top: TSRC.y - TSRC.size / 2,
             width: 100,
-            opacity: inboxOn ? 1 : 0.28,
+            opacity: lights(channelParts(i), lit) ? 1 : 0.28,
           }}
         >
           <span
@@ -639,18 +642,18 @@ function ConversationsTall({
         </div>
       ))}
 
-      <Hub cx={THUB.cx} cy={THUB.cy} r={THUB.r} on={lights(BOTH, lit)}>
+      <Hub cx={THUB.cx} cy={THUB.cy} r={THUB.r} on={lights(ALL, lit)}>
         <HubLabel deep={deep} small />
       </Hub>
 
       {TOUT.xs.map((x, i) => (
-        <Node key={x} x={x} y={TOUT.top} w={TOUT.w} h={TOUT.h} on={aiOn}>
+        <Node key={x} x={x} y={TOUT.top} w={TOUT.w} h={TOUT.h} on={lights(i === 0 ? ASSISTANT : TEAM_OUT, lit)}>
           {i === 0 ? <AiLabel stacked /> : <TeamLabel stacked />}
         </Node>
       ))}
 
       {tallIn.map((wire, i) => (
-        <Traveller key={wire.id} d={wire.d} delay={i * 0.7} lit={lit} parts={INBOX}>
+        <Traveller key={wire.id} d={wire.d} delay={i * 0.7} lit={lit} parts={channelParts(i)}>
           <Sender i={i} />
         </Traveller>
       ))}
@@ -667,7 +670,7 @@ function ConversationsTall({
           <Reply label={t.label} />
         </Traveller>
       ))}
-      <Traveller d={tallOut[1].d} delay={2.2} dur={5.6} lit={lit} parts={ASSISTANT}>
+      <Traveller d={tallOut[1].d} delay={2.2} dur={5.6} lit={lit} parts={TEAM_OUT}>
         <Handed />
       </Traveller>
     </Box>
@@ -828,52 +831,29 @@ function tallOuts(
 /* ==========================================================================
    02 SALES
    --------------------------------------------------------------------------
-   An enquiry becomes a contact, the contact becomes a deal on the board,
-   and the deal sends out the two things that move it along - a follow-up
-   with a date, and an appointment in the calendar. Four features, four
-   nodes, in the order a lead meets them.
+   A lead becomes a contact, the contact becomes a deal on a pipeline, and
+   the deal sends out the three things that move it along - a follow-up
+   with a date, a booking in the calendar, and a quotation. Six features,
+   six nodes, in the order a lead meets them.
 
-   What travels is Anand's own progress: his initial arrives, his contact
-   card moves on to the board, and the board sends a reminder and a
-   booking.
+   What travels is one customer's own progress: their initial arrives,
+   their contact card moves on to the pipeline, and the pipeline sends a
+   reminder, a booking and a quotation.
    ========================================================================== */
 
-const CONTACTS: readonly FeatureSlug[] = ["contacts"];
-const PIPELINE: readonly FeatureSlug[] = ["sales-pipeline"];
-const FOLLOWS: readonly FeatureSlug[] = ["follow-ups"];
-const BOOKINGS: readonly FeatureSlug[] = ["appointments"];
+const LEADS: readonly FeatureSlug[] = ["leads-management"];
+const CONTACTS: readonly FeatureSlug[] = ["contacts-management"];
+const PIPELINE: readonly FeatureSlug[] = ["sales-pipeline-management"];
+const FOLLOWS: readonly FeatureSlug[] = ["follow-up-management"];
+const BOOKINGS: readonly FeatureSlug[] = ["booking-management"];
+const QUOTES: readonly FeatureSlug[] = ["quotation-invoice"];
 
-function EnquiryNode({ stacked = false }: { stacked?: boolean }) {
-  return (
-    <div
-      className={`flex h-full items-center gap-3 px-3.5 ${
-        stacked ? "flex-col justify-center gap-2 text-center" : ""
-      }`}
-    >
-      <span className={`grid shrink-0 gap-1 ${stacked ? "grid-cols-4" : "grid-cols-2"}`}>
-        {(["wa", "ig", "fb", "web"] as const).map((c) => {
-          const Icon = channelIcons[c];
-          return (
-            <span
-              key={c}
-              className={`grid place-items-center rounded-md bg-white shadow-[0_6px_14px_-6px_rgba(2,8,24,0.8)] ${stacked ? "size-[24px]" : "size-[18px]"}`}
-            >
-              <Icon className={stacked ? "size-3.5" : "size-3"} style={{ color: `var(--color-${c})` }} />
-            </span>
-          );
-        })}
-      </span>
-      <span className="min-w-0">
-        <span className="block text-[16px] leading-tight font-extrabold text-white">
-          New enquiry
-        </span>
-        <span className="mt-0.5 block text-[12.5px] leading-snug text-white/70">
-          From any channel
-        </span>
-      </span>
-    </div>
-  );
-}
+/* The three ways out of the pipeline, in order. */
+const SALES_OUTS = [
+  { parts: FOLLOWS, Mark: FollowUpMark, title: "Follow-up", line: "A date and an owner" },
+  { parts: BOOKINGS, Mark: CalendarMark, title: "Booking", line: "In your calendar" },
+  { parts: QUOTES, Mark: QuoteMark, title: "Quotation", line: "Sent, accepted, billed" },
+] as const;
 
 /* The board, drawn as its stages - four steps with a deal on the second.
    The words are the pipeline's own heading cut to fit a circle: "A deal
@@ -891,14 +871,12 @@ function StageDots() {
   );
 }
 
-/* ---- wide: every node stacked, the way the two on the right always were.
-   Side by side, "New enquiry" had 84px beside its four channel marks and
-   broke into four lines. */
+/* ---- wide: every node stacked. Three ways out, down the right. */
 const SW = { w: 840, h: 520 } as const;
 const S_ENQ = { x: 0, w: 158, h: 132, cy: 260 } as const;
 const S_CON = { x: 222, w: 158, h: 132, cy: 260 } as const;
-const S_HUB = { cx: 538, cy: 260, r: 96 } as const;
-const S_OUT = { x: 690, w: 150, h: 116, ys: [128, 392] } as const;
+const S_HUB = { cx: 530, cy: 260, r: 92 } as const;
+const S_OUT = { x: 684, w: 156, h: 104, ys: [88, 260, 432] } as const;
 
 const salesWide: Wire[] = [
   {
@@ -909,7 +887,7 @@ const salesWide: Wire[] = [
     y1: S_ENQ.cy,
     x2: S_CON.x,
     y2: S_CON.cy,
-    parts: CONTACTS,
+    parts: [...LEADS, ...CONTACTS],
   },
   {
     id: "flow-sales-wide-con",
@@ -922,56 +900,66 @@ const salesWide: Wire[] = [
     parts: PIPELINE,
   },
   ...S_OUT.ys.map((y, i) => {
-    const x1 = S_HUB.cx + S_HUB.r * 0.7;
-    const y1 = S_HUB.cy + (i === 0 ? -1 : 1) * S_HUB.r * 0.7;
+    const dir = i - 1;
+    const x1 = S_HUB.cx + S_HUB.r * (dir === 0 ? 1 : 0.7);
+    const y1 = S_HUB.cy + dir * S_HUB.r * 0.7;
     return {
       id: `flow-sales-wide-out-${i}`,
-      d: `M ${x1} ${y1} C ${x1 + 40} ${y1 + (i === 0 ? -40 : 40)}, ${S_OUT.x - 40} ${y}, ${S_OUT.x} ${y}`,
+      d: `M ${x1} ${y1} C ${x1 + 40} ${y1 + dir * 40}, ${S_OUT.x - 40} ${y}, ${S_OUT.x} ${y}`,
       from: "#ffffff",
       x1,
       y1,
       x2: S_OUT.x,
       y2: y,
-      parts: i === 0 ? FOLLOWS : BOOKINGS,
+      parts: SALES_OUTS[i].parts,
     };
   }),
 ];
+
+function LeadNode({ deep, stacked = false }: { deep: string; stacked?: boolean }) {
+  return (
+    <NodeText
+      stacked={stacked}
+      tile={<Tile color={deep}><LeadsMark className="size-5" /></Tile>}
+      title="Lead"
+      line="A business you found"
+    />
+  );
+}
 
 function SalesWide({ lit, deep, glow }: { lit: Lit; deep: string; glow: string }) {
   return (
     <Box w={SW.w} h={SW.h} className={WIDE_SHOWN}>
       <Wires w={SW.w} h={SW.h} glow={glow} lit={lit} wires={salesWide} />
 
-      <Node x={S_ENQ.x} y={S_ENQ.cy - S_ENQ.h / 2} w={S_ENQ.w} h={S_ENQ.h} on={lights(CONTACTS, lit)}>
-        <EnquiryNode stacked />
+      <Node x={S_ENQ.x} y={S_ENQ.cy - S_ENQ.h / 2} w={S_ENQ.w} h={S_ENQ.h} on={lights(LEADS, lit)}>
+        <LeadNode deep={deep} stacked />
       </Node>
       <Node x={S_CON.x} y={S_CON.cy - S_CON.h / 2} w={S_CON.w} h={S_CON.h} on={lights(CONTACTS, lit)}>
         <NodeText stacked tile={<Tile color={deep}><ContactsMark className="size-5" /></Tile>} title="Contact" line="One record, your fields" />
       </Node>
       <Hub cx={S_HUB.cx} cy={S_HUB.cy} r={S_HUB.r} on={lights(PIPELINE, lit)}>
-        <HubText deep={deep} mark={<PipelineMark className="size-7" />} title="Your pipeline" line="A place for every lead">
+        <HubText deep={deep} mark={<PipelineMark className="size-7" />} title="Your pipeline" line="A place for every deal">
           <StageDots />
         </HubText>
       </Hub>
-      <Node x={S_OUT.x} y={S_OUT.ys[0] - S_OUT.h / 2} w={S_OUT.w} h={S_OUT.h} on={lights(FOLLOWS, lit)}>
-        <NodeText stacked tile={<Tile color={deep}><FollowUpMark className="size-5" /></Tile>} title="Follow-up" line="A date and an owner" />
-      </Node>
-      <Node x={S_OUT.x} y={S_OUT.ys[1] - S_OUT.h / 2} w={S_OUT.w} h={S_OUT.h} on={lights(BOOKINGS, lit)}>
-        <NodeText stacked tile={<Tile color={deep}><CalendarMark className="size-5" /></Tile>} title="Appointment" line="In your calendar" />
-      </Node>
+      {SALES_OUTS.map((o, i) => (
+        <Node key={o.title} x={S_OUT.x} y={S_OUT.ys[i] - S_OUT.h / 2} w={S_OUT.w} h={S_OUT.h} on={lights(o.parts, lit)}>
+          <NodeText stacked tile={<Tile color={deep}><o.Mark className="size-5" /></Tile>} title={o.title} line={o.line} />
+        </Node>
+      ))}
 
-      <Traveller d={salesWide[0].d} delay={0} dur={3.2} quick lit={lit} parts={CONTACTS}>
+      <Traveller d={salesWide[0].d} delay={0} dur={3.2} quick lit={lit} parts={[...LEADS, ...CONTACTS]}>
         <Sender i={0} />
       </Traveller>
       <Traveller d={salesWide[1].d} delay={0.8} dur={3.2} quick lit={lit} parts={PIPELINE}>
         <Pip color={deep}><ContactsMark className="size-3.5" /></Pip>
       </Traveller>
-      <Traveller d={salesWide[2].d} delay={1.6} dur={3.2} quick lit={lit} parts={FOLLOWS}>
-        <Pip color={deep}><FollowUpMark className="size-3.5" /></Pip>
-      </Traveller>
-      <Traveller d={salesWide[3].d} delay={2.4} dur={3.2} quick lit={lit} parts={BOOKINGS}>
-        <Pip color={deep} brand><CalendarMark className="size-3.5" /></Pip>
-      </Traveller>
+      {SALES_OUTS.map((o, i) => (
+        <Traveller key={o.title} d={salesWide[2 + i].d} delay={1.6 + i * 0.8} dur={3.2} quick lit={lit} parts={o.parts}>
+          <Pip color={deep} brand={i === 1}><o.Mark className="size-3.5" /></Pip>
+        </Traveller>
+      ))}
     </Box>
   );
 }
@@ -981,7 +969,7 @@ const ST = { w: 420, h: 640 } as const;
 const ST_ENQ = { x: 90, y: 16, w: 240, h: 76 } as const;
 const ST_CON = { x: 90, y: 150, w: 240, h: 76 } as const;
 const ST_HUB = { cx: 210, cy: 344, r: 78 } as const;
-const ST_OUT = { top: 494, h: 128, w: 194, xs: [11, 215] } as const;
+const ST_OUT = { top: 494, h: 132, w: 128, xs: [6, 146, 286] } as const;
 
 const salesTall: Wire[] = [
   {
@@ -992,7 +980,7 @@ const salesTall: Wire[] = [
     y1: ST_ENQ.y + ST_ENQ.h,
     x2: 210,
     y2: ST_CON.y,
-    parts: CONTACTS,
+    parts: [...LEADS, ...CONTACTS],
   },
   {
     id: "flow-sales-tall-con",
@@ -1009,7 +997,7 @@ const salesTall: Wire[] = [
     ST_OUT.xs.map((x) => x + ST_OUT.w / 2),
     ST_OUT.top,
     ST_HUB,
-    [FOLLOWS, BOOKINGS],
+    SALES_OUTS.map((o) => o.parts),
   ),
 ];
 
@@ -1018,39 +1006,34 @@ function SalesTall({ lit, deep, glow }: { lit: Lit; deep: string; glow: string }
     <Box w={ST.w} h={ST.h} className={TALL_SHOWN}>
       <Wires w={ST.w} h={ST.h} glow={glow} lit={lit} wires={salesTall} />
 
-      <Node x={ST_ENQ.x} y={ST_ENQ.y} w={ST_ENQ.w} h={ST_ENQ.h} on={lights(CONTACTS, lit)}>
-        <EnquiryNode />
+      <Node x={ST_ENQ.x} y={ST_ENQ.y} w={ST_ENQ.w} h={ST_ENQ.h} on={lights(LEADS, lit)}>
+        <LeadNode deep={deep} />
       </Node>
       <Node x={ST_CON.x} y={ST_CON.y} w={ST_CON.w} h={ST_CON.h} on={lights(CONTACTS, lit)}>
         <NodeText tile={<Tile color={deep}><ContactsMark className="size-5" /></Tile>} title="Contact" line="One record, your fields" />
       </Node>
       <Hub cx={ST_HUB.cx} cy={ST_HUB.cy} r={ST_HUB.r} on={lights(PIPELINE, lit)}>
-        <HubText small deep={deep} mark={<PipelineMark className="size-6" />} title="Your pipeline" line="A place for every lead">
+        <HubText small deep={deep} mark={<PipelineMark className="size-6" />} title="Your pipeline" line="A place for every deal">
           <StageDots />
         </HubText>
       </Hub>
-      {ST_OUT.xs.map((x, i) => (
-        <Node key={x} x={x} y={ST_OUT.top} w={ST_OUT.w} h={ST_OUT.h} on={lights(i === 0 ? FOLLOWS : BOOKINGS, lit)}>
-          {i === 0 ? (
-            <NodeText stacked tile={<Tile color={deep}><FollowUpMark className="size-5" /></Tile>} title="Follow-up" line="A date and an owner" />
-          ) : (
-            <NodeText stacked tile={<Tile color={deep}><CalendarMark className="size-5" /></Tile>} title="Appointment" line="In your calendar" />
-          )}
+      {SALES_OUTS.map((o, i) => (
+        <Node key={o.title} x={ST_OUT.xs[i]} y={ST_OUT.top} w={ST_OUT.w} h={ST_OUT.h} on={lights(o.parts, lit)}>
+          <NodeText stacked tile={<Tile color={deep}><o.Mark className="size-5" /></Tile>} title={o.title} line={o.line} />
         </Node>
       ))}
 
-      <Traveller d={salesTall[0].d} delay={0} dur={3.2} quick lit={lit} parts={CONTACTS}>
+      <Traveller d={salesTall[0].d} delay={0} dur={3.2} quick lit={lit} parts={[...LEADS, ...CONTACTS]}>
         <Sender i={0} />
       </Traveller>
       <Traveller d={salesTall[1].d} delay={0.8} dur={3.2} quick lit={lit} parts={PIPELINE}>
         <Pip color={deep}><ContactsMark className="size-3.5" /></Pip>
       </Traveller>
-      <Traveller d={salesTall[2].d} delay={1.6} dur={3.2} quick lit={lit} parts={FOLLOWS}>
-        <Pip color={deep}><FollowUpMark className="size-3.5" /></Pip>
-      </Traveller>
-      <Traveller d={salesTall[3].d} delay={2.4} dur={3.2} quick lit={lit} parts={BOOKINGS}>
-        <Pip color={deep} brand><CalendarMark className="size-3.5" /></Pip>
-      </Traveller>
+      {SALES_OUTS.map((o, i) => (
+        <Traveller key={o.title} d={salesTall[2 + i].d} delay={1.6 + i * 0.8} dur={3.2} quick lit={lit} parts={o.parts}>
+          <Pip color={deep} brand={i === 1}><o.Mark className="size-3.5" /></Pip>
+        </Traveller>
+      ))}
     </Box>
   );
 }
@@ -1067,7 +1050,7 @@ function SalesFlow({ lit, accent, deep }: FlowProps) {
 
 
 /* ==========================================================================
-   03 MARKETING AND 04 OPERATIONS - TWO IN, ONE MIDDLE, TWO OUT
+   03 MARKETING AND 04 AUTOMATION & INSIGHTS - TWO IN, ONE MIDDLE, TWO OUT
    --------------------------------------------------------------------------
    Both chapters move the same way - two ways in, one place everything
    passes through, two ways out - so they share one drawing, each with its
@@ -1247,80 +1230,75 @@ function crossFlow(c: Cross) {
 }
 
 /* ---- 03 MARKETING ------------------------------------------------------------
-   Your ads and your own forms bring leads in; every lead is kept with where
-   it came from; and out go the two things that record makes possible - a
-   broadcast to the right customers, and the qualified leads handed back to
-   Meta.
+   Your forms bring answers in - your own web forms and your Meta lead
+   forms - and every answer is kept on a contact; out go the two ways of
+   reaching those contacts: a WhatsApp broadcast from an approved
+   template, and an email campaign.
 
-   Lead Capture is both inputs and the record they arrive at; Meta Ads is
-   the ads in and the qualified leads back; Broadcasts is the way out to
-   customers. The record lights for all three, because all three pass
-   through it.
+   Forms is both ways in; WhatsApp Marketing and Email Marketing the ways
+   out; the contacts light for all three, because all three pass through
+   them. The Marketing AI Agent - Studio, building Meta ads - lights the
+   ad forms its ads bring answers through, and the contacts they become.
 
-   What travels: an ad's mark, Farah from the website - who submitted the
-   form twice and is still one contact (§8) - a broadcast, and a tick for a
-   lead that qualified. */
-const ADS: readonly FeatureSlug[] = ["meta-ads"];
-const CAPTURE: readonly FeatureSlug[] = ["lead-capture"];
-const SENDS: readonly FeatureSlug[] = ["broadcasts"];
-const ADS_IN: readonly FeatureSlug[] = ["meta-ads", "lead-capture"];
+   What travels: a form, an ad's lead form, a broadcast, an email. */
+const FORMS: readonly FeatureSlug[] = ["forms"];
+const ADS: readonly FeatureSlug[] = ["forms", "marketing-ai-agent"];
+const WHATSAPP: readonly FeatureSlug[] = ["whatsapp-marketing"];
+const EMAIL: readonly FeatureSlug[] = ["email-marketing"];
 
 const MarketingFlow = crossFlow({
   id: "marketing",
   nodes: [
-    { parts: ADS_IN, mark: <AdsMark className="size-5" />, title: "Your ads", line: "Built and approved here" },
-    { parts: CAPTURE, mark: <CaptureMark className="size-5" />, title: "Your forms", line: "Pages, comments, chat" },
-    /* One line each: "Approved templates out" and "Qualified leads
-       returned" broke with a word left alone on a second line. */
-    { parts: SENDS, mark: <BroadcastMark className="size-5" />, title: "Broadcast", line: "Approved templates" },
-    { parts: ADS, mark: <RepeatGlyph className="size-5" />, title: "Back to Meta", line: "Qualified leads" },
+    { parts: FORMS, mark: <FormsMark className="size-5" />, title: "Your web forms", line: "On your site, or a link" },
+    { parts: ADS, mark: <AdsMark className="size-5" />, title: "Your ad forms", line: "Meta lead forms" },
+    /* One line each: two-line labels left a word alone on the second. */
+    { parts: WHATSAPP, mark: <BroadcastMark className="size-5" />, title: "WhatsApp", line: "Approved templates" },
+    { parts: EMAIL, mark: <EmailMark className="size-5" />, title: "Email", line: "Your own sending key" },
   ],
   hub: {
-    parts: ["meta-ads", "lead-capture", "broadcasts"],
-    Mark: CaptureMark,
-    title: "Every lead",
-    line: "And where it came from",
+    parts: ["forms", "whatsapp-marketing", "email-marketing", "marketing-ai-agent"],
+    Mark: ContactsMark,
+    title: "Your contacts",
+    line: "Every answer, kept",
   },
   traffic: (deep) => [
+    <Pip key="form" color={deep}><FormsMark className="size-3.5" /></Pip>,
     <Pip key="ad" color={deep}><AdsMark className="size-3.5" /></Pip>,
-    <Sender key="farah" i={3} />,
     <Pip key="send" color={deep} brand><BroadcastMark className="size-3.5" /></Pip>,
-    <Pip key="back" color={deep}><CheckIcon className="size-3.5" /></Pip>,
+    <Pip key="mail" color={deep}><EmailMark className="size-3.5" /></Pip>,
   ],
 });
 
-/* ---- 04 OPERATIONS -----------------------------------------------------------
-   What happens and what is bought come in; the workspace runs them by the
-   business's own rules, roles and records; and out to the team, each with
-   their role, and to the dashboard, which says how it is going.
+/* ---- 04 AUTOMATION & INSIGHTS ------------------------------------------------
+   Two things come in: an event, which starts an automation, and a
+   question, which the Analytics AI Agent answers. Both go to the same
+   place - your CRM - and out come the automation's steps and the agent's
+   answer, with the tools it used.
 
-   Automations are the events in; Chat Commerce the orders in; Team and
-   Permissions the way out to people, Reports the way out to the figures.
-   The workspace lights for all four. */
-const AUTOMATIONS: readonly FeatureSlug[] = ["automations"];
-const COMMERCE: readonly FeatureSlug[] = ["chat-commerce"];
-const TEAM: readonly FeatureSlug[] = ["team-permissions"];
-const REPORTS: readonly FeatureSlug[] = ["reports"];
+   Automation is the event in and the steps out; the Analytics AI Agent is
+   the question in and the answer out; the CRM lights for both. */
+const AUTO: readonly FeatureSlug[] = ["automation"];
+const ANALYTICS: readonly FeatureSlug[] = ["analytics-ai-agent"];
 
-const OperationsFlow = crossFlow({
-  id: "operations",
+const AutomationFlow = crossFlow({
+  id: "automation",
   nodes: [
-    { parts: AUTOMATIONS, mark: <AutomationMark className="size-5" />, title: "Every event", line: "Message, lead, booking" },
-    { parts: COMMERCE, mark: <CommerceMark className="size-5" />, title: "Every order", line: "Cart, payment, recorded" },
-    { parts: TEAM, mark: <TeamMark className="size-5" />, title: "Your team", line: "Each with their role" },
-    { parts: REPORTS, mark: <ReportsMark className="size-5" />, title: "Your dashboard", line: "How it is going" },
+    { parts: AUTO, mark: <AutomationMark className="size-5" />, title: "An event", line: "Message, booking, quotation" },
+    { parts: ANALYTICS, mark: <SparkGlyph className="size-5" />, title: "A question", line: "In plain words" },
+    { parts: AUTO, mark: <CheckIcon className="size-5" />, title: "The steps", line: "Sent, tagged, assigned" },
+    { parts: ANALYTICS, mark: <AnalyticsAgentMark className="size-5" />, title: "The answer", line: "And the tools it used" },
   ],
   hub: {
-    parts: ["automations", "chat-commerce", "team-permissions", "reports"],
+    parts: ["automation", "analytics-ai-agent"],
     Mark: OperationsMark,
-    title: "Your workspace",
-    line: "Rules, roles and records",
+    title: "Your CRM",
+    line: "Contacts, deals, chats",
   },
   traffic: (deep) => [
     <Pip key="event" color={deep}><AutomationMark className="size-3.5" /></Pip>,
-    <Pip key="order" color={deep}><CommerceMark className="size-3.5" /></Pip>,
-    <Pip key="team" color={deep}><TeamMark className="size-3.5" /></Pip>,
-    <Pip key="report" color={deep} brand><ReportsMark className="size-3.5" /></Pip>,
+    <Pip key="ask" color={deep}><SparkGlyph className="size-3.5" /></Pip>,
+    <Pip key="steps" color={deep}><CheckIcon className="size-3.5" /></Pip>,
+    <Pip key="answer" color={deep} brand><AnalyticsAgentMark className="size-3.5" /></Pip>,
   ],
 });
 
@@ -1333,5 +1311,5 @@ export const chapterFlows: Partial<
   conversations: ConversationsFlow,
   sales: SalesFlow,
   marketing: MarketingFlow,
-  operations: OperationsFlow,
+  "automation-insights": AutomationFlow,
 };

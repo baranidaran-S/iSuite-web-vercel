@@ -4,7 +4,6 @@ import { useReducedMotion } from "motion/react";
 import { CheckIcon } from "@/components/ui/icons";
 import { featureMarks } from "@/components/ui/featureIcons";
 import { InfoGlyph } from "@/components/features/kit/glyphs";
-import { featureScreens } from "@/components/features/screens";
 import { features } from "@/lib/content/features";
 import {
   featureDetails,
@@ -18,8 +17,8 @@ import { featureBar } from "@/lib/content/featuresPage";
    /features - THE PARTS EVERY FEATURE SECTION IS BUILT FROM
    --------------------------------------------------------------------------
    The shell a feature sits in, its name pill, its capability lists and its
-   "Good to know" note - one set for all thirteen, so they read as one page
-   rather than as thirteen designs.
+   "Good to know" note - one set for all fifteen, so they read as one page
+   rather than as fifteen designs.
 
    TWO GROUNDS, THE HOME PAGE'S TWO. A feature is either on white or on
    night, and a chapter alternates them - the rhythm the home page already
@@ -39,7 +38,6 @@ export function featureOf(slug: FeatureSlug) {
     group,
     item,
     detail: featureDetails[slug]!,
-    screen: featureScreens[slug]!,
   };
 }
 
@@ -167,7 +165,7 @@ export function FeatureTitle({
   /* AN h3 SET AT h2 SIZE. Every feature belongs to a chapter, and the
      chapter's name is the h2 - Conversations, Sales - so a screen reader's
      list of headings reads chapter, then its features, then their groups
-     (h4), rather than thirteen features level with the four chapters they
+     (h4), rather than fifteen features level with the four chapters they
      sit in. The size is the site's section heading all the same. */
   return (
     <h3
@@ -201,7 +199,10 @@ export function FeatureLead({
 /* ---- THE CAPABILITIES ------------------------------------------------------
    A tick, the name, and the sentence under it. Pointing at one lights the
    element it describes in the picture beside it - `onHot` is how a layout
-   hears about it. A tap does the same on a touch screen. */
+   hears about it. A tap does the same on a touch screen.
+
+   `numbered` puts each one's place in the list where the tick was - the
+   number its pin carries on the picture beside it. */
 export function CapabilityItems({
   group,
   tone,
@@ -209,6 +210,7 @@ export function CapabilityItems({
   deep,
   onHot,
   hot,
+  numbered = false,
   className = "",
 }: {
   group: CapabilityGroup;
@@ -217,6 +219,7 @@ export function CapabilityItems({
   deep: string;
   onHot?: (id: string | null) => void;
   hot?: string | null;
+  numbered?: boolean;
   className?: string;
 }) {
   const dark = tone === "dark";
@@ -255,10 +258,11 @@ export function CapabilityItems({
 
   return (
     <ul className={`flex flex-col gap-4 ${className}`}>
-      {group.items.map((c) => (
+      {group.items.map((c, i) => (
         <CapabilityRow
           key={c.id}
           cap={c}
+          n={numbered ? i + 1 : undefined}
           dark={dark}
           accent={accent}
           deep={deep}
@@ -272,6 +276,7 @@ export function CapabilityItems({
 
 function CapabilityRow({
   cap,
+  n,
   dark,
   accent,
   deep,
@@ -279,6 +284,7 @@ function CapabilityRow({
   onHot,
 }: {
   cap: Capability;
+  n?: number;
   dark: boolean;
   accent: string;
   deep: string;
@@ -293,7 +299,9 @@ function CapabilityRow({
       className="flex cursor-default gap-3"
     >
       <span
-        className="mt-[3px] grid size-5 shrink-0 place-items-center rounded-full transition-colors"
+        className={`mt-[3px] grid shrink-0 place-items-center rounded-full transition-colors ${
+          n ? "size-[22px] text-[11.5px] leading-none font-extrabold" : "size-5"
+        }`}
         style={
           on
             ? { backgroundColor: dark ? "#fff" : deep, color: dark ? deep : "#fff" }
@@ -302,7 +310,7 @@ function CapabilityRow({
               : { backgroundColor: `${accent}1f`, color: deep }
         }
       >
-        <CheckIcon className="size-3" />
+        {n ?? <CheckIcon className="size-3" />}
       </span>
       <span className="min-w-0">
         <span
@@ -340,6 +348,9 @@ export function GoodToKnow({
   const { detail } = featureOf(slug);
   const dark = tone === "dark";
   const grid = columns === 2 ? "md:grid-cols-2" : "";
+  /* Nothing at all for a feature with no limits - an empty box labelled
+     "Good to know" would promise something and say nothing. */
+  if (detail.limits.length === 0) return null;
   return (
     <aside
       aria-label={`${featureOf(slug).item.name}: ${featureBar.goodToKnow.toLowerCase()}`}

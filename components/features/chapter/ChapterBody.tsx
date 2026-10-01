@@ -1,11 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowIcon } from "@/components/ui/icons";
 import { featureMarks } from "@/components/ui/featureIcons";
 import { chapterFlows } from "@/components/features/chapter/FlowScene";
-// import { ChapterScene } from "@/components/features/chapter/ChapterScene";
-// import { chapterScenes } from "@/components/features/chapter/scenes";
 import { features } from "@/lib/content/features";
 
 /* ==========================================================================
@@ -64,27 +62,61 @@ export function ChapterBody({
      way a chapter of two does. */
   const three = group.items.length === 3;
 
-  /* THE PICTURE IS THE CHAPTER'S FLOW. It was the hero's stack with this
-     chapter's layer lit - still in chapter/ChapterScene.tsx, complete, and
-     kept on purpose because it was liked. It read as the hero's picture a
-     second time, straight after the hero. To bring it back, swap the
-     picture below for the commented one and uncomment its two imports:
+  /* THE PICTURE IS THE CHAPTER'S FLOW. It was once the hero's exploded
+     stack with this chapter's layer lit, kept aside because it was liked;
+     it went on 2026-09-30 with the stack itself and the old feature list
+     it drew (git history, be265ee: chapter/ChapterScene.tsx, scenes.tsx).
 
-       const index = features.groups.findIndex((g) => g.slug === group.slug);
-       const scene = chapterScenes[group.slug];
-       {scene && <ChapterScene index={index} def={scene} lit={lit} />}
-  */
+     IT HOLDS STILL WHEN ASKED, AND WHEN NOBODY CAN SEE IT. Its messages
+     travel the wires for as long as the page is open, so it has a pause
+     (WCAG 2.2.2); and off screen it stops, rather than running four
+     chapters' animations nobody is looking at. Under reduced motion it is
+     still already, and the button is not drawn. */
+  const flowBox = useRef<HTMLDivElement>(null);
+  const [paused, setPaused] = useState(false);
+  const [away, setAway] = useState(true);
+  useEffect(() => {
+    const el = flowBox.current;
+    if (!el) return;
+    const io = new IntersectionObserver((e) => setAway(!e[e.length - 1].isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   return (
     <div className="relative mx-auto grid max-w-[84rem] gap-y-10 px-5 pt-16 pb-10 md:px-10 md:pt-20 md:pb-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.82fr)] lg:grid-rows-[1fr_auto] lg:gap-x-12 lg:gap-y-10 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.2fr)] xl:pt-24 xl:pb-16">
       <div className="lg:col-start-1 lg:row-start-1 lg:self-end">{children}</div>
 
       {Flow && (
-        <div
-          aria-hidden
-          className="lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-center"
-        >
-          <Flow lit={lit} accent={group.accent} deep={group.deep} />
+        <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-center">
+          <div
+            ref={flowBox}
+            aria-hidden
+            data-still={paused || away ? "" : undefined}
+            className="[&[data-still]_*]:[animation-play-state:paused]!"
+          >
+            <Flow lit={lit} accent={group.accent} deep={group.deep} />
+          </div>
+          <div className="mt-2 flex justify-end motion-reduce:hidden">
+            <button
+              type="button"
+              onClick={() => setPaused((p) => !p)}
+              aria-label={`${paused ? "Play" : "Pause"} the ${group.name} picture`}
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3 py-1.5 text-[12px] font-bold text-white/80 transition-colors hover:border-white/45 hover:text-white focus-visible:outline-white"
+            >
+              <svg viewBox="0 0 24 24" className="size-3" fill="currentColor" aria-hidden>
+                {paused ? (
+                  <path d="M7 5v14l12-7L7 5z" />
+                ) : (
+                  <>
+                    <rect x="6" y="5" width="4" height="14" rx="1" />
+                    <rect x="14" y="5" width="4" height="14" rx="1" />
+                  </>
+                )}
+              </svg>
+              {paused ? "Play" : "Pause"}
+            </button>
+          </div>
         </div>
       )}
 

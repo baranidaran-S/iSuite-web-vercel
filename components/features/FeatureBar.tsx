@@ -16,22 +16,22 @@ import { featureBar } from "@/lib/content/featuresPage";
 
      left    the chapter's numeral and name, and the feature being read.
              It is also the button that opens the full list.
-     right   thirteen ticks in four runs - one per feature, coloured by
+     right   fifteen ticks in four runs - one per feature, coloured by
              chapter. Behind you they are filled, the one you are in is
              long, and ahead of you they are grey. Each is a link, and
              says which feature it is when pointed at.
 
-   ONE BAR, NOT A SIDEBAR. A column of thirteen links down the side takes
+   ONE BAR, NOT A SIDEBAR. A column of fifteen links down the side takes
    a fifth of the width from every section for the whole page, and the
    feature sections are the widest things on it. A bar costs one line.
 
    ON A PHONE THE TICKS GO, and a hairline along the foot of the pill keeps
    the one thing they said that the label does not - how far down the
-   thirteen you are. The whole pill is then the button.
+   fifteen you are. The whole pill is then the button.
 
    IT FOLLOWS THE READER, NOT THE MOUSE. The feature it names is the one
    whose section has crossed the upper part of the screen, measured on
-   scroll - one pass over thirteen elements a frame, and only a change
+   scroll - one pass over fifteen elements a frame, and only a change
    re-renders. In a chapter shown as one compact section (data-compact,
    Sales' showcase) it is the feature open there, which the section's
    tour can change with no scroll at all, so the section announces it
@@ -55,7 +55,7 @@ const FLAT = GROUPS.flatMap((g, gi) =>
 type Where = { show: boolean; g: number; f: number | null };
 
 /* `built` lists the features whose sections are on the page. Those still
-   to come are shown - the thirteen are the thirteen - but not linked: a
+   to come are shown - the fifteen are the fifteen - but not linked: a
    tick or a menu entry that scrolls nowhere reads as broken. Left out,
    every feature is linked. */
 export function FeatureBar({ built }: { built?: readonly string[] }) {
@@ -93,8 +93,8 @@ export function FeatureBar({ built }: { built?: readonly string[] }) {
           /* A chapter shown in one compact section, one feature open at a
              time, counts as a single section: once it reaches the line,
              the feature named is the one open in it. By position alone the
-             bar said "Contacts and Custom Fields" over an open
-             Appointments, because Contacts' tab was highest. */
+             bar named whichever feature's tab sat highest, not the one
+             open. */
           const box = el.closest<HTMLElement>("[data-compact]");
           const r = (box ?? el).getBoundingClientRect();
           if (r.top <= line && (!box || el.hasAttribute("data-open"))) {
@@ -157,7 +157,7 @@ export function FeatureBar({ built }: { built?: readonly string[] }) {
   const group = GROUPS[where.g];
   const item = where.f === null ? null : group.items[where.f];
   const at = item ? FLAT.findIndex((x) => x.item.slug === item.slug) : -1;
-  /* How far down the thirteen, for the phone's hairline. The chapter
+  /* How far down the fifteen, for the phone's hairline. The chapter
      opener counts as the start of its chapter. */
   const progress =
     at >= 0
@@ -196,7 +196,11 @@ export function FeatureBar({ built }: { built?: readonly string[] }) {
           >
             {group.n}
           </span>
-          <span className="relative flex min-w-0 flex-1 items-center overflow-hidden md:w-[17.5rem] md:flex-none">
+          {/* 19rem holds the longest label whole: "Automation & Insights /
+              Analytics AI Agent" is 295px. At 17.5rem its last word was cut.
+              Below 360px a phone shows the feature alone, and at 14px
+              "Sales Pipeline Management" was 5px too wide - so 13px there. */}
+          <span className="relative flex min-w-0 flex-1 items-center overflow-hidden md:w-[19rem] md:flex-none">
             <AnimatePresence mode="popLayout" initial={false}>
               <motion.span
                 key={`${where.g}-${where.f}`}
@@ -204,7 +208,7 @@ export function FeatureBar({ built }: { built?: readonly string[] }) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                className="flex min-w-0 items-center gap-1.5 truncate text-[14px] leading-tight"
+                className="flex min-w-0 items-center gap-1.5 truncate text-[13px] leading-tight min-[360px]:text-[14px]"
               >
                 <span
                   className={`shrink-0 font-bold ${item ? "hidden text-muted sm:inline" : "text-ink"}`}
@@ -228,7 +232,7 @@ export function FeatureBar({ built }: { built?: readonly string[] }) {
           />
         </button>
 
-        {/* ---- THE THIRTEEN ---- */}
+        {/* ---- THE FIFTEEN ---- */}
         <ol className="ml-auto hidden items-center gap-2.5 pr-3 md:flex">
           {GROUPS.map((g, gi) => (
             <li key={g.slug}>

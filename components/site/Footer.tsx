@@ -115,7 +115,10 @@ export function Footer() {
           {/* ---- THE ROUTES ---- */}
           <div className="flex shrink-0 gap-12 sm:gap-16 md:gap-20">
             <FooterNav label={footer.productLabel} items={nav} />
-            <FooterNav label={footer.legalLabel} items={legal} />
+            {/* Not prefetched: the legal pages are not built yet (see
+                PLACEHOLDERS), and prefetching them logged two 404s on
+                every page. The links stay; drop this when the pages exist. */}
+            <FooterNav label={footer.legalLabel} items={legal} prefetch={false} />
           </div>
         </div>
 
@@ -136,9 +139,11 @@ export function Footer() {
 function FooterNav({
   label,
   items,
+  prefetch,
 }: {
   label: string;
   items: readonly { readonly label: string; readonly href: string }[];
+  prefetch?: false;
 }) {
   return (
     /* Two navs in one footer, each named, because "navigation" announced
@@ -157,6 +162,7 @@ function FooterNav({
           <li key={item.href}>
             <Link
               href={item.href}
+              prefetch={prefetch}
               className="text-[16.5px] font-bold text-ink transition-colors hover:text-brand"
             >
               {item.label}

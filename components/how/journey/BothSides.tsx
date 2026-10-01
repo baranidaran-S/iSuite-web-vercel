@@ -460,10 +460,14 @@ export function BothSides() {
                       className={`grid transition-[grid-template-rows] duration-300 ease-out ${opened ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
                     >
                       <div className="-mx-1.5 min-h-0 overflow-hidden px-1.5">
-                        <p className="pt-2 text-[14px] leading-relaxed text-muted lg:text-[13.5px]">{s.line}</p>
-                        <div className="flex pt-3 pb-1.5 lg:justify-center">
-                          <FeatureLink slug={s.feature} className={CLEAR} />
-                        </div>
+                        <p className={`pt-2 text-[14px] leading-relaxed text-muted lg:text-[13.5px] ${s.feature ? "" : "pb-1.5"}`}>{s.line}</p>
+                        {/* Not every step has a feature on the list - the
+                            ad click, the reports, Meta hearing back. */}
+                        {s.feature && (
+                          <div className="flex pt-3 pb-1.5 lg:justify-center">
+                            <FeatureLink slug={s.feature} className={CLEAR} />
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

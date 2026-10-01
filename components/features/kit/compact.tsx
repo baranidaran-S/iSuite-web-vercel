@@ -31,7 +31,9 @@ export function useTick(live: boolean, ms: number) {
 
 /* A group's capabilities by name, each kept whole: a line breaks between
    two of them and never inside one, and the dot rides on the end of its
-   line rather than starting the next. */
+   line rather than starting the next - held to the last word by a
+   no-break space, or a name that filled its line left the dot alone on
+   the next ("Overdue, due today, done and new this week" / "·"). */
 export function Names({ names }: { names: readonly string[] }) {
   return (
     <>
@@ -39,7 +41,7 @@ export function Names({ names }: { names: readonly string[] }) {
         <Fragment key={name}>
           <span className="inline-block max-w-full">
             {name}
-            {i < names.length - 1 && " ·"}
+            {i < names.length - 1 && " ·"}
           </span>{" "}
         </Fragment>
       ))}

@@ -1,86 +1,109 @@
-import { Limits as KitLimits } from "@/components/features/kit/compact";
-import { features } from "@/lib/content/features";
-import {
-  featureDetails,
-  type FeatureDetail,
-  type FeatureSlug,
-} from "@/lib/content/featureDetails";
-
-export { LAND, Names, useTick } from "@/components/features/kit/compact";
+import type { Chapter, Part } from "@/components/features/kit/chapter";
+import { PENDING, features } from "@/lib/content/features";
+import { featureDetails, type FeatureSlug } from "@/lib/content/featureDetails";
+import { featureShots } from "@/lib/content/shots";
 
 /* ==========================================================================
    03 MARKETING - WHAT THE CHAPTER SHARES
    --------------------------------------------------------------------------
-   The chapter's three features in order, with their words from
-   featureDetails.ts, the leads its pictures show arriving, and the parts
-   every compact chapter says its features with (kit/compact.tsx).
+   The chapter's features in order - each with its words from
+   featureDetails.ts and its real screen from shots.ts - for its deck
+   (Deck.tsx), and the moments each card's live strip shows (LiveStrip.tsx).
 
-   CHOSEN FROM THREE, TWICE OVER. The live board (Board.tsx) is the
-   chapter. A hand of cards was chosen first, and given the board's live
-   pictures; on the page the moving part was a quarter of each card and
-   read as text, so the board came back, with each feature's name on its
-   own panel and its words straight under it. The cards and the third
-   version, the chapter in sentences, were deleted once it settled.
+   CHOSEN FROM THREE, THREE TIMES OVER. A hand of cards was chosen first,
+   then a live board of arrivals and departures took its place: the cards'
+   moving part was a quarter of each card and read as text. On 2026-09-30,
+   with the app's real screens to show, the chapter was drawn three ways
+   again - a deck, a bento, screens that unfold - and the deck was chosen,
+   its face now the real screen.
+
+   ON 2026-09-30 THE CHAPTER ALSO TOOK THE APP'S OWN FEATURES: WhatsApp
+   Marketing, Email Marketing, Forms, and the Marketing AI Agent - a card
+   saying its details were on their way until the client confirmed it,
+   on 2026-10-01, as the app's Studio building Meta ads.
    ========================================================================== */
 
 export const MARKETING = features.groups[2];
 
-export type MarketingPart = {
-  slug: FeatureSlug;
-  item: (typeof MARKETING)["items"][number];
-  detail: FeatureDetail;
-  n: string;
+/* The chapter's features, in order. A feature still being confirmed
+   carries only the line that says so. */
+const PARTS: Part[] = MARKETING.items.map((item, i) => {
+  const slug = item.slug as FeatureSlug;
+  const detail = featureDetails[slug];
+  const head = {
+    slug,
+    n: `${MARKETING.n}.${i + 1}`,
+    name: item.name,
+    mark: item.mark as Part["mark"],
+  };
+  if (PENDING.has(slug) || !detail) {
+    return { ...head, title: "", groups: [], limits: [], pending: item.line };
+  }
+  return {
+    ...head,
+    title: detail.title,
+    groups: detail.groups,
+    limits: detail.limits,
+    shot: featureShots[slug]?.[0],
+  };
+});
+
+export const MARKETING_CHAPTER: Chapter = {
+  slug: MARKETING.slug,
+  name: MARKETING.name,
+  accent: MARKETING.accent,
+  deep: MARKETING.deep,
+  label: "Marketing features",
+  parts: PARTS,
 };
 
-export const MARKETING_PARTS: MarketingPart[] = MARKETING.items.map((item, i) => ({
-  slug: item.slug as FeatureSlug,
-  item,
-  detail: featureDetails[item.slug as FeatureSlug]!,
-  n: `${MARKETING.n}.${i + 1}`,
-}));
-
-/* LEADS ARRIVING, for the pictures that show Lead Capture at work. The
-   site's cast, each arriving the way their own enquiry did elsewhere on
-   the page - Farah, who submitted the form twice, is the duplicate that
-   gets matched - and between them all eight of §8's ways in and all of
-   its handling. */
-export type Source = "ads" | "wa" | "ig" | "web" | "form" | "cal";
+/* SUBMISSIONS ARRIVING, for Forms: web forms on a business's site, a
+   form's shared link, and Meta lead forms from its ads - the three ways a
+   form reaches the CRM - and what becomes of each, all of which the app
+   does: a contact created, the answers saved to its fields, a tag, a deal
+   opened on the form's pipeline. */
+export type Source = "ads" | "form";
 
 export const ARRIVALS: readonly {
   t: string;
   from: string;
   src: Source;
   who: string;
-  via: string;
   status: string;
 }[] = [
-  { t: "09:12", from: "Meta lead ad", src: "ads", who: "Lakshmi A.", via: "Dental check-up", status: "Contact created" },
-  { t: "09:26", from: "Click-to-WhatsApp ad", src: "wa", who: "Anand R.", via: "Dental check-up · Ad 2", status: "Ad saved" },
-  { t: "09:41", from: "Instagram comment", src: "ig", who: "Ajay T.", via: "Keyword “PRICE”", status: "Tagged" },
-  { t: "09:58", from: "Website form", src: "form", who: "Farah Q.", via: "Your contact form", status: "Duplicate matched" },
-  { t: "10:07", from: "Instant form", src: "ads", who: "Meera N.", via: "Coimbatore branch ad", status: "Deal opened" },
-  { t: "10:19", from: "Booking page", src: "cal", who: "Meena S.", via: "Check-up booking", status: "Contact created" },
-  { t: "10:33", from: "Hosted form", src: "form", who: "Arun V.", via: "Callback form", status: "Tagged" },
-  { t: "10:46", from: "Website chat", src: "web", who: "Naveen L.", via: "Your website", status: "Same record" },
-  { t: "10:52", from: "Meta lead ad", src: "ads", who: "Suresh V.", via: "Missed on Sunday", status: "Pulled in later" },
+  { t: "09:12", from: "Meta lead form", src: "ads", who: "Lakshmi A.", status: "Deal opened" },
+  { t: "09:41", from: "Website form", src: "form", who: "Ajay T.", status: "Contact created" },
+  { t: "09:58", from: "Form link", src: "form", who: "Farah Q.", status: "Answers saved" },
+  { t: "10:07", from: "Meta lead form", src: "ads", who: "Meera N.", status: "Tagged" },
+  { t: "10:33", from: "Website form", src: "form", who: "Arun V.", status: "Deal opened" },
+  { t: "10:52", from: "Meta lead form", src: "ads", who: "Suresh V.", status: "Contact created" },
 ];
 
-/* GOOD TO KNOW for a Marketing feature. */
-export function Limits({
-  part,
-  dark = false,
-  className = "",
-}: {
-  part: MarketingPart;
-  dark?: boolean;
-  className?: string;
-}) {
-  return (
-    <KitLimits
-      name={part.item.name}
-      limits={part.detail.limits}
-      dark={dark}
-      className={className}
-    />
-  );
-}
+/* WHATSAPP BROADCASTS on their way, each status moving on - the states the
+   app's broadcast list tracks. Every one an approved template, to a group
+   of contacts. */
+export const DEPARTURES: readonly { name: string; to: string; kind: string; steps: readonly string[] }[] = [
+  { name: "Weekend offer", to: "Group · Past customers", kind: "Marketing", steps: ["Sending", "Delivered", "Read"] },
+  { name: "Booking reminder", to: "Group · Booked this week", kind: "Utility", steps: ["Delivered", "Read"] },
+  { name: "New price list", to: "Group · New enquiries", kind: "Marketing", steps: ["Sending", "Delivered"] },
+  { name: "Holiday timings", to: "Group · All customers", kind: "Utility", steps: ["Delivered", "Read"] },
+];
+
+/* CAMPAIGNS THE MARKETING AI AGENT IS BUILDING, as its Studio threads go:
+   it asks its questions, builds on Meta, and leaves each one paused for
+   you to start. Ads with a WhatsApp button or a lead form, the two kinds
+   it made. */
+export const CAMPAIGNS: readonly { name: string; ad: string; where: string }[] = [
+  { name: "Weekend offer", ad: "WhatsApp ad", where: "Chennai" },
+  { name: "Free first visit", ad: "Lead form ad", where: "Madurai" },
+  { name: "New batch open", ad: "WhatsApp ad", where: "Coimbatore" },
+  { name: "Festive sale", ad: "Lead form ad", where: "Tamil Nadu" },
+];
+export const CAMPAIGN_STEPS = ["Asking you", "Building", "Paused"] as const;
+
+/* EMAIL CAMPAIGNS in the outbox: a draft, its list built, sent. */
+export const OUTBOX: readonly { subject: string; to: string; steps: readonly string[] }[] = [
+  { subject: "What's new this month", to: "List · All contacts", steps: ["Draft", "List built", "Sent"] },
+  { subject: "Welcome aboard", to: "List · New contacts", steps: ["List built", "Sent"] },
+  { subject: "We miss you", to: "List · Gone quiet", steps: ["Draft", "List built"] },
+];

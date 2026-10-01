@@ -10,7 +10,7 @@ import { howItWorksHero } from "@/lib/content/howItWorks";
    opens with, so a visitor who pressed "See How It Works" on the home page
    knows they are on the same site - and under them the cast of the
    journey, where the home page puts its screenshot and /features its
-   exploded stack. No picture on the site is drawn twice.
+   video. No picture on the site is drawn twice.
 
    THE SKY HOLDS ITS BLUE LOW, as /features' does, because the cast's cards
    are white and need something to stand out against.

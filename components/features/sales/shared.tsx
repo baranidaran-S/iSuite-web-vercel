@@ -17,10 +17,9 @@ import { featureBar } from "@/lib/content/featuresPage";
 
    ONE SECTION FOR THE WHOLE CHAPTER, NOT ONE PER FEATURE. Chapter 01
    gives each feature a section of its own, about three screens long; here
-   the four features share one, about a screen, which is what the chapter
+   the six features share one, about a screen, which is what the chapter
    was chosen for. Each feature still carries its slug as an id, so the
-   hero's callouts, the chapter card and the feature bar all still land on
-   it.
+   chapter card, the feature bar and links from other pages land on it.
 
    CHOSEN FROM THREE, and after two rounds. A live desk of four animated
    tiles and the chapter drawn as a pipeline board were built beside the
@@ -98,7 +97,9 @@ export function Inside({
   );
 }
 
-/* GOOD TO KNOW, in a line or two: every limit, never folded away. */
+/* GOOD TO KNOW, in a line or two: every limit, never folded away - and
+   nothing at all for a feature with none. "Good to know:" with nothing
+   after it showed under four of the six features. */
 export function Know({
   part,
   dark = false,
@@ -108,6 +109,7 @@ export function Know({
   dark?: boolean;
   className?: string;
 }) {
+  if (part.detail.limits.length === 0) return null;
   return (
     <div
       aria-label={`${part.item.name}: ${featureBar.goodToKnow.toLowerCase()}`}

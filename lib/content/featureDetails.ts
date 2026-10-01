@@ -3,53 +3,53 @@ import type { features } from "@/lib/content/features";
 /* ==========================================================================
    /features - WHAT EACH FEATURE SECTION SAYS
    --------------------------------------------------------------------------
-   One entry per feature, keyed by the feature's slug from features.ts, and
-   every line in it comes from that feature's own section of the
-   requirements - §6 for One Inbox, §7 for the AI Sales Assistant, and so on
-   down to §18. The home page NAMES these features; this is where each one
-   is explained in full.
+   One entry per feature, keyed by the feature's slug from features.ts.
+
+   THE SOURCE IS THE APP. Every capability here was read off the real
+   product (crm.mntfuture.com) on 2026-09-30 - its screens, its settings,
+   its own descriptions of itself - and where the app words something
+   well, the words are its own: "Work owed to people - who to chase, and by
+   when" is the Follow-ups page's subtitle. The requirements document this
+   file was first written from described an earlier product; where the two
+   differ the app wins (it has quotations and invoices, which the document
+   listed as missing).
+
+   NOTHING THE APP MARKS "COMING SOON" IS HERE. Click-to-WhatsApp and
+   click-to-Instagram ads and Google lead forms are on its channels page,
+   not yet available, and are not mentioned.
 
    THE CAPABILITIES ARE GROUPED, AND THE GROUPS ARE THE SECTION'S SHAPE.
-   §6 lists sixteen capabilities for One Inbox in one column. Sixteen
-   equal bullets is a specification sheet, and nobody reads one. Sorted the
-   way a business owner would ask about them - where the messages come
-   from, how you find one, what a conversation can hold, how the team
-   shares the work - it is the same sixteen with a shape.
+   Sorted the way a business owner would ask about them, rather than one
+   long column of equal bullets.
 
-   EACH GROUP IS ALSO A PART OF THE PRODUCT PICTURE. A group's `id` names
-   the zone of the drawing that shows it - the channel rail, the
-   conversation list, the thread, the side panel - and every capability's
-   `id` names the element inside that zone. That is why the channel filter
-   sits with the channels: in the product it IS the channel rail, and a
-   group that had to point at two ends of the screen could not be drawn as
-   one place. See components/features/screens.
+   IN CHAPTER 01 EACH GROUP IS ALSO A PART OF THE APP. A group's `id` names
+   its parts up close - the conversation list, the thread, the bar under
+   it, the contact panel - and a capability's `id` names its pin on them;
+   see lib/content/closeups.ts. Elsewhere the ids only have to be unique.
 
-   `limits` IS NOT SMALL PRINT. Requirements §23 asks for the current
-   product's limits to be stated plainly, and a page this detailed that
-   never mentioned one would be the first thing a careful buyer stopped
-   believing. Each limit sits with the feature it belongs to - calendar
-   sync under the assistant that books, not in a list at the foot of the
-   page. Every one comes from §14, §21, §22 or §23, and where the home
-   page's FAQ already answers the same question, the wording matches it.
+   `limits` IS NOT SMALL PRINT. A page this detailed that never mentioned a
+   limit would be the first thing a careful buyer stopped believing. Each
+   sits with the feature it belongs to. A feature with none has none.
 
-   §31 APPLIES TO EVERY LINE: a capability, never an outcome; "AI sales
-   assistant", never "chatbot"; nothing suggesting it replaces a team.
+   EVERY LINE IS A CAPABILITY, never an outcome; nothing suggests it
+   replaces a team; no figures.
+
+   The Marketing AI Agent was left out until the client confirmed what it
+   is (2026-10-01): Studio's ad side - see its entry.
    ========================================================================== */
 
 export type FeatureSlug =
   (typeof features)["groups"][number]["items"][number]["slug"];
 
 export type Capability = {
-  /* The element in the product drawing that shows this capability. */
+  /* The element this capability names - unique within its feature. */
   id: string;
   name: string;
-  /* Omitted for the assistant's setup list, which is ten things you fill
-     in rather than ten things it does - they are shown as tags. */
   line?: string;
 };
 
 export type CapabilityGroup = {
-  /* The zone of the product drawing that shows this group. */
+  /* In Chapter 01, the area of the screenshot that shows this group. */
   id: string;
   label: string;
   items: readonly Capability[];
@@ -65,1054 +65,729 @@ export type FeatureDetail = {
 };
 
 export const featureDetails: Partial<Record<FeatureSlug, FeatureDetail>> = {
-  /* ---- One Inbox - requirements §6 ------------------------------------- */
-  "one-inbox": {
-    /* §6's own page heading, in the site's sentence case. */
-    title: "Every conversation. One shared inbox.",
-    lead: "WhatsApp Business, Instagram DMs, Facebook Messenger and your website chat arrive in one list, on your business's own WhatsApp number, and your whole team works from it.",
+  /* ==== 01 CONVERSATIONS ================================================ */
+
+  "unified-inbox": {
+    title: "Every channel. One shared inbox.",
+    lead: "WhatsApp, Instagram, Facebook Messenger and your website's chat arrive in one list, and your whole team answers from it - with the Sales AI Agent replying wherever you let it.",
     groups: [
       {
         id: "channels",
-        label: "Every channel",
+        label: "Every channel, one list",
         items: [
-          {
-            id: "whatsapp",
-            name: "WhatsApp Business on your own number",
-            /* §6 says the business's own number. It does NOT say the number
-               a business already uses - §22 needs one not yet on WhatsApp -
-               so this says "yours", and no more. */
-            line: "Your business's own number, not a shared or borrowed one.",
-          },
-          {
-            id: "instagram",
-            name: "Instagram DMs",
-            line: "Direct messages to your Instagram account, in the same list.",
-          },
-          {
-            id: "messenger",
-            name: "Facebook Messenger",
-            line: "Messages to your Facebook page, beside everything else.",
-          },
-          {
-            id: "webchat",
-            name: "Website chat widget",
-            line: "A chat window on your website that lands in the same inbox.",
-          },
-          {
-            id: "channel-filter",
-            name: "Channel filter",
-            line: "Just WhatsApp, just Instagram, or everything together.",
-          },
+          { id: "whatsapp", name: "WhatsApp Business", line: "Your business's own number, connected through WhatsApp's Business API." },
+          { id: "instagram", name: "Instagram", line: "Direct messages to your Instagram business account, in the same list." },
+          { id: "messenger", name: "Facebook Messenger", line: "Messages to your Facebook page, beside everything else." },
+          { id: "webchat", name: "Website chat", line: "Chats from the widget on your website land here too." },
+          { id: "filters", name: "Search, teams and tags", line: "Search the conversations, or narrow the list to a team or a tag." },
         ],
       },
       {
-        id: "find",
-        label: "Finding the right chat",
+        id: "thread",
+        label: "The whole conversation",
         items: [
-          {
-            id: "unread",
-            name: "Unread filter",
-            line: "Only the conversations nobody has opened yet.",
-          },
-          {
-            id: "status",
-            name: "Status filter",
-            line: "Conversations filtered by where each one stands.",
-          },
-          {
-            id: "waiting",
-            name: "Waiting time",
-            line: "How long each customer has been waiting for a reply.",
-          },
-        ],
-      },
-      {
-        id: "media",
-        label: "Voice notes, photos and history",
-        items: [
-          {
-            id: "voice",
-            name: "Voice notes",
-            line: "A customer's voice note plays inside the conversation.",
-          },
-          {
-            id: "ai-voice",
-            name: "AI replies to voice notes",
-            /* §6: "AI voice-note replies where configured". */
-            line: "Where you have set it up, the assistant answers a voice note too.",
-          },
-          {
-            id: "photos",
-            name: "Photos",
-            line: "Photos customers send, in the thread they sent them in.",
-          },
-          {
-            id: "history",
-            name: "Conversation history",
-            line: "Everything said with a customer, kept in one thread.",
-          },
-        ],
-      },
-      {
-        id: "team",
-        label: "Working as a team",
-        items: [
-          {
-            id: "shared",
-            name: "Shared team inbox",
-            line: "Everyone on your team works from the same list of conversations.",
-          },
-          {
-            id: "assign",
-            name: "Conversation assignment",
-            line: "Each conversation can have an owner, so it is clear who replies.",
-          },
-          {
-            id: "notes",
-            name: "Internal notes",
-            line: "Notes on a conversation that only your team can see.",
-          },
-          {
-            id: "quick",
-            name: "Saved quick replies",
-            line: "The answers you give every day, saved and sent in a tap.",
-          },
-        ],
-      },
-    ],
-    limits: [
-      /* §23. "Not part of the current product guide" rather than "cannot":
-         the guide not listing it is what is known. */
-      "One WhatsApp number per workspace. More than one is not part of the current product guide.",
-      /* §14 - approved templates for out-of-window messages. */
-      "More than 24 hours after a customer's last message, WhatsApp only allows an approved template. That rule is Meta's.",
-      /* §22, in the words of the home page's FAQ answer. */
-      "Meta bills you for WhatsApp messaging on its own terms, separately from anything MnT Future charges.",
-      /* §23 and §24, and the home page's FAQ answer again. */
-      "There is no App Store or Play Store app. Your team uses the inbox in a mobile browser.",
-    ],
-  },
-
-  /* ---- AI Sales Assistant - requirements §7 ------------------------------ */
-  "ai-sales-assistant": {
-    /* The landing page requirements' own heading for this feature (§12). */
-    title: "An AI sales assistant that understands your business.",
-    lead: "You set it up with your own services, prices, rules and tone. It replies in the customer's language, asks your questions, books appointments and follows up, and it hands anything it should not handle to your team.",
-    groups: [
-      {
-        id: "setup",
-        label: "What you set it up with",
-        /* §7's configuration list, all ten, in its own order. */
-        items: [
-          { id: "name", name: "Business name" },
-          { id: "tone", name: "Tone" },
-          { id: "services", name: "Services" },
-          { id: "prices", name: "Prices" },
-          { id: "rules", name: "Rules" },
-          { id: "packages", name: "Packages" },
-          { id: "policies", name: "Policies" },
-          { id: "documents", name: "Approved documents" },
-          { id: "ad-rules", name: "Ad-specific instructions" },
-          { id: "handoff-rules", name: "Handoff rules" },
-        ],
-      },
-      {
-        id: "talk",
-        label: "How it talks",
-        items: [
-          {
-            id: "language",
-            name: "The customer's language",
-            line: "It replies in the language the customer wrote in: Tamil, Tanglish, English, Hindi and more.",
-          },
-          {
-            id: "approved",
-            name: "Your information, nothing else",
-            /* §7: "Uses approved business information". */
-            line: "Its answers come from the business information you approve.",
-          },
-        ],
-      },
-      {
-        id: "book",
-        label: "Qualifying and booking",
-        items: [
-          {
-            id: "qualify",
-            name: "Your qualifying questions",
-            line: "It asks the questions you set, and saves the answers to the contact.",
-          },
-          {
-            id: "calendar",
-            name: "Calendar availability",
-            line: "It checks your calendar before it offers a time.",
-          },
-          {
-            id: "booking",
-            name: "Book, reschedule, cancel",
-            line: "Customers can book, move or cancel an appointment in the chat.",
-          },
-          {
-            id: "confirmed",
-            name: "Confirmed before it says so",
-            /* §7: "Checks actual system events before sending
-               booking-related replies" - said the way a customer would
-               notice it. */
-            line: "It checks the booking really went through before it tells the customer.",
-          },
-        ],
-      },
-      {
-        id: "handoff",
-        label: "Following up and handing over",
-        items: [
-          {
-            id: "follow-up",
-            name: "Follow-ups after silence",
-            line: "When a customer goes quiet, it follows up.",
-          },
-          {
-            id: "handover",
-            name: "Handoff to your team",
-            line: "Complaints, payments, legal questions and anything else you choose go to a person.",
-          },
-        ],
-      },
-    ],
-    limits: [
-      /* §7 and §17: never suggest it replaces staff. The home page's FAQ
-         says the same thing at more length. */
-      "It works alongside your team, not instead of it. Anything it should not handle goes to a person.",
-      "It answers from the information you approve, so keep your prices and policies up to date.",
-      /* §7: "and other supported languages" - no fifth one is named. */
-      "Tamil, Tanglish, English and Hindi are among the languages it supports. Ask about any other you need.",
-      /* §21 and §23, in the words of the home page's FAQ answer. */
-      "It books into iSuite AI's own calendars. It does not sync with Google Calendar or Outlook.",
-    ],
-  },
-
-  /* ---- Contacts and Custom Fields - requirements §10 ------------------- */
-  contacts: {
-    title: "Everything about a customer, on one record.",
-    lead: "Their number, where they came from and every conversation on every channel, with the fields your business decides are worth keeping - including the ones the assistant asks for.",
-    groups: [
-      {
-        id: "record",
-        label: "The contact record",
-        items: [
-          {
-            id: "identity",
-            name: "Name, number and email",
-            line: "The basics, kept once, for everyone on your team.",
-          },
-          {
-            id: "company",
-            name: "Company",
-            line: "For customers who come to you on behalf of a business.",
-          },
-          {
-            id: "source",
-            name: "Source",
-            /* §8: "A clicked ad can be recorded against the contact". */
-            line: "Where the enquiry came from - a channel, a form or the ad they clicked.",
-          },
-          {
-            id: "notes",
-            name: "Notes",
-            line: "What your team learns about the customer, written where everyone can find it.",
-          },
-        ],
-      },
-      {
-        id: "history",
-        label: "Every conversation with them",
-        items: [
-          {
-            id: "full-history",
-            name: "Full conversation history",
-            line: "Everything said with the customer, in order.",
-          },
-          {
-            id: "cross-channel",
-            name: "Across every channel",
-            line: "WhatsApp, Instagram, Messenger and your website, on the one record.",
-          },
-        ],
-      },
-      {
-        id: "fields",
-        label: "Fields you decide",
-        /* §10's five kinds of custom field, in its own order. */
-        items: [
-          {
-            id: "contact-fields",
-            name: "Contact fields",
-            line: "Your own details about the customer, like the branch they visit.",
-          },
-          {
-            id: "deal-fields",
-            name: "Deal fields",
-            line: "Details that belong to one deal rather than to the person.",
-          },
-          {
-            id: "shared-fields",
-            name: "Fields on contacts and deals",
-            line: "Details kept on the contact and on their deals together.",
-          },
-          {
-            id: "ask-fields",
-            name: "Fields the assistant asks for",
-            line: "It asks your questions in the chat and fills these in from the answers.",
-          },
-          {
-            id: "required-fields",
-            name: "Required before a deal opens",
-            line: "Fields that must be filled in before a deal can be opened.",
-          },
-        ],
-      },
-      {
-        id: "segments",
-        label: "Tags and segments",
-        /* §10's uses for tags and segments, all five. */
-        items: [
-          {
-            id: "filter",
-            name: "Filtering",
-            line: "Narrow any list to the customers with a tag.",
-          },
-          {
-            id: "seg-follow-ups",
-            name: "Follow-ups",
-            line: "Choose who to follow up by tag or segment.",
-          },
-          {
-            id: "seg-broadcasts",
-            name: "Broadcasts",
-            line: "Send an approved template to a segment you pick.",
-          },
-          {
-            id: "groups",
-            name: "Customer groups",
-            line: "Group customers the way your business thinks about them.",
-          },
-          {
-            id: "qualification",
-            name: "Lead qualification",
-            line: "Mark how far a lead has come, using your own tags.",
-          },
-        ],
-      },
-    ],
-    limits: [
-      /* §23 - no lead scoring, stated with what does the job instead. */
-      "There is no hot, warm or cold lead scoring in the current product guide. Your own tags and fields do that job.",
-      /* §16 - data ownership and the Contacts CSV export. */
-      "Your contacts belong to your business, and they can be exported as a CSV.",
-    ],
-  },
-
-  /* ---- Sales Pipeline - requirements §11 -------------------------------- */
-  "sales-pipeline": {
-    /* The landing page requirements' own heading and copy (§13). */
-    title: "Every lead has a place in your sales pipeline.",
-    lead: "Every enquiry can become a contact and a deal. Your team can manage owners, stages, deal values, expected close dates, notes and won/lost reasons from a shared sales board.",
-    groups: [
-      {
-        id: "board",
-        label: "Your boards and stages",
-        items: [
-          {
-            id: "boards",
-            name: "More than one board",
-            line: "A board for each way you sell - new patients on one, treatments on another.",
-          },
-          {
-            id: "stages",
-            name: "Your own stages",
-            /* §11: the stages are examples; businesses configure their own. */
-            line: "New Enquiry, Qualified, Appointment Booked - or whatever your business calls them.",
-          },
-          {
-            id: "drag",
-            name: "Drag and drop",
-            line: "Move a deal to its next stage by dragging it there.",
-          },
-        ],
-      },
-      {
-        id: "deal",
-        label: "Every deal",
-        items: [
-          {
-            id: "value",
-            name: "Deal value and currency",
-            line: "What the deal is worth, in the currency you sell in.",
-          },
-          {
-            id: "owner",
-            name: "Deal owner",
-            line: "One person responsible for every deal.",
-          },
-          {
-            id: "close-date",
-            name: "Expected close date",
-            line: "When the deal should close, so late ones show up.",
-          },
-          {
-            id: "deal-notes",
-            name: "Notes",
-            line: "What has been said and agreed, on the deal itself.",
-          },
-          {
-            id: "answers",
-            name: "Qualifying answers",
-            line: "The answers to your questions, saved on the deal.",
-          },
-        ],
-      },
-      {
-        id: "close",
-        label: "Won, lost and why",
-        items: [
-          {
-            id: "won",
-            name: "Won reasons",
-            line: "Why a deal was won, recorded when it closes.",
-          },
-          {
-            id: "lost",
-            name: "Lost reasons",
-            line: "Why a deal was lost - recorded, because losing happens.",
-          },
-          {
-            id: "one-deal",
-            /* "per board" is §11's own, and without it the name says a
-               customer can only ever have one deal open. */
-            name: "One open deal per customer, per board",
-            line: "A customer has one open deal on a board at a time.",
-          },
-        ],
-      },
-      {
-        id: "analytics",
-        label: "Seeing the whole board",
-        items: [
-          {
-            id: "pipeline-analytics",
-            name: "Pipeline analytics",
-            line: "How deals are moving through your stages.",
-          },
-          {
-            id: "stage-contents",
-            name: "What is in each stage",
-            line: "Every deal waiting in a stage, listed.",
-          },
-          {
-            id: "past-close",
-            name: "Deals past their close date",
-            line: "The ones that should have closed by now, pulled out.",
-          },
-        ],
-      },
-    ],
-    limits: [
-      /* §11 - the stages are examples. */
-      "The stages shown are examples. You set your own.",
-      /* §23 - quotes, invoices, e-signatures. */
-      "Quotes, invoices and e-signatures are not part of the current product guide.",
-    ],
-  },
-
-  /* ---- Follow-ups - requirements §12 ------------------------------------ */
-  "follow-ups": {
-    /* §12's positioning, and the landing page's benefit 4: "do not depend
-       only on memory". */
-    title: "Follow-ups that do not depend on memory.",
-    lead: "Every follow-up has a due date and an owner. Due and overdue lists show what is waiting, owners are reminded, and the follow-ups the assistant promises in a chat are written down.",
-    groups: [
-      {
-        id: "lists",
-        label: "Due and overdue",
-        items: [
-          {
-            id: "due-date",
-            name: "A due date on every follow-up",
-            line: "Each follow-up says when it has to happen.",
-          },
-          {
-            id: "due-list",
-            name: "Due list",
-            line: "What is due today and next, in one list.",
-          },
-          {
-            id: "overdue-list",
-            name: "Overdue list",
-            line: "The ones that slipped, kept apart so they are seen first.",
-          },
-        ],
-      },
-      {
-        id: "remind",
-        label: "Reminders",
-        items: [
-          {
-            id: "owner-reminders",
-            name: "Owner reminders",
-            line: "The person a follow-up belongs to is reminded when it is due.",
-          },
-          {
-            id: "promised",
-            name: "Follow-ups the assistant promised",
-            /* §12: "AI-written promised follow-ups". */
-            line: "When the assistant promises something in a chat, the follow-up is written down.",
-          },
-        ],
-      },
-      {
-        id: "track",
-        label: "Keeping track",
-        items: [
-          {
-            id: "per-customer",
-            name: "Follow-ups per customer",
-            line: "Every follow-up with one customer, on their record.",
-          },
-          {
-            id: "on-time",
-            name: "On-time follow-up rate",
-            line: "How often follow-ups happen when they were due.",
-          },
-        ],
-      },
-    ],
-    limits: [
-      /* §14 - out-of-window WhatsApp messages need templates. */
-      "More than 24 hours after a customer's last message, a WhatsApp follow-up has to be an approved template. That rule is Meta's.",
-    ],
-  },
-
-  /* ---- Appointments - requirements §9 ----------------------------------- */
-  appointments: {
-    title: "Bookings that follow your calendar.",
-    /* The landing page requirements' copy (§14), with the settings that
-       make it true. */
-    lead: "Customers book, reschedule or cancel using your configured calendars and availability - your working hours, buffers and notice - with a confirmation and reminders before they come.",
-    groups: [
-      {
-        id: "calendars",
-        label: "Your calendars",
-        items: [
-          {
-            id: "per-person",
-            name: "A calendar per person",
-            line: "Each member of your team has their own calendar.",
-          },
-          {
-            id: "per-service",
-            name: "A calendar per service",
-            line: "Services book into their own calendars, at their own length.",
-          },
-          {
-            id: "hours",
-            name: "Working hours",
-            line: "Only the hours you are open can be booked.",
-          },
-          {
-            id: "timezone",
-            name: "Host timezone",
-            line: "Times are kept in the host's own timezone.",
-          },
-        ],
-      },
-      {
-        id: "rules",
-        label: "Booking rules",
-        items: [
-          {
-            id: "buffers",
-            name: "Buffers",
-            line: "Time kept free between one booking and the next.",
-          },
-          {
-            id: "notice",
-            name: "Minimum notice",
-            line: "How soon before a slot it can still be booked.",
-          },
-          {
-            id: "horizon",
-            name: "Booking horizon",
-            line: "How far ahead customers can book.",
-          },
-        ],
-      },
-      {
-        id: "messages",
-        label: "Confirmations and reminders",
-        items: [
-          {
-            id: "confirmation",
-            name: "Booking confirmation",
-            line: "Sent as soon as the booking is made.",
-          },
-          {
-            id: "remind-24",
-            name: "24-hour reminder",
-            line: "A reminder the day before.",
-          },
-          {
-            id: "remind-1",
-            name: "1-hour reminder",
-            line: "A reminder shortly before they are due.",
-          },
-          {
-            id: "thanks",
-            name: "Thank-you message",
-            line: "A message after the visit.",
-          },
-          {
-            id: "missed",
-            name: "Missed booking message",
-            line: "A message to a customer whose booking was missed.",
-          },
-        ],
-      },
-      {
-        id: "changes",
-        label: "Changes and no-shows",
-        items: [
-          {
-            id: "reschedule",
-            name: "Reschedule link",
-            line: "Customers move their own booking from a link.",
-          },
-          {
-            id: "cancel",
-            name: "Cancellation link",
-            line: "Or cancel it, the same way.",
-          },
-          {
-            id: "no-show",
-            name: "No-shows marked by your team",
-            line: "A team member marks a booking as a no-show.",
-          },
-          {
-            id: "no-show-rate",
-            name: "No-show rate per host",
-            line: "How often each host's bookings are missed.",
-          },
-        ],
-      },
-    ],
-    limits: [
-      /* §9 - "Do not claim automatic no-show detection." */
-      "No-shows are marked by a person. There is no automatic no-show detection.",
-      /* §21 and §23, in the words of the home page's FAQ answer. */
-      "Bookings go into iSuite AI's own calendars. It does not sync with Google Calendar or Outlook.",
-    ],
-  },
-
-  /* ---- Meta Ads - requirements §15 --------------------------------------
-     The home page's Meta ads section is ONE thing this feature does - the
-     AI building a campaign from a poster, with the owner's approval. This
-     is all of it, and none of that story is told again here. */
-  "meta-ads": {
-    /* The landing page requirements' own heading for it (§15). */
-    title: "Connect your ads to the enquiries they generate.",
-    lead: "Campaigns, ad sets, ads and lead forms are built in iSuite AI and go live only when the owner approves them. Each lead is traced to the campaign and ad it came from, and each ad shows what it brought in, down to the deals it won.",
-    groups: [
-      {
-        id: "build",
-        label: "Built in iSuite AI",
-        items: [
-          { id: "campaigns", name: "Campaigns" },
-          { id: "ad-sets", name: "Ad sets" },
-          { id: "ads", name: "Ads" },
-          { id: "lead-forms", name: "Lead forms" },
+          { id: "history", name: "Every message, in order", line: "Messages, templates and attachments, in one thread." },
+          { id: "ai-badge", name: "AI replies, marked", line: "Every reply the Sales AI Agent sent carries an AI tag." },
+          { id: "status", name: "Open or closed", line: "Mark where each conversation stands." },
+          { id: "assign", name: "Assign", line: "Hand the conversation to the right teammate." },
         ],
       },
       {
         id: "control",
-        label: "Your say before it runs",
+        label: "You and the AI, in the same chat",
         items: [
-          {
-            id: "approval",
-            name: "Owner approval",
-            line: "Nothing goes live until the owner approves it.",
-          },
-          {
-            id: "cap",
-            name: "Daily budget cap",
-            line: "The most an ad can spend in a day, set before it runs.",
-          },
+          { id: "auto", name: "The AI, replying", line: "A bar says when the Sales AI Agent is answering this conversation." },
+          { id: "takeover", name: "Take over", line: "One press and the conversation is yours." },
+          { id: "draft", name: "Draft with AI", line: "Tap the spark for a drafted reply you edit before sending." },
+          { id: "attach", name: "Files and emoji", line: "Attach a file or add an emoji, the way you would on your phone." },
         ],
       },
       {
-        id: "results",
-        label: "What each ad brought in",
-        /* §15's list, in its order: the first four from Meta, the last
-           three from the pipeline. */
+        id: "customer",
+        label: "The customer, beside the chat",
         items: [
-          { id: "spend", name: "Spend" },
-          { id: "impressions", name: "Impressions" },
-          { id: "clicks", name: "Clicks" },
-          { id: "leads", name: "Leads" },
-          { id: "won", name: "Won deals" },
-          { id: "value", name: "Deal value" },
-          { id: "cash", name: "Cash collected" },
-        ],
-      },
-      {
-        id: "tracking",
-        label: "Tracked both ways",
-        /* §15's lead source tracking, and its Conversions API feedback -
-           which is the same link run the other way. */
-        items: [
-          { id: "lead-ad-source", name: "Lead ad source" },
-          { id: "campaign", name: "Campaign" },
-          { id: "ad", name: "Ad" },
-          { id: "ctwa-source", name: "Click-to-WhatsApp source" },
-          { id: "linked", name: "Linked to the contact and deal" },
-          {
-            id: "capi",
-            name: "Qualified leads sent back to Meta",
-            line: "Through Meta's Conversions API.",
-          },
+          { id: "contact", name: "Contact details", line: "Name, number and email, each a click from copying." },
+          { id: "tags", name: "Tags", line: "Tag the customer without leaving the chat." },
+          { id: "deals", name: "Deals", line: "The customer's deals, and a way to open one." },
+          { id: "notes", name: "Notes", line: "Notes your team keeps about the customer." },
         ],
       },
     ],
     limits: [
-      /* §22's approval for the customer's own ad account, then the §15
-         disclaimer - verbatim, and mandatory. */
-      "Ads run on your own Meta ad account, which Meta has to approve for these features. Meta advertising charges and Meta approval requirements are separate from MnT Future charges and timelines.",
-      /* §15's "do not promise" list, turned round into what is true. */
-      "The figures show what your ads did, where the data is available. They are not a promise of leads, sales or lower ad costs.",
+      "After 24 hours without a message from the customer, WhatsApp allows only an approved template - the inbox says so and offers your templates.",
+      "Meta bills WhatsApp messages separately.",
     ],
   },
 
-  /* ---- Broadcasts and Templates - requirements §14 ----------------------- */
-  broadcasts: {
-    title: "Approved templates, sent to the customers you choose.",
-    lead: "Write a WhatsApp template, submit it to Meta and follow its approval. Once approved it goes to a segment, a tag, a group or a list, straight away or on a schedule, and you can see it delivered, read and replied to. Anyone who has opted out is skipped.",
+  "website-ai-chat-widget": {
+    title: "A chat on your website, answered.",
+    lead: "Put one line of code on your site and a chat bubble appears on every page. Visitors write in, the Sales AI Agent answers, and every chat lands in your inbox.",
     groups: [
       {
-        id: "templates",
-        label: "Templates",
+        id: "install",
+        label: "On any website",
         items: [
-          { id: "create", name: "Create WhatsApp templates" },
-          { id: "submit", name: "Submit to Meta" },
-          { id: "approval", name: "Track approval" },
+          { id: "snippet", name: "One line of code", line: "Paste it before your site's closing body tag, and the bubble appears bottom-right on every page." },
+          { id: "anysite", name: "WordPress, Shopify, Wix or your own HTML", line: "It works on any website." },
+          { id: "switch", name: "An off switch", line: "Turning the widget off hides the bubble at once." },
         ],
       },
       {
-        id: "audience",
-        label: "Who it goes to",
+        id: "look",
+        label: "Your name and your colour",
         items: [
-          { id: "segments", name: "Segments" },
-          { id: "tags", name: "Tags" },
-          { id: "filters", name: "Groups or filters" },
-          { id: "lists", name: "Uploaded lists, where supported" },
+          { id: "title", name: "Widget title", line: "The name at the top of the chat." },
+          { id: "color", name: "Accent colour", line: "The widget wears your colour." },
+          { id: "greeting", name: "Greeting", line: "The first bubble a visitor sees when the chat opens." },
         ],
       },
       {
-        id: "timing",
-        label: "When it goes",
+        id: "answers",
+        label: "Answered by the Sales AI Agent",
         items: [
-          { id: "now", name: "Send immediately" },
-          { id: "schedule", name: "Schedule a broadcast" },
+          { id: "ai", name: "AI answers", line: "The Sales AI Agent replies from what you have told it about your business." },
+          { id: "buttons", name: "Buttons to tap", line: "Where a reply offers choices, the visitor taps one instead of typing." },
+          { id: "team", name: "Your team, when it's needed", line: "Someone can take the chat over from the inbox." },
         ],
       },
       {
-        id: "results",
-        label: "What happened",
+        id: "inbox",
+        label: "Every chat, someone you can reach",
         items: [
-          { id: "delivered", name: "Delivery" },
-          { id: "read", name: "Reads" },
-          { id: "replied", name: "Replies" },
-          { id: "opt-outs", name: "Opt-outs skipped automatically" },
+          { id: "phone", name: "A phone number first", line: "Turn it on and visitors give a number before chatting, so every chat is a lead you can call back." },
+          { id: "landed", name: "In the same inbox", line: "Website chats sit beside WhatsApp, Instagram and Messenger." },
+          { id: "files", name: "Attachments", line: "Visitors can send a file." },
         ],
       },
     ],
     limits: [
-      /* §14's first two rules, kept apart as §14 keeps them: opt-in
-         always, templates outside the window - the same 24-hour rule
-         Follow-ups states. Run together they read as if opt-in only
-         mattered after 24 hours. */
-      "Customers must have opted in, and outside the 24 hours after their last message only approved templates can be sent.",
-      /* §14's last two, in the words of the home page's FAQ answer. */
-      "Meta bills you for WhatsApp messaging on its own terms, separately from anything MnT Future charges. Messaging is not unlimited or free.",
+      "Its answers come from the Sales AI Agent, so the agent is set up first.",
     ],
   },
 
-  /* ---- Lead Capture - requirements §8 ------------------------------------ */
-  "lead-capture": {
-    title: "Every way a lead arrives, kept on one record.",
-    lead: "Leads from Meta ads and forms, click-to-WhatsApp ads, your own forms and booking pages, Instagram comments and website chat each become a contact with a deal, tags and the ad they came from. A customer who writes again another way is matched to the record they already have.",
+  "sales-ai-agent": {
+    title: "An AI agent that answers, books and hands over.",
+    lead: "It replies to customers in their own language from what you tell it about your business, books a time on your calendar, and hands the conversation to your team by the rules you set.",
     groups: [
       {
-        id: "sources",
-        label: "Where leads come in",
-        /* §8's eight, in its order. */
+        id: "language",
+        label: "In their language, from your business",
         items: [
-          { id: "lead-ads", name: "Meta lead ads" },
-          { id: "instant-forms", name: "Meta instant forms" },
-          { id: "ctwa", name: "Click-to-WhatsApp ads" },
-          { id: "hosted-forms", name: "Hosted forms" },
-          { id: "site-forms", name: "Forms on your website" },
-          { id: "booking-pages", name: "Booking pages" },
-          { id: "comment-keywords", name: "Instagram comment keywords" },
-          { id: "site-chat", name: "Website chat" },
+          { id: "languages", name: "Tamil, English, Hindi and more", line: "It answers in the language the customer wrote in." },
+          { id: "knowledge", name: "What you tell it", line: "Your business context, your instructions, and a knowledge base it searches." },
+          { id: "goal", name: "A goal for every chat", line: "What it is working towards - and once a deal is open, the goal you set for that deal's stage." },
+          { id: "briefs", name: "Ad briefs", line: "For a customer who came from an ad, the terms that ad's offer allows, and nothing beyond them." },
         ],
       },
       {
-        id: "handling",
-        label: "What happens to each lead",
+        id: "booking",
+        label: "Books a time",
         items: [
-          { id: "contact", name: "Contact created" },
-          { id: "deal", name: "Deal opened" },
-          { id: "tags", name: "Tags applied" },
-          { id: "ad-info", name: "Ad information saved" },
+          { id: "slots", name: "Offers free times", line: "It offers the times that are open on your calendar." },
+          { id: "books", name: "Books it", line: "The booking goes on the calendar, and the customer becomes a contact." },
+          { id: "confirm", name: "Confirmation on WhatsApp", line: "A confirmation follows with the time, who they will meet, and where." },
         ],
       },
       {
-        id: "one-record",
-        label: "One customer, one record",
+        id: "handoff",
+        label: "Hands over by your rules",
         items: [
-          { id: "duplicates", name: "Duplicate contacts matched" },
-          { id: "cross-channel", name: "One record across channels" },
-          { id: "missed", name: "Missed Meta leads pulled in later" },
+          { id: "reasons", name: "Reasons to hand over", line: "Asked for a person, ready to buy, a reply limit, a deal stage, gone quiet - or a reason you add." },
+          { id: "routing", name: "To the right person", line: "By team, deal stage and value, language, channel or tags - to whoever is least busy." },
+          { id: "escalation", name: "Nobody left waiting", line: "If no one answers in time: a reminder, the next person, a manager, then an honest word to the customer." },
+          { id: "takeover", name: "Take over any time", line: "Anyone on your team can take the conversation with one press." },
+        ],
+      },
+      {
+        id: "rules",
+        label: "Within the limits you set",
+        items: [
+          { id: "window", name: "Inside WhatsApp's 24 hours", line: "It follows up only while the window is open, stops the moment they reply, and never chases anyone who opted out." },
+          { id: "replylimit", name: "A reply limit", line: "No more automatic replies per conversation than you allow." },
+          { id: "playground", name: "A playground", line: "Test its replies as if you were a customer before it talks to anyone." },
+          { id: "drafts", name: "Drafts for your team", line: "Your team can ask it for a reply to edit before sending." },
         ],
       },
     ],
     limits: [
-      /* §8: "where supported". */
-      "Missed Meta leads can be pulled in later only where Meta supports it.",
-      /* §22: the customer's own number and ad account. */
-      "Meta lead ads, instant forms and click-to-WhatsApp ads come in through your own Meta ad account and WhatsApp Business number, once they are connected.",
+      "It runs on your own OpenAI, Anthropic or Sarvam AI key: your provider bills you directly, and there are no per-seat AI fees.",
+      "It states as fact only what you give it - your instructions, knowledge base, service packages and ad briefs.",
     ],
   },
 
-  /* ---- Automations - requirements §13 ------------------------------------
-     Ten triggers and fourteen actions, all of them, and the log every run
-     leaves. The actions are grouped by where they land. */
-  automations: {
-    title: "When this happens, do that. No code.",
-    lead: "Choose what starts an automation - a message, a keyword, a new lead, a booking, a customer gone quiet - and what it does next: reply, send a template, wait, branch, assign, tag, move a deal, email or call a webhook. Every run is logged, step by step.",
+  /* ==== 02 SALES ========================================================= */
+
+  "leads-management": {
+    title: "Businesses you found, kept apart until someone speaks to them.",
+    lead: "Leads are prospects, not customers yet. Add them, import them, or give it a list of websites to read for a way to reach each one - then work the list call by call.",
     groups: [
       {
-        id: "triggers",
-        label: "When",
+        id: "find",
+        label: "Bring them in",
         items: [
-          { id: "new-message", name: "New message" },
-          { id: "keyword", name: "Keyword" },
-          { id: "new-contact", name: "New contact" },
-          { id: "tag-added", name: "Tag added" },
-          { id: "form-submitted", name: "Form submitted" },
-          { id: "meta-ad-lead", name: "Meta ad lead" },
-          { id: "booking-made", name: "Booking made" },
-          { id: "booking-missed", name: "Booking missed" },
-          { id: "stage-movement", name: "Stage movement" },
-          { id: "quiet", name: "Customer becomes quiet" },
+          { id: "add", name: "Add a lead" },
+          { id: "import", name: "Import leads" },
+          { id: "websites", name: "Read a list of websites for contact details" },
         ],
       },
       {
-        id: "to-customer",
-        label: "Then, to the customer",
+        id: "work",
+        label: "Work the list",
         items: [
-          { id: "send-message", name: "Send message" },
-          { id: "send-template", name: "Send approved template" },
-          { id: "send-image", name: "Send image" },
-          { id: "send-file", name: "Send file" },
-          { id: "ask-wait", name: "Ask and wait" },
-        ],
-      },
-      {
-        id: "flow",
-        label: "Then, in the flow",
-        items: [
-          { id: "wait", name: "Wait for a period" },
-          { id: "branch", name: "Branch by condition" },
-        ],
-      },
-      {
-        id: "for-team",
-        label: "Then, for your team",
-        items: [
-          { id: "assign", name: "Assign conversation" },
-          { id: "add-tag", name: "Add tag" },
-          { id: "update-field", name: "Update field" },
-          { id: "move-deal", name: "Move deal" },
-          { id: "notify", name: "Notify colleague" },
-        ],
-      },
-      {
-        id: "elsewhere",
-        label: "Then, elsewhere",
-        items: [
-          { id: "email", name: "Send email" },
-          { id: "webhook", name: "Trigger webhook" },
-        ],
-      },
-      {
-        id: "logs",
-        label: "Every run, logged",
-        items: [
-          { id: "log-trigger", name: "Trigger" },
-          { id: "log-steps", name: "Steps" },
-          { id: "log-result", name: "Action result" },
-          { id: "log-success", name: "Success or failure" },
-          { id: "log-error", name: "Error details" },
+          { id: "statuses", name: "New, contacted, replied, not a fit, do not contact" },
+          { id: "calls", name: "My calls" },
+          { id: "mark", name: "Mark contacted" },
+          { id: "search", name: "Search by name" },
         ],
       },
     ],
     limits: [
-      /* §14's window rule, which binds an automation's messages too. */
-      "Outside the 24 hours after a customer's last message, an automation can send them only an approved template.",
+      "A lead can't be messaged on WhatsApp first - Meta needs an opt-in - so you call or email, and WhatsApp opens the moment they write back.",
     ],
   },
 
-  /* ---- Reports and Dashboard - requirements §16 --------------------------
-     All fifteen of §16's figures, by what they measure. None of them is
-     shown as a number anywhere on this page: the home page's hero carries
-     the one real dashboard screenshot. */
-  reports: {
-    /* Not "on one dashboard": the chapter's card for this feature ends
-       with those words, a screen above. */
-    title: "How the business is doing, at a glance.",
-    lead: "Active and waiting conversations, new contacts, open deals and pipeline value, today's bookings, first-response times, and how many leads the assistant handled beside your team - with contacts and form submissions exported whenever you want them.",
+  "contacts-management": {
+    title: "Every customer, one record you shape.",
+    lead: "One record per customer, holding the fields you decide are worth keeping, and a list you can search, filter, save views of, import to and export from.",
     groups: [
       {
-        id: "conversations",
-        label: "Conversations",
+        id: "list",
+        label: "The list",
         items: [
-          { id: "active", name: "Active conversations" },
-          { id: "waiting", name: "Waiting conversations" },
-          { id: "age", name: "Conversation age" },
-          { id: "sent", name: "Messages sent" },
-          { id: "first-response", name: "Average first-response time" },
-          { id: "response-performance", name: "Response-time performance" },
-        ],
-      },
-      {
-        id: "leads",
-        label: "Leads",
-        items: [
-          { id: "new-contacts", name: "New contacts" },
-          { id: "ai-handled", name: "AI-handled leads" },
-          { id: "human-handled", name: "Human-handled leads" },
-        ],
-      },
-      {
-        id: "sales",
-        label: "Deals and bookings",
-        items: [
-          { id: "open-deals", name: "Open deals" },
-          { id: "pipeline-value", name: "Pipeline value" },
-          { id: "deals", name: "Deals" },
-          { id: "wins", name: "Wins" },
-          { id: "deal-value", name: "Deal value" },
-          { id: "bookings-today", name: "Today's bookings" },
-        ],
-      },
-      {
-        id: "exports",
-        label: "Exports",
-        items: [
-          { id: "contacts-csv", name: "Contacts CSV" },
-          { id: "forms-csv", name: "Form submissions CSV" },
-        ],
-      },
-    ],
-    limits: [
-      /* §23: no complete end-to-end funnel report in a single view. */
-      "There is no single report that follows a lead from the first ad to the final sale in one view.",
-      /* §16's data ownership. */
-      "The data behind the dashboard belongs to your business.",
-    ],
-  },
-
-  /* ---- Team and Permissions - requirements §17 ---------------------------
-     THE VERIFIED MANAGER IS NAMED, AND ITS ACTIONS ARE NOT. §17 lists them
-     ("read numbers, set follow-ups, look up customers...") and then says to
-     publish the exact actions only after product confirmation. Until that
-     comes, the capability is here with §17's own words for it -
-     "supported actions" - and nothing more. */
-  "team-permissions": {
-    title: "Everyone sees what they should, and nothing else.",
-    lead: "Give each person a role - owner, admin, employee, viewer or one you define - and set exactly what they can do and whose records they can see. Every action, the assistant's included, is on record.",
-    groups: [
-      {
-        id: "roles",
-        label: "Roles",
-        items: [
-          { id: "owner", name: "Owner" },
-          { id: "admin", name: "Admin" },
-          { id: "employee", name: "Employee" },
-          { id: "viewer", name: "Viewer" },
-          { id: "custom", name: "Custom roles" },
-        ],
-      },
-      {
-        id: "scope",
-        label: "What each can do",
-        items: [
-          { id: "exact", name: "Exact permissions" },
-          { id: "own", name: "Own records only" },
-          { id: "assigned", name: "Assigned records only" },
-        ],
-      },
-      {
-        id: "together",
-        label: "Working together",
-        items: [
-          { id: "assignment", name: "Conversation assignment" },
-          { id: "notes", name: "Internal notes" },
-          {
-            id: "manager",
-            name: "Verified manager on WhatsApp",
-            line: "A verified manager can take supported actions from WhatsApp.",
-          },
+          { id: "search", name: "Search by name, phone or email" },
+          { id: "filter", name: "Filters" },
+          { id: "columns", name: "Your columns" },
+          { id: "views", name: "Saved views" },
+          { id: "import", name: "Import" },
+          { id: "export", name: "Export" },
         ],
       },
       {
         id: "record",
-        label: "On record",
+        label: "The record",
         items: [
-          { id: "audit", name: "Audit trail" },
-          { id: "ai-history", name: "AI action history" },
-          { id: "refused", name: "Refused-action history" },
+          { id: "fields", name: "Your own fields" },
+          { id: "tags", name: "Tags" },
+          { id: "company", name: "Company" },
+          { id: "chat", name: "A chat, one press away" },
+        ],
+      },
+      {
+        id: "groups",
+        label: "Groups",
+        items: [
+          { id: "curated", name: "Curated lists of contacts" },
+          { id: "broadcast", name: "Built to broadcast to" },
         ],
       },
     ],
     limits: [],
   },
 
-  /* ---- Chat Commerce in India - requirements §18 ------------------------- */
-  "chat-commerce": {
-    title: "Sell inside the chat, from your own catalogue.",
-    lead: "Your Meta catalogue syncs into iSuite AI, products go to the customer as cards in the chat, a WhatsApp cart becomes an order in your CRM, and payment is requested and recorded in the same conversation.",
+  "sales-pipeline-management": {
+    title: "As many pipelines as you sell in.",
+    lead: "A pipeline for each way you sell, each with its own stages in its own order, and every deal on it as a board or a list.",
     groups: [
       {
-        id: "catalogue",
-        label: "Catalogue and cart",
+        id: "pipelines",
+        label: "Your pipelines",
         items: [
-          { id: "sync", name: "Meta catalogue sync" },
-          { id: "cards", name: "Product cards in chat" },
-          { id: "cart-order", name: "WhatsApp cart to CRM order" },
+          { id: "add", name: "Add a pipeline" },
+          { id: "stages", name: "Your stages, in your order" },
+          { id: "rename", name: "Rename any stage" },
+          { id: "duplicate", name: "Duplicate a pipeline" },
         ],
       },
       {
-        id: "payment",
-        label: "Payment",
+        id: "deals",
+        label: "The deals",
         items: [
-          { id: "request", name: "Payment request in chat" },
-          { id: "recorded", name: "Payment confirmation recorded" },
+          { id: "views", name: "Board or list" },
+          { id: "add-deal", name: "Add a deal" },
+          { id: "card", name: "Value and owner on every deal" },
+          { id: "close", name: "Won and lost" },
+        ],
+      },
+      {
+        id: "moves",
+        label: "What moves with them",
+        items: [
+          { id: "goals", name: "A goal per stage for the Sales AI Agent" },
+          { id: "triggers", name: "Deal created, moved, won and lost start automations" },
+          { id: "forms", name: "Ad forms that open a deal" },
+        ],
+      },
+    ],
+    limits: [],
+  },
+
+  "follow-up-management": {
+    title: "Work owed to people - who to chase, and by when.",
+    lead: "Every follow-up your team owes, sorted by when it is due, with the whole team's or only your own in view.",
+    groups: [
+      {
+        id: "when",
+        label: "Sorted by when",
+        items: [
+          { id: "overdue", name: "Overdue" },
+          { id: "today", name: "Today" },
+          { id: "week", name: "This week" },
+          { id: "done", name: "Show done" },
+        ],
+      },
+      {
+        id: "whose",
+        label: "Whose, and what kind",
+        items: [
+          { id: "everyone", name: "Everyone, or mine" },
+          { id: "kind", name: "Every kind, or one" },
+          { id: "search", name: "Search a note or a name" },
+        ],
+      },
+      {
+        id: "glance",
+        label: "At a glance",
+        items: [
+          { id: "counts", name: "Overdue, due today, done and new this week" },
+          { id: "ontime", name: "On-time rate" },
+        ],
+      },
+      {
+        id: "act",
+        label: "Done in one press",
+        items: [
+          { id: "new", name: "New follow-up" },
+          { id: "tick", name: "Done" },
+        ],
+      },
+    ],
+    limits: [],
+  },
+
+  "booking-management": {
+    title: "Share your calendar. Every booking becomes a contact.",
+    lead: "A calendar for each kind of meeting, with a link customers book from, the appointments in one list, and a message on WhatsApp for every change.",
+    groups: [
+      {
+        id: "calendars",
+        label: "Booking calendars",
+        items: [
+          { id: "kinds", name: "A calendar for each kind of meeting" },
+          { id: "link", name: "A link to share" },
+          { id: "person", name: "Whose calendar it is" },
+          { id: "duration", name: "Duration" },
+          { id: "where", name: "Where or how you meet" },
+          { id: "buffers", name: "Buffers before and after" },
+          { id: "notice", name: "Minimum notice and booking window" },
+        ],
+      },
+      {
+        id: "appointments",
+        label: "Appointments",
+        items: [
+          { id: "states", name: "Upcoming, past and cancelled" },
+          { id: "views", name: "List or calendar" },
+          { id: "people", name: "Everyone's, or one person's" },
+        ],
+      },
+      {
+        id: "messages",
+        label: "On WhatsApp",
+        items: [
+          { id: "confirmed", name: "Confirmation" },
+          { id: "reminder", name: "Reminder" },
+          { id: "changed", name: "Rescheduled and cancelled" },
+          { id: "missed", name: "Missed" },
+          { id: "thanks", name: "Thank you" },
+        ],
+      },
+      {
+        id: "reports",
+        label: "Booking reports",
+        items: [
+          { id: "by-person", name: "By team member" },
+          { id: "busiest", name: "Busiest hours and days" },
+          { id: "sources", name: "Where bookings come from" },
+          { id: "deals", name: "Turned into deals" },
         ],
       },
     ],
     limits: [
-      /* §18's "do not claim" list, said as what is true. */
-      "It records orders and payments. It is not accounting software: no quotes, invoices, e-signatures or the rest of an ERP.",
+      "Bookings live in iSuite AI's own calendars - there is no Google Calendar or Outlook sync. A meeting link is set once, on the calendar.",
+    ],
+  },
+
+  "quotation-invoice": {
+    title: "Quote it, bill it, and see what came back.",
+    lead: "Quotations built from your catalogue with GST worked out, a link the customer accepts or declines from, invoices beside them, and where every one stands.",
+    groups: [
+      {
+        id: "quote",
+        label: "The quotation",
+        items: [
+          { id: "items", name: "Items from your catalogue, or typed" },
+          { id: "pricing", name: "Quantity, rate, discount and tax" },
+          { id: "gst", name: "GST and total" },
+          { id: "terms", name: "Notes and terms" },
+          { id: "pdf", name: "PDF download" },
+        ],
+      },
+      {
+        id: "customer",
+        label: "The customer's side",
+        items: [
+          { id: "link", name: "A link to accept or decline" },
+          { id: "verbal", name: "A yes on a call, recorded" },
+          { id: "resend", name: "Send again" },
+        ],
+      },
+      {
+        id: "status",
+        label: "Where each one stands",
+        items: [
+          { id: "states", name: "Draft, sent, accepted, declined, expired" },
+          { id: "numbers", name: "Numbered, with a valid-until date" },
+          { id: "revisions", name: "Every revision counted" },
+          { id: "invoices", name: "Invoices, beside the quotations" },
+        ],
+      },
+      {
+        id: "auto",
+        label: "What they can start",
+        items: [
+          { id: "q-triggers", name: "Quotation sent, accepted, declined and expiring" },
+          { id: "i-triggers", name: "Invoice issued, paid and overdue" },
+        ],
+      },
+    ],
+    limits: [],
+  },
+
+  /* ==== 03 MARKETING ===================================================== */
+
+  "whatsapp-marketing": {
+    title: "Bulk WhatsApp messages, from approved templates.",
+    lead: "Choose an approved template, choose who gets it, personalise it and send - then see how many were delivered and read.",
+    groups: [
+      {
+        id: "steps",
+        label: "In four steps",
+        items: [
+          { id: "template", name: "An approved template" },
+          { id: "audience", name: "Who gets it" },
+          { id: "personalise", name: "Personalised" },
+          { id: "send", name: "Sent" },
+        ],
+      },
+      {
+        id: "who",
+        label: "Who gets it",
+        items: [
+          { id: "groups", name: "Groups of your contacts" },
+          { id: "optout", name: "Only customers who opted in" },
+        ],
+      },
+      {
+        id: "track",
+        label: "What happened",
+        items: [
+          { id: "recipients", name: "Recipients" },
+          { id: "delivered", name: "Delivered" },
+          { id: "read", name: "Read" },
+          { id: "status", name: "Status and date" },
+        ],
+      },
+      {
+        id: "templates",
+        label: "Templates",
+        items: [
+          { id: "approved", name: "Approved by Meta" },
+          { id: "kinds", name: "Utility or marketing" },
+        ],
+      },
+    ],
+    limits: [
+      "Only approved templates can be sent in bulk, and only to customers who have opted in. Meta bills WhatsApp messages separately.",
+    ],
+  },
+
+  "email-marketing": {
+    title: "Email campaigns, through your own sending key.",
+    lead: "Write the email in HTML with each customer's name in it, build the list it goes to, count it, and send.",
+    groups: [
+      {
+        id: "write",
+        label: "The email",
+        items: [
+          { id: "name", name: "Campaign name" },
+          { id: "subject", name: "Subject line" },
+          { id: "preview", name: "Preview text" },
+          { id: "html", name: "Body in HTML" },
+          { id: "merge", name: "Name, first name, company and email filled in" },
+          { id: "unsubscribe", name: "Unsubscribe link" },
+        ],
+      },
+      {
+        id: "list",
+        label: "Who it goes to",
+        items: [
+          { id: "build", name: "Build the list" },
+          { id: "count", name: "Count them first" },
+        ],
+      },
+      {
+        id: "send",
+        label: "Sending",
+        items: [
+          { id: "drafts", name: "Drafts" },
+          { id: "now", name: "Send now" },
+        ],
+      },
+    ],
+    limits: [
+      "Campaigns are sent through your own Resend account and key.",
+    ],
+  },
+
+  forms: {
+    title: "Forms that turn every answer into a contact.",
+    lead: "Build a form, put it on your site or share its link, and every submission becomes a contact - and your Meta lead forms land the same way.",
+    groups: [
+      {
+        id: "build",
+        label: "Web forms you build",
+        items: [
+          { id: "pages", name: "Sections and pages" },
+          { id: "types", name: "Text, choices and more" },
+          { id: "required", name: "Required fields" },
+          { id: "saves", name: "Each answer saved to a contact field" },
+          { id: "preview", name: "A live preview" },
+        ],
+      },
+      {
+        id: "share",
+        label: "On your site",
+        items: [
+          { id: "embed", name: "Embed it" },
+          { id: "link", name: "Or share its link" },
+          { id: "publish", name: "Publish or unpublish" },
+          { id: "submissions", name: "Every submission kept" },
+        ],
+      },
+      {
+        id: "ads",
+        label: "Your Meta lead forms",
+        items: [
+          { id: "import", name: "Every lead form on your page" },
+          { id: "map", name: "Where each answer lands" },
+          { id: "tags", name: "The tags a lead wears" },
+          { id: "pipeline", name: "The pipeline its deal opens on" },
+        ],
+      },
+      {
+        id: "auto",
+        label: "What they can start",
+        items: [
+          { id: "triggers", name: "Form submitted and ad lead received" },
+          { id: "vars", name: "Ad, campaign and form names in the steps" },
+        ],
+      },
+    ],
+    limits: [
+      "Ad forms are the lead forms on your connected Facebook page.",
+    ],
+  },
+
+  /* THE MARKETING AI AGENT IS STUDIO'S AD SIDE - confirmed by the client
+     on 2026-10-01. Studio is one agent; the Analytics AI Agent is its
+     asking side. Every line here was read off Studio's own threads: asked
+     in Tanglish with a poster attached, it asked its questions
+     (ask_user), searched the targeting, created the campaign, ad set and
+     ad - each "Created (Paused)" - and asked in the chat before going
+     live (not through Approvals, so that is not claimed); it chose
+     a lead form or a WhatsApp button; it stopped to say Meta needed a
+     payment method, or its lead-ad terms, first; and asked afterwards it
+     reported each ad's spend and clicks (meta_get_performance) and the
+     contacts and won deals each brought in (ads_roas). Its "Meta Ads
+     Manager" skill is the client's own, written with the Skill Creator,
+     so it is not claimed here; Skills are on the Analytics AI Agent. */
+  "marketing-ai-agent": {
+    title: "Tell it what to advertise, and it builds the ad on Meta.",
+    lead: "In Studio, attach your poster and say what you want in your own words. It asks what it needs, finds the audience, and builds the campaign, ad set and ad on your Meta ad account - paused, until you say it can run.",
+    groups: [
+      {
+        id: "ask",
+        label: "You ask in your own words",
+        items: [
+          { id: "languages", name: "Tamil, Tanglish or English" },
+          { id: "poster", name: "Your poster or post attached" },
+          { id: "questions", name: "Its questions before it builds" },
+        ],
+      },
+      {
+        id: "build",
+        label: "It builds it on Meta",
+        items: [
+          { id: "audience", name: "The audience, and how many it reaches" },
+          { id: "campaign", name: "Campaign, ad set and ad" },
+          { id: "copy", name: "The ad copy" },
+          { id: "kinds", name: "A WhatsApp button or a lead form" },
+        ],
+      },
+      {
+        id: "hold",
+        label: "Nothing runs until you say so",
+        items: [
+          { id: "paused", name: "Everything made paused" },
+          { id: "go-live", name: "It asks before it goes live" },
+          { id: "meta-needs", name: "What Meta still needs from you" },
+        ],
+      },
+      {
+        id: "after",
+        label: "Then, how each ad did",
+        items: [
+          { id: "spend", name: "Spend and clicks" },
+          { id: "won", name: "The contacts and won deals it brought" },
+          { id: "next", name: "What to change next" },
+        ],
+      },
+    ],
+    limits: [
+      "It works on your own Meta ad account: Meta bills the ad spend, separately from MnT Future.",
+      "It runs on the AI provider keys you add in Settings, and your provider bills you for them.",
+    ],
+  },
+
+  /* ==== 04 AUTOMATION & INSIGHTS ========================================= */
+
+  /* `triggers` holds one entry per kind of event, its `line` naming every
+     trigger of that kind in the app's own words; the action groups hold one
+     entry per action. All twenty-five triggers and nineteen actions are the
+     app's, and the recipe on /features (operations/Recipe.tsx) runs its
+     programs from these ids. */
+  automation: {
+    title: "Workflows that run the routine steps, without code.",
+    lead: "Pick what starts it - a message, a new contact, a booking, a form, a quotation - and the steps that follow. Every run is logged.",
+    groups: [
+      {
+        id: "triggers",
+        label: "What starts it",
+        /* " ·": the dot is held to the trigger before it, so a line can
+           end on a dot but never start with one ("· Deal lost") - the same
+           rule Names (kit/compact.tsx) keeps for capability lists. */
+        items: [
+          { id: "t-conversation", name: "A conversation", line: "New message received · First message from a contact · Keyword match · Button or list reply · No reply from you · Instagram comment" },
+          { id: "t-contact", name: "A contact or a deal", line: "New contact created · Tag added · Deal created · Deal moved to stage · Deal won · Deal lost" },
+          { id: "t-booking", name: "A booking", line: "Booking made · Cancelled · Completed · No-show" },
+          { id: "t-form", name: "A form or an ad", line: "Form submitted · Ad lead received" },
+          { id: "t-quote", name: "A quotation or an invoice", line: "Quotation sent · Accepted · Declined · Expiring · Invoice issued · Paid · Overdue" },
+        ],
+      },
+      {
+        id: "send",
+        label: "Message the customer",
+        items: [
+          { id: "send-message", name: "Send message" },
+          { id: "send-template", name: "Send template" },
+          { id: "send-buttons", name: "Send buttons" },
+          { id: "send-list", name: "Send list" },
+          { id: "send-media", name: "Send media" },
+        ],
+      },
+      {
+        id: "wait",
+        label: "Wait and listen",
+        items: [
+          { id: "wait", name: "Wait" },
+          { id: "ask-wait", name: "Ask and wait for reply" },
+          { id: "wait-reply", name: "Wait for reply" },
+        ],
+      },
+      {
+        id: "record",
+        label: "Keep the record",
+        items: [
+          { id: "add-tag", name: "Add tag" },
+          { id: "remove-tag", name: "Remove tag" },
+          { id: "update-field", name: "Update contact field" },
+          { id: "create-deal", name: "Create deal" },
+          { id: "move-deal", name: "Move deal to stage" },
+        ],
+      },
+      {
+        id: "route",
+        label: "Pass it on",
+        items: [
+          { id: "assign-conversation", name: "Assign conversation" },
+          { id: "assign-lead", name: "Assign lead" },
+          { id: "send-email", name: "Send email" },
+          { id: "webhook", name: "Send webhook" },
+          { id: "close", name: "Close conversation" },
+        ],
+      },
+      {
+        id: "decide",
+        label: "Decide",
+        items: [{ id: "condition", name: "Condition (if / else)" }],
+      },
+      {
+        id: "logs",
+        label: "Every run, logged",
+        items: [
+          { id: "log-status", name: "Result" },
+          { id: "log-who", name: "Who it ran for" },
+          { id: "log-trigger", name: "What started it" },
+          { id: "log-steps", name: "The steps it ran" },
+        ],
+      },
+    ],
+    limits: [
+      "Messages an automation sends keep to WhatsApp's rules: after 24 hours, only an approved template.",
+    ],
+  },
+
+  /* `ask` names what the agent can look up; the recipe on /features
+     (operations/Recipe.tsx) lights the ones each question reaches for. */
+  "analytics-ai-agent": {
+    title: "Ask your CRM a question in plain words.",
+    lead: "It looks things up with real tools before it answers - your pipelines, deals, contacts, conversations and Meta ads - and tells you which tools it used. Anything it wants to change waits for a person.",
+    groups: [
+      {
+        id: "ask",
+        label: "Ask about",
+        items: [
+          { id: "ask-deals", name: "Pipelines and deals" },
+          { id: "ask-contacts", name: "Contacts" },
+          { id: "ask-conversations", name: "Conversations" },
+          { id: "ask-ads", name: "Meta ads and how they are doing" },
+        ],
+      },
+      {
+        id: "tools",
+        label: "It shows its work",
+        items: [
+          { id: "tools-real", name: "Looks it up before answering" },
+          { id: "tools-named", name: "Names the tools it used" },
+          { id: "threads", name: "Every question kept as a thread" },
+        ],
+      },
+      {
+        id: "skills",
+        label: "Skills",
+        items: [
+          { id: "skill-write", name: "Write down how a job is done" },
+          { id: "skill-load", name: "Used only when it applies" },
+        ],
+      },
+      {
+        id: "approvals",
+        label: "Approvals",
+        items: [{ id: "approve", name: "Anything it wants to change waits for a person" }],
+      },
+    ],
+    limits: [
+      "It runs on the AI provider keys you add in Settings, and your provider bills you for them.",
     ],
   },
 };

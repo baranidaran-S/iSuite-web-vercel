@@ -59,7 +59,7 @@ import { FinalCta } from "@/components/home/FinalCta";
 export const metadata: Metadata = {
   title: "How It Works",
   description:
-    "Follow one enquiry through iSuite AI from ad click to won or lost deal: what the AI sales assistant does, where your team takes over, and what you need to start.",
+    "Follow one enquiry through iSuite AI from ad click to won or lost deal: what the Sales AI Agent does, where your team takes over, and what you need to start.",
   alternates: { canonical: "/how-it-works" },
 };
 

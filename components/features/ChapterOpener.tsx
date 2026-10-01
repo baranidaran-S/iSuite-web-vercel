@@ -5,10 +5,10 @@ import { chapters } from "@/lib/content/featuresPage";
 /* ==========================================================================
    /features - A CHAPTER OPENS
    --------------------------------------------------------------------------
-   One per group - Conversations, Sales, Marketing, Operations - before the
-   features in it. It says which of the four the reader is in, what that
-   group is for, and which features follow, and it shows the group's own
-   layer of the hero's stack, lit.
+   One per group - Conversations, Sales, Marketing, Automation & Insights -
+   before the features in it. It says which of the four the reader is in,
+   what that group is for, and which features follow, and it shows how
+   that part of the system moves.
 
    A CARD IN THE CHAPTER'S OWN COLOUR. This was first drawn with no card at
    all - the heading straight on the page ground between two feature cards
@@ -26,11 +26,9 @@ import { chapters } from "@/lib/content/featuresPage";
    inside the chapter.
 
    THE PICTURE IS THE CHAPTER'S FLOW - what comes into this part of the
-   system and where it goes - see chapter/FlowScene.tsx. The hero shows
-   the product's structure and each feature shows its screen; the chapter
-   shows the movement between them, so no picture on the page is drawn
-   twice. It was the hero's stack again with one layer lit, which is kept
-   in chapter/ChapterScene.tsx and can be switched back in ChapterBody.
+   system and where it goes - see chapter/FlowScene.tsx. Each feature shows
+   its real screen; the chapter shows the movement between them, so no
+   picture on the page is drawn twice.
 
    The ground - colour, light and a faint grid - is drawn here, on the
    server; the flow and the feature cards, which share a hover, are

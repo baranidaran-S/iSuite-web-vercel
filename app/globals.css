@@ -157,18 +157,6 @@
   }
 }
 
-/* The chips keep drifting after they arrive. Different durations per chip so
-   they never sync up into a single pulsing mass — see Hero.tsx. */
-@keyframes drift {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-9px);
-  }
-}
-
 /* THE HEADLINE REVEAL. Each line slides up from behind a clipped box rather
    than fading in, which is the single cheapest way to make type look
    directed rather than merely animated - the letters arrive from somewhere
@@ -337,34 +325,12 @@
   animation-delay: var(--d, 0s);
 }
 
-@utility anim-drift {
-  animation: drift var(--dur, 6s) ease-in-out infinite;
-  animation-delay: var(--d, 0s);
-}
-
 /* --------------------------------------------------------------------------
-   THE CHAPTER SCENES - components/features/chapter
+   THE CHAPTER FLOWS' RING - components/features/chapter/FlowScene
    --------------------------------------------------------------------------
-   Three small loops for the lit layer each /features chapter opens on: a
-   channel mark bobbing over the conversation it brought in, a ring where
-   its beam meets the layer, and a message travelling down the beam - or,
-   for the assistant, a reply travelling up it.
-
-   All transform and opacity, inside the scene's own 3D space. The reduced
-   motion rule at the foot of this file stops every one of them after a
-   frame, and each element's own style is its resting state - the mark
-   floating at its height, the ring and the travelling dot not drawn - so
-   stopping them leaves a still picture rather than a half-played one. */
-@keyframes pin-bob {
-  0%,
-  100% {
-    transform: translateZ(var(--z0));
-  }
-  50% {
-    transform: translateZ(var(--z1));
-  }
-}
-
+   A ring spreading from a flow's hub, over and over. Transform and opacity
+   only; its resting style is not drawn, so the reduced motion rule at the
+   foot of this file leaves a still picture rather than a half-played one. */
 @keyframes pin-ping {
   from {
     transform: scale(0.45);
@@ -376,48 +342,8 @@
   }
 }
 
-/* The travelling dot is two elements, one moving and one fading, on the
-   same clock. Fading the moving one would flatten the dot inside it - an
-   element below full opacity cannot hold anything in 3D - and the dot is
-   turned to face the reader. */
-@keyframes pin-travel {
-  from {
-    transform: translateZ(var(--from));
-  }
-  to {
-    transform: translateZ(var(--to));
-  }
-}
-
-@keyframes pin-fade {
-  0%,
-  100% {
-    opacity: 0;
-  }
-  15%,
-  80% {
-    opacity: 1;
-  }
-}
-
-@utility anim-pin-bob {
-  animation: pin-bob var(--dur, 5.5s) ease-in-out infinite;
-  animation-delay: var(--d, 0s);
-}
-
 @utility anim-pin-ping {
   animation: pin-ping var(--dur, 2.8s) ease-out infinite;
-  animation-delay: var(--d, 0s);
-}
-
-@utility anim-pin-travel {
-  animation: pin-travel var(--dur, 2.8s) cubic-bezier(0.55, 0, 0.45, 1)
-    infinite;
-  animation-delay: var(--d, 0s);
-}
-
-@utility anim-pin-fade {
-  animation: pin-fade var(--dur, 2.8s) linear infinite;
   animation-delay: var(--d, 0s);
 }
 
@@ -488,21 +414,10 @@
   animation: ring-spin var(--dur, 7s) linear infinite;
 }
 
-/* CHAPTER 02'S TOUR - components/features/sales/Showcase. How long until
-   the playing feature gives way to the next, drawn along the foot of its
-   tab. It only runs while the tour plays, and the tour never plays under
-   reduced motion. */
-@keyframes fill-x {
-  from { scale: 0 1; }
-  to { scale: 1 1; }
-}
-@utility anim-fill {
-  transform-origin: left;
-  animation: fill-x var(--dur, 7s) linear both;
-}
-
-/* ...and the feature taking its place comes in over a moment rather than
-   appearing all at once, so its words move with the phone beside them. */
+/* Something that changes in place comes in over a moment rather than
+   appearing all at once - /how-it-works's step clock (journey/BothSides).
+   Chapter 02's tour and its progress bar (anim-fill) went on 2026-10-01,
+   when the chapter came to be scrolled one feature at a time. */
 @keyframes swap-in {
   from { opacity: 0; translate: 0 8px; }
   to { opacity: 1; translate: 0 0; }
@@ -511,10 +426,34 @@
   animation: swap-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* CHAPTER 03'S BOARD - components/features/marketing/Board. A lead
+/* A real screen taller than its window pans slowly down to its foot and
+   back, resting at each end, so the whole of it is seen - --pan is how far,
+   as a share of the screen's own height. */
+@keyframes pan-screen {
+  0%, 14% { translate: 0 0; }
+  50%, 64% { translate: 0 var(--pan, 0%); }
+  100% { translate: 0 0; }
+}
+@utility anim-pan {
+  animation: pan-screen var(--dur, 16s) ease-in-out infinite;
+}
+
+/* A signal dropping down a connector, from one step of an automation to
+   the next - --len is the connector's length. */
+@keyframes drip {
+  from { translate: 0 0; opacity: 0; }
+  20% { opacity: 1; }
+  to { translate: 0 var(--len, 24px); opacity: 0; }
+}
+@utility anim-drip {
+  animation: drip 0.8s ease-in both;
+  animation-delay: var(--d, 0s);
+}
+
+/* CHAPTER 03'S DECK - components/features/marketing/LiveStrip. A lead
    arriving, or a message's status moving on, turns over like a split-flap
-   display, top row first. Only while the board is on screen, and never
-   under reduced motion, where the rows are simply there. */
+   display, top row first. Only while its card is in front and on screen,
+   and never under reduced motion, where the rows are simply there. */
 @keyframes flap-in {
   from { transform: rotateX(-88deg); opacity: 0.25; }
   to { transform: rotateX(0deg); opacity: 1; }
@@ -522,49 +461,6 @@
 @utility anim-flap {
   transform-origin: 50% 0;
   animation: flap-in 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
-  animation-delay: var(--d, 0s);
-}
-
-/* CHAPTER 04'S DESK - components/features/operations/Desk. A patch cable
-   drawn from socket to socket (pathLength 1, so one dash is the whole
-   cable) and its plugs pushed home; a line of the run log written across
-   the display; a dashboard lamp brightening as a refresh passes it. Only
-   while the desk is on screen. Each one's resting state is the desk set
-   up - cables in, lamps on - so under reduced motion that is simply what
-   is there. */
-@keyframes cable-draw {
-  from { stroke-dashoffset: 1; }
-  to { stroke-dashoffset: 0; }
-}
-@utility anim-cable {
-  stroke-dasharray: 1;
-  animation: cable-draw 0.6s cubic-bezier(0.3, 0, 0.2, 1) both;
-  animation-delay: var(--d, 0s);
-}
-@keyframes plug-in {
-  from { opacity: 0; scale: 1.7; }
-  to { opacity: 1; scale: 1; }
-}
-@utility anim-plug {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: plug-in 0.28s cubic-bezier(0.3, 0, 0.2, 1) both;
-  animation-delay: var(--d, 0s);
-}
-@keyframes type-in {
-  from { clip-path: inset(0 100% 0 0); }
-  to { clip-path: inset(0 0 0 0); }
-}
-@utility anim-type {
-  animation: type-in 0.45s steps(12, end) both;
-  animation-delay: var(--d, 0s);
-}
-@keyframes lamp-hot {
-  0%, 22%, 100% { opacity: 0; }
-  8% { opacity: 1; }
-}
-@utility anim-lamp {
-  animation: lamp-hot var(--dur, 4.8s) ease-out infinite;
   animation-delay: var(--d, 0s);
 }
 

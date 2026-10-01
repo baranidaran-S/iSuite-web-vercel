@@ -7,7 +7,7 @@ import { cast, type CastId } from "@/lib/content/howItWorks";
    /how-it-works - THE CAST
    --------------------------------------------------------------------------
    Everyone one enquiry passes through, in the order it reaches them: the
-   customer, the AI sales assistant, the team, iSuite AI itself, and Meta,
+   customer, the Sales AI Agent, the team, iSuite AI itself, and Meta,
    where the ad ran and where the loop closes. The journey below says what
    each of them does, step by step; this is who they are.
 

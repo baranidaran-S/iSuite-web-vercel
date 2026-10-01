@@ -2,10 +2,10 @@ import { Fragment } from "react";
 import { ChapterOpener } from "@/components/features/ChapterOpener";
 import { FeatureBar } from "@/components/features/FeatureBar";
 import { FeaturesHero } from "@/components/features/FeaturesHero";
-import { featureScreens } from "@/components/features/screens";
 import { StoryFeature } from "@/components/features/StoryFeature";
 import { FinalCta } from "@/components/home/FinalCta";
-import { features } from "@/lib/content/features";
+import { closeups } from "@/lib/content/closeups";
+import { PENDING, features } from "@/lib/content/features";
 import { featureDetails } from "@/lib/content/featureDetails";
 
 /* ==========================================================================
@@ -22,23 +22,26 @@ import { featureDetails } from "@/lib/content/featureDetails";
 export type Compact = Partial<Record<string, () => React.JSX.Element>>;
 
 export function FeaturesBody({ compact }: { compact: Compact }) {
-  /* A chapter is ready when all of its features are: their words, and
-     their screens where the chapter is told feature by feature. */
+  /* A chapter is ready when all of its features are: their words, and -
+     where the chapter is told feature by feature - their parts of the app
+     up close (lib/content/closeups.ts). A feature whose details are still
+     being confirmed (PENDING) does not hold its chapter back - it shows
+     that the details are coming. */
   const chapters = features.groups.filter((group) =>
     group.items.every(
       (item) =>
-        featureDetails[item.slug] &&
-        (compact[group.slug] || featureScreens[item.slug]),
+        PENDING.has(item.slug) ||
+        (featureDetails[item.slug] && (compact[group.slug] || closeups[item.slug])),
     ),
   );
 
-  /* The features whose sections are on the page. The hero's callouts and
-     the feature bar link only these, and show the rest as still to come. */
+  /* The features whose sections are on the page. The feature bar links
+     only these, and shows the rest as still to come. */
   const built = chapters.flatMap((group) => group.items.map((item) => item.slug));
 
   return (
     <>
-      <FeaturesHero built={built} />
+      <FeaturesHero />
       <FeatureBar built={built} />
 
       {chapters.map((group) => {
